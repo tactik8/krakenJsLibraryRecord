@@ -29,6 +29,7 @@ export class KrThing {
     constructor(record_type = null, record_id = null) {
         this._properties = [];
 
+        this._callbacks=[];
         // metadata
         this.metadata = new KrMetadata();
 
@@ -48,6 +49,26 @@ export class KrThing {
         }
     }
 
+
+
+
+    // ----------------------------------------------------
+    // Events
+    // ----------------------------------------------------
+
+
+    register(callback){
+        this._callbacks.push(callback);
+    }
+
+    dispatchEvent(event){
+
+        for(let c of this._callbacks){
+            c(event);
+        }
+    }
+    
+    
     // ----------------------------------------------------
     // Attributes
     // ----------------------------------------------------
@@ -118,7 +139,7 @@ export class KrThing {
     
     getFullRecord(depth=0) {
 
-        if(depth && depth > MAX_DEPTH){ console.log('max'); return this.ref};
+        if(depth && depth > MAX_DEPTH){  return this.ref};
         
         let record = {};
         let properties = this.properties;
@@ -133,7 +154,7 @@ export class KrThing {
     setFullRecord(value) {
         this._properties = [];
         Object.keys(value).forEach((key) => {
-            this.setProperty(key, value[key]);
+            this.addProperty(key, value[key]);
         });
     }
 
@@ -308,6 +329,9 @@ export class KrThing {
         actionType,
         previousValue
     ) {
+
+        // Get olf value
+        let oldValue = this.getProperty(propertyID)?.value;
        
         // get or create property object
         let property = this.getProperty(propertyID);
@@ -341,6 +365,11 @@ export class KrThing {
             previousValue,
         );
 
+        // dispatch event
+        let newValue = this.getProperty(propertyID).value;
+        let event = {'type': 'change', record_type: this.record_type, record_id: this.record_id,  'propertyID': propertyID, 'oldValue': oldValue, 'newValue': newValue};
+        this.dispatchEvent(event);
+        
         return newValues;
     }
 
@@ -355,6 +384,22 @@ export class KrThing {
         return new KrThing(record_type, record_id);
     }
 
+
+
+    // ----------------------------------------------------
+    // Dot notation
+    // ----------------------------------------------------
+
+
+    dotGet(path){        
+        
+    }
+
+    dotSet(path, value){
+
+    }
+    
+    
     // ----------------------------------------------------
     // Comparisons
     // ----------------------------------------------------

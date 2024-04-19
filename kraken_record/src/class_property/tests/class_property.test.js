@@ -88,7 +88,6 @@ test('KrProperty Values', function () {
     // test all
     var expected_result = 'value1';
     var results = k.values;
-    console.log(k.propertyValuesNet);
     expect(results).toStrictEqual(['value1']);
 
 });

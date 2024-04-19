@@ -21,7 +21,6 @@ test('KrMetadata init', function () {
     var expected_result =new Date(2024, 3, 18);;
     
     k.observationDate = input_value;
-    console.log(typeof k.observationDate, typeof expected_result);
     expect(k.observationDate).toStrictEqual(expected_result);
     expect(k.d).toStrictEqual(expected_result);
 

@@ -10,12 +10,16 @@ export class KrMetadata {
     - record:         Returns all metadata in a dict
     - object:         The original source of the data
     - Instrument:     What brought the data over
+    - validFrom
+    - validThrough
 
 
     Methods
     - equal:     Returns true if comes from same object
     - lt:        Worst metadata in order of c and d
     - gt:        Best metadata in order of c and d
+    - isValid    Returns true if date between validfrom validthrough
+    
 
     */
 
@@ -112,6 +116,20 @@ export class KrMetadata {
         this.observationDate = value;
     }
 
+    get validFrom(){
+        return this._record.validFrom;
+    }
+    set validFrom(value){
+        this._record.validFrom = value;
+    }
+
+    get validThrough(){
+        return this._record.validThrough;
+    }
+    set validThrough(value){
+        this._record.validThrough = value;
+    }
+
     get object(){
         return this._record.object;
     }
@@ -126,7 +144,22 @@ export class KrMetadata {
         };
         return false;
     }
-    gt(other){
+
+
+    isValid(comparisonDate=null){
+        // Returns true if value is within velidFrom, validThrough. Uses today's date if not provided
+        if(comparisonDate==null){
+            comparisonDate = new Date();
+        }
+
+        if (this.validFrom && comparisonDate < this.validFrom)  { return False };
+        if (this.validThrough && comparisonDate >= this.validThrough)  { return False }
+        return True
+    }
+    
+    gt(other, comparisonDate){
+
+        
         if (!this.credibility && other.credibility) { return false};
         if (this.credibility && !other.credibility) { return true};
 
@@ -139,7 +172,6 @@ export class KrMetadata {
 
         if ( this.observationDate > other.observationDate){ return true };
         if ( this.observationDate < other.observationDate){ return false };
-
 
         if (!this.createdDate && other.createdDate) { return false};
         if (this.createdDate && !other.createdDate) { return true};

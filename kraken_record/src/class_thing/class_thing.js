@@ -29,7 +29,8 @@ export class KrThing {
     constructor(record_type = null, record_id = null) {
         this._properties = [];
 
-        this._callbacks=[];
+        this._callbacks = {}
+        
         // metadata
         this.metadata = new KrMetadata();
 
@@ -51,22 +52,37 @@ export class KrThing {
 
 
 
+    // -----------------------------------------------------
+    //  events 
+    // -----------------------------------------------------
 
-    // ----------------------------------------------------
-    // Events
-    // ----------------------------------------------------
 
-
-    register(callback){
-        this._callbacks.push(callback);
-    }
-
-    dispatchEvent(event){
-
-        for(let c of this._callbacks){
-            c(event);
+    addEventListener(eventType, callback) {
+        if(typeof callback !== "function") return;
+        if(this._callbacks[eventType] === undefined) {
+          this._callbacks[eventType] = [];
         }
+
+        this._callbacks[eventType].push(callback);
+      }
+
+    dispatchEvent(eventType, data) {
+        if(this._callbacks[eventType] === undefined) return;
+
+        const event = {
+            type: eventType,
+            target: this,
+            data: data
+        }
+
+        this._callbacks[eventType].forEach(callback => {
+          callback(event);
+        })
     }
+
+
+
+   
     
     
     // ----------------------------------------------------
@@ -367,8 +383,12 @@ export class KrThing {
 
         // dispatch event
         let newValue = this.getProperty(propertyID).value;
-        let event = {'type': 'change', record_type: this.record_type, record_id: this.record_id,  'propertyID': propertyID, 'oldValue': oldValue, 'newValue': newValue};
-        this.dispatchEvent(event);
+
+        if( oldValue != newValue){
+            let data = {propertyID: propertyID, oldValue: oldValue, newValue: newValue }
+            this.dispatchEvent(actionType, data);
+        }
+        
         
         return newValues;
     }

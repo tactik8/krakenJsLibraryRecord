@@ -62,6 +62,7 @@ export class KrThing {
 
         if (eventType == null){
             eventType=='all'
+            
         }
         
         if(this._callbacks[eventType] === undefined) {

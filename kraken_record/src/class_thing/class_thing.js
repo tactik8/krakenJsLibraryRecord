@@ -5,7 +5,6 @@ import { KrMetadata } from "../class_metadata/class_metadata.js";
 
 let MAX_DEPTH = 6;
 
-
 export class KrThing {
     /*
 
@@ -29,16 +28,17 @@ export class KrThing {
     constructor(record_type = null, record_id = null) {
         this._properties = [];
 
-        this._callbacks = {}
-        
+        this._callbacks = {};
+
         // metadata
         this.metadata = new KrMetadata();
 
         // if record_type is a dict, treat as record instead
-        if (record_type && record_type["@type"]) this.setFullRecord(record_type);
+        if (record_type && record_type["@type"])
+            this.setFullRecord(record_type);
 
         //
-        if (record_type && !(record_type["@type"])) {
+        if (record_type && !record_type["@type"]) {
             this.setProperty("@type", record_type);
         }
         if (record_id) {
@@ -50,51 +50,46 @@ export class KrThing {
         }
     }
 
-
-
     // -----------------------------------------------------
-    //  events 
+    //  events
     // -----------------------------------------------------
-
 
     addEventListener(eventType, callback) {
-        if(typeof callback !== "function") return;
+        if (typeof callback !== "function") return;
 
-        if (eventType == null){
-            eventType=='all'
-            
+        if (!eventType || eventType == null) {
+            eventType == "all";
+        }
+        if (this._callbacks[eventType] === undefined) {
+            this._callbacks[eventType] = [];
         }
         
-        if(this._callbacks[eventType] === undefined) {
-          this._callbacks[eventType] = [];
-        }
 
         this._callbacks[eventType].push(callback);
-      }
+    }
 
     dispatchEvent(eventType, data) {
-        if(this._callbacks[eventType] === undefined) return;
+        //if (this._callbacks[eventType] === undefined) return;
 
         const event = {
             type: eventType,
             target: this,
-            data: data
+            data: data,
+        };
+
+        if (this._callbacks[eventType] === undefined) {
+            this._callbacks[eventType] = [];
         }
 
-        this._callbacks[eventType].forEach(callback => {
-          callback(event);
-        })
+        this._callbacks[eventType].forEach((callback) => {
+            callback(event);
+        });
 
-        this._callbacks['all'].forEach(callback => {
-          callback(event);
-        })
+        this._callbacks["all"].forEach((callback) => {
+            callback(event);
+        });
     }
 
-
-
-   
-    
-    
     // ----------------------------------------------------
     // Attributes
     // ----------------------------------------------------
@@ -161,16 +156,18 @@ export class KrThing {
     set refRecord(value) {
         this.setRefRecord(value);
     }
-    
-    
-    getFullRecord(depth=0) {
 
-        if(depth && depth > MAX_DEPTH){  return this.ref};
-        
+    getFullRecord(depth = 0) {
+        if (depth && depth > MAX_DEPTH) {
+            return this.ref;
+        }
+
         let record = {};
         let properties = this.properties;
         for (let i = 0; i < properties.length; i++) {
-            record[properties[i].propertyID] = properties[i].getFullRecord(depth ++);
+            record[properties[i].propertyID] = properties[i].getFullRecord(
+                depth++,
+            );
         }
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -184,7 +181,7 @@ export class KrThing {
         });
     }
 
-    getRefRecord(depth=0) {
+    getRefRecord(depth = 0) {
         let record = {};
 
         for (let i = 0; i < this.properties.length; i++) {
@@ -196,14 +193,17 @@ export class KrThing {
         return record;
     }
 
-    getBestRecord(depth=0) {
-        if(depth > MAX_DEPTH){ return this.ref};
-        
+    getBestRecord(depth = 0) {
+        if (depth > MAX_DEPTH) {
+            return this.ref;
+        }
+
         let record = {};
 
         for (let i = 0; i < this.properties.length; i++) {
-            record[this.properties[i].propertyID] =
-                this.properties[i].getBestRecord(depth ++);
+            record[this.properties[i].propertyID] = this.properties[
+                i
+            ].getBestRecord(depth++);
         }
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -226,12 +226,12 @@ export class KrThing {
     set rawRecord(value) {
         this.setSystemRecord(value);
     }
-    
+
     getSystemRecord(depth) {
+        if (depth > MAX_DEPTH) {
+            return this.ref;
+        }
 
-        if(depth > MAX_DEPTH){ return this.ref};
-
-        
         let record = {};
 
         for (let i = 0; i < this.properties.length; i++) {
@@ -340,7 +340,7 @@ export class KrThing {
     setProperty(propertyID, value, credibility, observationDate) {
         return this.replaceProperty(
             propertyID,
-            null, 
+            null,
             value,
             credibility,
             observationDate,
@@ -353,12 +353,11 @@ export class KrThing {
         credibility,
         observationDate,
         actionType,
-        previousValue
+        previousValue,
     ) {
-
         // Get olf value
         let oldValue = this.getProperty(propertyID)?.value;
-       
+
         // get or create property object
         let property = this.getProperty(propertyID);
         if (!property) {
@@ -392,14 +391,17 @@ export class KrThing {
         );
 
         // dispatch event
-        let newValue = this.getProperty(propertyID).value;
+        let newValue = this.getProperty(propertyID)?.value;
 
-        if( oldValue != newValue){
-            let data = {propertyID: propertyID, oldValue: oldValue, newValue: newValue }
+        if (oldValue != newValue) {
+            let data = {
+                propertyID: propertyID,
+                oldValue: oldValue,
+                newValue: newValue,
+            };
             this.dispatchEvent(actionType, data);
         }
-        
-        
+
         return newValues;
     }
 
@@ -414,22 +416,14 @@ export class KrThing {
         return new KrThing(record_type, record_id);
     }
 
-
-
     // ----------------------------------------------------
     // Dot notation
     // ----------------------------------------------------
 
+    dotGet(path) {}
 
-    dotGet(path){        
-        
-    }
+    dotSet(path, value) {}
 
-    dotSet(path, value){
-
-    }
-    
-    
     // ----------------------------------------------------
     // Comparisons
     // ----------------------------------------------------
@@ -479,15 +473,13 @@ export class KrThing {
 
         return true;
     }
-    
+
     printScreen() {
         console.log("----------------------------------");
         console.log(this.properties.length);
         console.log("thing:", this.record_type, this.record_id);
         this.properties.map((property) => {
-
-            property.printScreen('    ');
-
+            property.printScreen("    ");
         });
     }
 }

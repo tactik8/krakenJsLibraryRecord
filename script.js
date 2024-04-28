@@ -10,6 +10,8 @@ function test(event){
 let k = new KrThing()
 console.log('z', k)
 
-k.register(test)
+k.addEventListener('all', test)
 
 k.setProperty('name', 'bob')
+
+

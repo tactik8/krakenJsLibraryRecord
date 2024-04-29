@@ -81,6 +81,10 @@ export class KrThing {
             this._callbacks[eventType] = [];
         }
 
+        if (this._callbacks['all'] === undefined) {
+            this._callbacks['all'] = [];
+        }
+        
         this._callbacks[eventType].forEach((callback) => {
             callback(event);
         });

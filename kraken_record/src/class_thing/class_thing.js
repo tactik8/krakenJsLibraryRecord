@@ -291,17 +291,40 @@ export class KrThing {
         /**
          * Returns property of
          */
-        // Returns property of
+
+        let propertiesID =  propertyID.split('.')
+        let pID =  propertyID.split('.')[0]
+        let otherIDS = propertyID.split('.').slice(1)
+
+        // Find property object
+        let property 
         for (let i = 0; i < this._properties.length; i++) {
-            if (this._properties[i].propertyID == propertyID) {
-                return this._properties[i];
+            if (this._properties[i].propertyID == pID) {
+                property = this._properties[i];
             }
         }
 
-        // create new property if missing
-        var property = new KrProperty(propertyID);
-        this._properties.push(property);
-        return property;
+        // Create property object if missing
+        if(!property || property == null){
+            property = new KrProperty(propertyID);
+            this._properties.push(property);
+        }
+
+        // Recurse
+
+        if( otherIDS.length > 0){
+
+            if (!property.value?.record_type){
+                return null
+            } else {
+                return property.value.getProperty(otherIDS.join('.'))
+            }
+            
+        } else {
+            return property;
+            
+        }
+
     }
 
     addProperty(propertyID, value, credibility, observationDate) {
@@ -359,10 +382,40 @@ export class KrThing {
         actionType,
         previousValue,
     ) {
+
+
+        // Handle dot notation
+        if(propertyID.includes('.')){
+
+            let pID = propertyID.split('.')[0]
+            let otherIDS = propertyID.split('.').slice(1)
+            
+            let p = this.getProperty(pID);
+
+            // If not value, create new KrThing
+            if(!p.value?.record_type){
+                p.setValues(
+                    new KrThing('Thing'),
+                    metadataRecord,
+                    actionType,
+                    null,
+                );
+            }
+
+            // Set value
+            p.value.setProperty(otherIDS.join('.'), value)
+            return p
+            
+        }
+
+
+
+        
         // Get olf value
         let oldValue = this.getProperty(propertyID)?.value;
 
         // get or create property object
+        
         let property = this.getProperty(propertyID);
         if (!property) {
             property = new KrProperty(propertyID);

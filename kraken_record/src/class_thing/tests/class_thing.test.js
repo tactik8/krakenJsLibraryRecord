@@ -242,3 +242,20 @@ test('KrThing properties netting', function () {
 
 
 
+
+
+// Run the test
+test('KrThing dot notation', function () {
+
+    let k1 = new KrThing('Thing', 'abc123');
+
+    k1.setProperty('name', 'bob');    
+    k1.setProperty('children.name', 'name1');
+   
+
+    let n = k1.getProperty('children.name')
+
+
+    expect(n.value).toStrictEqual('name1');
+
+});

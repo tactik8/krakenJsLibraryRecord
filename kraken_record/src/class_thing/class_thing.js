@@ -134,7 +134,7 @@ export class KrThing {
 
     get things(){
         // return all things 
-        let results = []
+        let results = [this]
         for(let p of this._properties){
             if (p.value?.record_type){
                 results.push(p)

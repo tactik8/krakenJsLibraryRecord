@@ -132,6 +132,7 @@ export class KrPropertyValue {
         this.metadata.observationDate = value;
     }
 
+
     // ----------------------------------------------------
     // Records 
     // ----------------------------------------------------
@@ -163,6 +164,9 @@ export class KrPropertyValue {
         return value;        
     }
 
+
+
+    
 
     // ----------------------------------------------------
     // Raw records 
@@ -230,5 +234,22 @@ export class KrPropertyValue {
         console.log(suffix, " - ", c_string, p_string, t_string, v);
         
     }
+
+
+    // -----------------------------------------------------
+    //  HTML values 
+    // -----------------------------------------------------
+
+
+    get valueHTML(){
+
+        if (this.value.record_type){
+
+            
+        }
+        
+    }
+
+    
 };
 

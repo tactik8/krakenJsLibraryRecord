@@ -9,6 +9,6 @@ let k = new KrThing()
 k.setProperty('child.name', 'bob')
 
 
-console.log(JSON.stringify(k.bestRecord, null, 4))
+console.log(JSON.stringify(k.fullRecord, null, 4))
 console.log(k.getProperty('child.name').value)
 

@@ -252,10 +252,13 @@ export class KrThing {
 
         let record = {};
 
-        for (let i = 0; i < this.properties.length; i++) {
-            record.properties[this.properties[i].propertyID] =
-                this.properties[i].getSystemRecord(depth);
+
+       
+        
+        for (let p of this.properties) {
+            record[p.propertyID] = p.getSystemRecord(depth);
         }
+
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
         return record;

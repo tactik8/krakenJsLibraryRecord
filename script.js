@@ -3,12 +3,12 @@ import { KrThing } from './kraken_record/kraken_record.js';
 
 
 
-let k = new KrThing()
+let k = new KrThing('Thing', 'bob')
+k.setProperty('name', 'bob2')
+console.log('vv', k.getSystemRecord())
+k.api_post()
 
 
-k.setProperty('child.name', 'bob')
-
-
-console.log(JSON.stringify(k.fullRecord, null, 4))
-console.log(k.getProperty('child.name').value)
-
+let k2 =  new KrThing('Thing', 'bob')
+k2.api_get()
+console.log('ww', k2.record)

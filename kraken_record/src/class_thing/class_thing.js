@@ -574,6 +574,7 @@ function ensureArray(value) {
 
 function simplify(data) {
     // Remove arrays of 1
+    return data
     console.log('data', data)
     if (Array.isArray(data)) {
         // If the array has exactly one element, return that element

@@ -120,9 +120,9 @@ export class KrProperty {
 
         this._propertyValues=[];
         var values = ensureArray(value);
-        for(let i=0; i< values.length; i++){
+        for(let value of values){
             var propertyValue = new KrPropertyValue();
-            propertyValue.systemRecord = values[i];
+            propertyValue.setSystemRecord(value)
             this._propertyValues.push(propertyValue);
         };
     }

@@ -38,8 +38,8 @@ test('KrThing get record', function () {
     let expected_result = {
         "@type": "person",
         "@id": "abc123",
-        "name": ["name1"],
-        "email": ["email@test.com"]
+        "name": "name1",
+        "email": "email@test.com"
     };
 
     let k = new KrThing(input_type, input_id);
@@ -67,13 +67,13 @@ test('KrThing get record complex', function () {
     let expected_result = {
         "@type": "person",
         "@id": "abc123",
-        "name": ["name1"],
-        "email": ["email@test.com"],
-        "other": [{
+        "name": "name1",
+        "email": "email@test.com",
+        "other": {
             "@type": "person",
             "@id": "def456",
-            "name": ["name2"],
-        }],
+            "name": "name2",
+        },
     };
 
     let k = new KrThing(input_type, input_id);

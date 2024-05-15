@@ -45,7 +45,7 @@ export class KrThing {
             this.setProperty("@id", record_id);
         }
 
-        if (!this.record_id) {
+        if (!this.record_id || this.record_id == null) {
             record_id = String(crypto.randomUUID());
         }
     }
@@ -108,6 +108,10 @@ export class KrThing {
         return this.setProperty("@type", value);
     }
     get record_id() {
+        let record_id =  this.getProperty("@id").value;
+        if(!record_id || record_id == null){
+            this.record_id = String(crypto.randomUUID())
+        }
         return this.getProperty("@id").value;
     }
     set record_id(value) {
@@ -179,10 +183,8 @@ export class KrThing {
 
         let record = {};
         let properties = this.properties;
-        for (let i = 0; i < properties.length; i++) {
-            record[properties[i].propertyID] = properties[i].getFullRecord(
-                depth++,
-            );
+        for (let p of properties) {
+            record[p.propertyID] = p.getFullRecord(depth+1);
         }
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -221,7 +223,7 @@ export class KrThing {
         for (let i = 0; i < this.properties.length; i++) {
             record[this.properties[i].propertyID] = this.properties[
                 i
-            ].getBestRecord(depth++);
+            ].getBestRecord(depth+1);
         }
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -251,16 +253,17 @@ export class KrThing {
         }
 
         let record = {};
-
-
+        record["@type"] = this.record_type;
+        record["@id"] = this.record_id;
+        record.properties = {}
+        record.summary = this.getFullRecord()
        
         
         for (let p of this.properties) {
-            record[p.propertyID] = p.getSystemRecord(depth);
+            record['properties'][p.propertyID] = p.getSystemRecord(depth);
         }
 
-        record["@type"] = this.record_type;
-        record["@id"] = this.record_id;
+        
         return record;
     }
 
@@ -270,32 +273,32 @@ export class KrThing {
         if (!value || !value.properties) {
             return;
         }
-
         // Reset current properties
         this._properties = [];
 
         // convert sub things to KrThing
         var keys = Object.keys(value.properties);
-        for (let i = 0; i < keys.length; i++) {
-            var properties = value.properties[keys[i]];
-            for (let t = 0; t < properties.length; t++) {
-                var propertyValue = properties[t];
-                if (propertyValue.value && propertyValue.value["@type"]) {
+        for (let key of keys) {
+            let properties = value.properties[key];
+            properties = ensureArray(properties)
+            for (let propertyValue of properties) {
+               
+                if (propertyValue?.object.value?.["@type"]) {
                     var thing = this.new(
-                        propertyValue.value["@type"],
-                        propertyValue.value["@id"],
+                        propertyValue.object.value["@type"],
+                        propertyValue.object.value["@id"],
                     );
-                    thing.fullRecord = propertyValue.value;
-                    propertyValue.value = thing;
+                    thing.setSystemRecord(propertyValue.object.value);
+                    propertyValue.object.value = thing;
                 }
             }
         }
 
         // load data
         var keys = Object.keys(value.properties);
-        for (let i = 0; i < keys.length; i++) {
-            var property = new KrProperty(keys[i]);
-            property.setSystemRecord(value.properties[keys[i]]);
+        for (let key of keys) {
+            var property = new KrProperty(key);
+            property.setSystemRecord(value.properties[key]);
             this._properties.push(property);
         }
     }

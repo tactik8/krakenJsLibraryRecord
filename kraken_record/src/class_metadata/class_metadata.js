@@ -50,7 +50,7 @@ export class KrMetadata {
         return JSON.parse(JSON.stringify(this._record));
     }
 
-    setSystemRecord(depth){
+    setSystemRecord(value){
         this._record = JSON.parse(JSON.stringify(value));
     }
 

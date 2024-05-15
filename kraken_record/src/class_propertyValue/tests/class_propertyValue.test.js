@@ -187,7 +187,7 @@ test('KrPropertyValue thing as a value', function () {
 
     var input_propertyID = 'name';
     var input_value = new KrThing({ "@type": "person", "@id": "test", "name": "name3" });
-    var expected_result = { "@type": "person", "@id": "test", "name": ["name3"] };
+    var expected_result = { "@type": "person", "@id": "test", "name": "name3" };
 
 
 

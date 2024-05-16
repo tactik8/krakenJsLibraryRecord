@@ -1,6 +1,18 @@
-import { KrThing } from "./kraken_record/kraken_record.js";
 
-function test() {
+
+import { exportAllDeclaration } from '@babel/types';
+import { KrThing } from '../class_thing.js';
+
+
+
+// Run the test
+test('KrThing init', function () {
+
+
+    var input_type = 'Person';
+    var input_id = "abc123";
+
+
     var k = new KrThing();
     k.record = {
         "@type": "person",
@@ -32,11 +44,10 @@ function test() {
         },
     };
 
+
     // Test properties
+    expect(k.things.length).toStrictEqual(4);
+    
 
-    for (let t of k.things) {
-        console.log(t.record_type);
-    }
-}
+});
 
-test();

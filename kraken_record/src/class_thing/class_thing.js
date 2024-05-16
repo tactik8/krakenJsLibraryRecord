@@ -140,11 +140,17 @@ export class KrThing {
         // return all things 
         let results = []
         for(let p of this._properties){
-            if (p.value?.record_type){
-                results.push(p)
-                results = results.concat(p.things)
+            for(let v of p.values){
+                if (v?.record_type){
+                    results.push(v)
+                }
+                results = results.concat(v.things)
             }
         }
+        results = results.filter(function (el) {
+            return el != null;
+        });
+
         return results
     }
     // ----------------------------------------------------

@@ -13,9 +13,9 @@
       "@babel/plugin-syntax-import-attributes"
     ]
   },
-  "name": "krakenrecordjs",
+  "name": "krakenrecord",
   "description": "Record utilities",
-  "version": "1.0.8",
+  "version": "1.0.0",
   "dependencies": {
     "uuid": "^9.0.1"
   },

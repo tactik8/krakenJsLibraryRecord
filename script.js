@@ -1,4 +1,10 @@
-import { KrThing } from "./kraken_record/kraken_record.js";
+
+
+
+//import { KrThing } from "./src/index.js";
+import { KrThing } from "./dist/main.js";
+
+
 
 function test() {
     var k = new KrThing();
@@ -27,15 +33,14 @@ function test() {
                     "@type": "person",
                     "@id": "person_3",
                     givenName: "givenName_3",
-                },
-            ],
-        },
-    };
-
+                }
+            ]
+        }
+    }
+   
     // Test properties
-
     for (let t of k.things) {
-        console.log(t.record_type);
+        console.log('a', t.record_type);
     }
 }
 

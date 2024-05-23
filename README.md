@@ -1,9 +1,9 @@
-# kraken_thing
+# kraken_record
 
 
 
 ## How to use
-The code is hosted in guthub pages
+The code is hosted in github pages
 ```
 import { KrThing } from 'https://tactik8.github.io/krakenJsLibraryRecord/kraken_record/kraken_record.js';
 

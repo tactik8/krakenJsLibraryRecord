@@ -1,3 +1,7 @@
+import { v4 as uuidv4 } from 'uuid';
+
+
+
 import { KrProperty } from "../class_property/class_property.js";
 
 import { KrMetadata } from "../class_metadata/class_metadata.js";
@@ -46,7 +50,7 @@ export class KrThing {
         }
 
         if (!this.record_id || this.record_id == null) {
-            record_id = String(crypto.randomUUID());
+            record_id = String(uuidv4());
         }
     }
 
@@ -110,7 +114,7 @@ export class KrThing {
     get record_id() {
         let record_id =  this.getProperty("@id").value;
         if(!record_id || record_id == null){
-            this.record_id = String(crypto.randomUUID())
+            this.record_id = String(uuidv4())
         }
         return this.getProperty("@id").value;
     }
@@ -139,6 +143,7 @@ export class KrThing {
     get things(){
         // return all things 
         let results = []
+        
         for(let p of this._properties){
             for(let v of p.values){
                 if (v?.record_type){

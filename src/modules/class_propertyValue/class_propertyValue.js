@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 
 import { KrMetadata } from '../class_metadata/class_metadata.js';
 
@@ -15,7 +16,7 @@ export class KrPropertyValue {
 
         this._record = {
             "@type": actionType,
-            "@id": String(crypto.randomUUID()),
+            "@id": String(uuidv4()),
             "object": {
                 "@type": "propertyValue",
                 propertyID: propertyID,

@@ -139,7 +139,8 @@ export class KrPropertyValue {
     // ----------------------------------------------------
     
     getFullRecord(depth=0){
-        if (this.value && this.value.constructor.name == 'KrThing' ){ 
+        
+        if (this.value && this.value?.record_type ){ 
             return this.value.getFullRecord(depth)  
         }
         return this.value;

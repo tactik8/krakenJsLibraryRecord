@@ -1,8 +1,8 @@
 
 
 
-//import { KrThing } from "./src/index.js";
-import { KrThing } from "./dist/main.js";
+import { KrThing } from "./src/index.js";
+//import { KrThing } from "./dist/main.js";
 
 
 
@@ -39,9 +39,7 @@ function test() {
     }
    
     // Test properties
-    for (let t of k.things) {
-        console.log('a', t.record_type);
-    }
+    console.log(k.record)
 }
 
 test();

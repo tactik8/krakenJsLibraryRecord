@@ -759,7 +759,8 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     getProperty(propertyID) {
         /**
          * Returns property of
-         */ let propertiesID = propertyID.split(".");
+         */ if (!propertyID || propertyID == null) return null;
+        let propertiesID = propertyID.split(".");
         let pID = propertyID.split(".")[0];
         let otherIDS = propertyID.split(".").slice(1);
         // Find property object

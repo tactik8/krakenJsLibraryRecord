@@ -323,6 +323,9 @@ export class KrThing {
          * Returns property of
          */
 
+
+        if(!propertyID || propertyID == null){ return null }
+        
         let propertiesID =  propertyID.split('.')
         let pID =  propertyID.split('.')[0]
         let otherIDS = propertyID.split('.').slice(1)

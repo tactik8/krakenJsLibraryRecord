@@ -284,7 +284,13 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     // Records 
     // ----------------------------------------------------
     getFullRecord(depth = 0) {
-        if (this.value && this.value?.record_type) return this.value.getFullRecord(depth);
+        if (this.value && this.value?.record_type) {
+            if ([
+                "previousItem",
+                "nextItem"
+            ].includes(this.propertyID)) return this.value.getRefRecord(depth);
+            else return this.value.getFullRecord(depth);
+        }
         return this.value;
     }
     getRefRecord(depth = 0) {

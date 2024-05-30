@@ -157,10 +157,9 @@ export class KrThing {
                     if(!db.includes(id)){
                         results.push(v)
                         db.push(id)
+                        results = results.concat(v.getThings(db))
                     }
-                    results = results.concat(v.getThings(db))
                 }
-                
             }
         }
         results = results.filter(function (el) {

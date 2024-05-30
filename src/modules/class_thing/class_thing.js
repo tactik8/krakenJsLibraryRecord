@@ -142,14 +142,25 @@ export class KrThing {
 
     get things(){
         // return all things 
+
+        return this.getThings([this.record_type + '/' + this.record_id])
+    }
+
+    getThings(db=[]){
+
         let results = []
-        
+
         for(let p of this._properties){
             for(let v of p.values){
                 if (v?.record_type){
-                    results.push(v)
+                    let id = v?.record_type + '/' + v.record_id
+                    if(!db.includes(id)){
+                        results.push(v)
+                        db.push(id)
+                    }
+                    results = results.concat(v.getThings(db))
                 }
-                results = results.concat(v.things)
+                
             }
         }
         results = results.filter(function (el) {
@@ -157,7 +168,13 @@ export class KrThing {
         });
 
         return results
+
+        
     }
+
+
+
+    
     // ----------------------------------------------------
     // Records
     // ----------------------------------------------------

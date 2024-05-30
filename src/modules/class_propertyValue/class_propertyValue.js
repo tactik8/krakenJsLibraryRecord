@@ -143,7 +143,7 @@ export class KrPropertyValue {
         if (this.value && this.value?.record_type ){ 
 
             if(['previousItem', 'nextItem'].includes(this.propertyID) ){
-                return this.value.getRefRecord(depth)  
+                return this.value.ref
             } else {
                 return this.value.getFullRecord(depth)  
             }

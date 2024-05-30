@@ -653,8 +653,8 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
                 if (!db.includes(id)) {
                     results.push(v);
                     db.push(id);
+                    results = results.concat(v.getThings(db));
                 }
-                results = results.concat(v.getThings(db));
             }
         }
         results = results.filter(function(el) {

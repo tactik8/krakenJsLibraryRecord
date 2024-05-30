@@ -288,7 +288,7 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
             if ([
                 "previousItem",
                 "nextItem"
-            ].includes(this.propertyID)) return this.value.getRefRecord(depth);
+            ].includes(this.propertyID)) return this.value.ref;
             else return this.value.getFullRecord(depth);
         }
         return this.value;

@@ -212,6 +212,9 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         this._record.object.value = ensureNotArray(value);
         this._record.replacer = ensureNotArray(value);
     }
+    get record() {
+        let record = this._record;
+    }
     // ----------------------------------------------------
     // Attributes - object
     // ----------------------------------------------------
@@ -430,7 +433,9 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         return this._propertyValues.map((x)=>x.getRefRecord(depth));
     }
     getBestRecord(depth = 0) {
-        return this._propertyValues.map((x)=>x.getBestRecord(depth));
+        return [
+            this.propertyValue.getBestRecord(depth)
+        ];
     }
     // ----------------------------------------------------
     // Records 

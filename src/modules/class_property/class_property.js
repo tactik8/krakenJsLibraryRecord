@@ -102,7 +102,7 @@ export class KrProperty {
     }
 
     getBestRecord(depth=0){
-        return this._propertyValues.map((x) => x.getBestRecord(depth) )
+        return [this.propertyValue.getBestRecord(depth)]
     }
 
     

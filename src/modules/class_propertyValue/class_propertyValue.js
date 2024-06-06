@@ -60,6 +60,15 @@ export class KrPropertyValue {
         this._record.object.value = ensureNotArray(value);
         this._record.replacer = ensureNotArray(value);
         }
+
+    get record(){
+
+        let record = this._record
+        
+        
+    }
+    
+
     
     // ----------------------------------------------------
     // Attributes - object

@@ -433,9 +433,11 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         return this._propertyValues.map((x)=>x.getRefRecord(depth));
     }
     getBestRecord(depth = 0) {
-        return [
-            this.propertyValue.getBestRecord(depth)
+        let p = this.propertyValue;
+        if (p && p != null) return [
+            p.getBestRecord(depth)
         ];
+        return [];
     }
     // ----------------------------------------------------
     // Records 

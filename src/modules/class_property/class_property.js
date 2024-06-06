@@ -102,7 +102,12 @@ export class KrProperty {
     }
 
     getBestRecord(depth=0){
-        return [this.propertyValue.getBestRecord(depth)]
+
+        let p = this.propertyValue
+        if(p && p != null ){
+            return [p.getBestRecord(depth)]
+        }
+        return []
     }
 
     

@@ -445,7 +445,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     }
     getBestRecord(depth = 0) {
         let p = this.propertyValue;
-        if (p && p != null && p != []) return [
+        if (p && p != null) return [
             p.getBestRecord(depth)
         ];
         return [];
@@ -471,7 +471,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     get propertyValue() {
         // return best property value object
         if (this.propertyValues && this.propertyValues.length > 0) return this.propertyValues[0];
-        return [];
+        return null;
     }
     get propertyValues() {
         // returns best pv for each different value

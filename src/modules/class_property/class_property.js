@@ -94,11 +94,11 @@ export class KrProperty {
     // ----------------------------------------------------
     
     getFullRecord(depth=0) {
-        return this._propertyValues.map((x) => x.getFullRecord(depth) )
+        return this.propertyValuesNet.map((x) => x.getFullRecord(depth) )
     }
 
     getRefRecord(depth=0){
-        return this._propertyValues.map((x) => x.getRefRecord(depth) )
+        return this.propertyValuesNet.map((x) => x.getRefRecord(depth) )
     }
 
     getBestRecord(depth=0){

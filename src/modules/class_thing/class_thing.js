@@ -404,6 +404,10 @@ export class KrThing {
         credibility,
         observationDate,
     ) {
+        if(!newValue && newValue != null){
+            newValue = previousValue
+            previousValue = null
+        }
         return this._updateProperty(
             propertyID,
             newValue,

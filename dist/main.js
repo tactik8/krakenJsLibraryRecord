@@ -209,8 +209,8 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         return this._record.replacer;
     }
     set replacer(value) {
-        this._record.object.value = ensureNotArray(value);
-        this._record.replacer = ensureNotArray(value);
+        this._record.object.value = $9ef8378eb9810880$var$ensureNotArray(value);
+        this._record.replacer = $9ef8378eb9810880$var$ensureNotArray(value);
     }
     get record() {
         let record = this._record;
@@ -228,8 +228,8 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         return this._record.object.value;
     }
     set value(value) {
-        this._record.object.value = ensureNotArray(value);
-        this._record.replacer = ensureNotArray(value);
+        this._record.object.value = $9ef8378eb9810880$var$ensureNotArray(value);
+        this._record.replacer = $9ef8378eb9810880$var$ensureNotArray(value);
     }
     // ----------------------------------------------------
     // Attributes - metadata
@@ -244,8 +244,8 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         return this._record.object.value;
     }
     set value(value) {
-        this._record.object.value = ensureNotArray(value);
-        this._record.replacer = ensureNotArray(value);
+        this._record.object.value = $9ef8378eb9810880$var$ensureNotArray(value);
+        this._record.replacer = $9ef8378eb9810880$var$ensureNotArray(value);
     }
     get agent() {
         return this.metadata.agent;
@@ -366,6 +366,17 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         this.value.record_type;
     }
 }
+function $9ef8378eb9810880$var$ensureNotArray(value) {
+    let new_value = $9ef8378eb9810880$var$ensureArray(value);
+    if (new_value.length > 0) return new_value[0];
+    else return null;
+}
+function $9ef8378eb9810880$var$ensureArray(value) {
+    if (Array.isArray(value)) return value;
+    else return [
+        value
+    ];
+}
 
 
 
@@ -427,10 +438,10 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     // Records 
     // ----------------------------------------------------
     getFullRecord(depth = 0) {
-        return this._propertyValues.map((x)=>x.getFullRecord(depth));
+        return this.propertyValuesNet.map((x)=>x.getFullRecord(depth));
     }
     getRefRecord(depth = 0) {
-        return this._propertyValues.map((x)=>x.getRefRecord(depth));
+        return this.propertyValuesNet.map((x)=>x.getRefRecord(depth));
     }
     getBestRecord(depth = 0) {
         let p = this.propertyValue;
@@ -809,6 +820,10 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         return this._updateProperty(propertyID, value, credibility, observationDate, "deleteAction");
     }
     replaceProperty(propertyID, previousValue, newValue, credibility, observationDate) {
+        if (!newValue && newValue != null) {
+            newValue = previousValue;
+            previousValue = null;
+        }
         return this._updateProperty(propertyID, newValue, credibility, observationDate, "replaceAction", previousValue);
     }
     setProperty(propertyID, value, credibility, observationDate) {

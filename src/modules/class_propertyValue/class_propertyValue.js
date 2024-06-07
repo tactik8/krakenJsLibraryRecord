@@ -280,3 +280,21 @@ export class KrPropertyValue {
     
 };
 
+
+
+function ensureNotArray(value) {
+    let new_value = ensureArray(value);
+    if (new_value.length > 0) {
+        return new_value[0];
+    } else {
+        return null;
+    }
+}
+
+function ensureArray(value) {
+    if (Array.isArray(value)) {
+        return value;
+    } else {
+        return [value];
+    }
+}

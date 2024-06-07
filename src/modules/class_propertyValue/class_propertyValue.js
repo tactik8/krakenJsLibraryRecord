@@ -200,8 +200,8 @@ export class KrPropertyValue {
         record.object['value'] =  null
         
         record.metadata = this.metadata.getSystemRecord();
-        
-        if (this.value && this.value.constructor.name == 'KrThing' ){
+
+        if (this.value && this.value.record_type ){
             record.object['value'] = this.value.getSystemRecord(depth);
         } else {
             record.object['value'] = this.value

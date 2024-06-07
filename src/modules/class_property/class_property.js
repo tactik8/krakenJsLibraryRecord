@@ -119,6 +119,7 @@ export class KrProperty {
 
 
     getSystemRecord(depth=0){
+        
         return this._propertyValues.map((x) => x.getSystemRecord(depth) )
     }
 

@@ -131,25 +131,48 @@ function test() {
                         "object": {
                             "@type": "propertyValue",
                             "propertyID": "level",
-                            "value": null
+                            "value": {
+                                "@type": "DigitalDocument",
+                                "@id": "dig4",
+                                "properties": {
+                                    "@type": [
+                                        {
+                                            "@type": "addAction",
+                                            "@id": "c15f245b-7012-405e-adbc-864cf32c107c",
+                                            "actionStatus": "completedActionStatus",
+                                            "object": {
+                                                "@type": "propertyValue",
+                                                "propertyID": "@type",
+                                                "value": "DigitalDocument"
+                                            },
+                                            "metadata": {
+                                                "createdDate": "\"2024-06-07T13:09:51.971Z\"",
+                                                "position": 1
+                                            }
+                                        }
+                                    ],
+                                    "@id": [
+                                        {
+                                            "@type": "addAction",
+                                            "@id": "4d230f54-6c36-4565-9cb2-1d4526312e4e",
+                                            "actionStatus": "completedActionStatus",
+                                            "object": {
+                                                "@type": "propertyValue",
+                                                "propertyID": "@id",
+                                                "value": "dig4"
+                                            },
+                                            "metadata": {
+                                                "createdDate": "\"2024-06-07T13:09:51.971Z\"",
+                                                "position": 1
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
                         },
                         "metadata": {
                             "createdDate": "\"2024-06-07T13:09:51.971Z\"",
                             "position": 2
-                        }
-                    },
-                    {
-                        "@type": "replaceAction",
-                        "@id": "49afb94d-1929-4db9-8986-5f58abbee1d6",
-                        "actionStatus": "completedActionStatus",
-                        "object": {
-                            "@type": "propertyValue",
-                            "propertyID": "level",
-                            "value": null
-                        },
-                        "metadata": {
-                            "createdDate": "\"2024-06-07T13:09:51.971Z\"",
-                            "position": 3
                         }
                     }
                 ],
@@ -169,9 +192,35 @@ function test() {
 
 
     
-    let v = t1.getBestRecord()
-    console.log(v)
+   
+
+
+    let pvs = t1.getProperty('level')?.propertyValuesNet
+
+    pvs = ensureArray(pvs)
+
+    for(let pv of pvs){
+        console.log(pv)
+        if (pv.record_id == '7495a5e2-e9d4-4a6a-a32b-6deca849d004'){
+            console.log(JSON.stringify(pv.getSystemRecord(), null, 4))
+            //return pv.getSystemRecord()
+            console.log(JSON.stringify(pv.getSystemRecord(), null, 4))
+        }
+    }
+    
     
 }
+
+
+function ensureArray(value) {
+    if (Array.isArray(value)) {
+        return value;
+    } else {
+        return [value];
+    }
+}
+
+
+
 
 test();

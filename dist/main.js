@@ -320,7 +320,7 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         record.object["propertyID"] = this._record.object["propertyID"];
         record.object["value"] = null;
         record.metadata = this.metadata.getSystemRecord();
-        if (this.value && this.value.constructor.name == "KrThing") record.object["value"] = this.value.getSystemRecord(depth);
+        if (this.value && this.value.record_type) record.object["value"] = this.value.getSystemRecord(depth);
         else record.object["value"] = this.value;
         return record;
     }

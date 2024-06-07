@@ -408,6 +408,31 @@ export class KrThing {
             newValue = previousValue
             previousValue = null
         }
+
+       
+        
+        if(newValue && newValue != null && Array.isArray(newValue) && newValue.length > 0){
+            
+            this._updateProperty(
+                propertyID,
+                newValue[0],
+                credibility,
+                observationDate,
+                "replaceAction",
+                previousValue,
+            );
+            this._updateProperty(
+                propertyID,
+                newValue.slice(1),
+                credibility,
+                observationDate,
+                "addAction",
+                previousValue,
+            );
+            
+        
+        return
+        } 
         return this._updateProperty(
             propertyID,
             newValue,

@@ -824,6 +824,11 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
             newValue = previousValue;
             previousValue = null;
         }
+        if (newValue && newValue != null && Array.isArray(newValue) && newValue.length > 0) {
+            this._updateProperty(propertyID, newValue[0], credibility, observationDate, "replaceAction", previousValue);
+            this._updateProperty(propertyID, newValue.slice(1), credibility, observationDate, "addAction", previousValue);
+            return;
+        }
         return this._updateProperty(propertyID, newValue, credibility, observationDate, "replaceAction", previousValue);
     }
     setProperty(propertyID, value, credibility, observationDate) {

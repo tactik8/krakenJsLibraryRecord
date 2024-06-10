@@ -152,7 +152,7 @@ export class KrPropertyValue {
         if (this.value && this.value?.record_type ){ 
 
             if(['previousItem', 'nextItem'].includes(this.propertyID) ){
-                return this.value.ref
+                return this?.value?.ref
             } else {
                 return this.value.getFullRecord(depth)  
             }
@@ -201,6 +201,13 @@ export class KrPropertyValue {
         
         record.metadata = this.metadata.getSystemRecord();
 
+
+        if(['previousItem', 'nextItem'].includes(this.propertyID) ){
+            return this?.value?.ref || null
+        } 
+
+
+        
         if (this.value && this.value.record_type ){
             record.object['value'] = this.value.getSystemRecord(depth);
         } else {

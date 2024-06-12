@@ -893,7 +893,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
             return p;
         }
         // Get olf value
-        let oldValue = this.getProperty(propertyID)?.value;
+        let oldValue = this.getProperty(propertyID)?.values;
         // get or create property object
         let property = this.getProperty(propertyID);
         if (!property) {

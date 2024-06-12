@@ -512,7 +512,7 @@ export class KrThing {
 
         
         // Get olf value
-        let oldValue = this.getProperty(propertyID)?.value;
+        let oldValue = this.getProperty(propertyID)?.values;
 
         // get or create property object
         

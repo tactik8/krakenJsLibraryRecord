@@ -25,6 +25,7 @@ export class KrProperty {
     constructor(propertyID = null) {
         this._propertyID = propertyID;
         this._propertyValues = [];
+        this._propertyValuesCache = null; 
 
         this.metadata = new KrMetadata();
     }
@@ -163,23 +164,30 @@ export class KrProperty {
 
     get propertyValuesNet(){
 
+        let pv = []
+        if(this._propertyValuesCache && this._propertyValuesCache != null){
+            pv = this._propertyValuesCache
+        } else {
+            pv = this.propertyValues
+        }
+
         let results = [];
-        // process additions
 
         // Process additions        
-        results = results.concat(this.propertyValues.filter((item) => item.record_type == 'addAction'));
-        results = results.concat(this.propertyValues.filter((item) => item.record_type == 'replaceAction'));
+        results = results.concat(pv.filter((item) => item.record_type == 'addAction'));
+        results = results.concat(pv.filter((item) => item.record_type == 'replaceAction'));
 
         
         // Process deletions and replacements
-        this.propertyValues.filter((item) => item.record_type == 'replaceAction').forEach((filteredItem) => {
+        pv.filter((item) => item.record_type == 'replaceAction').forEach((filteredItem) => {
             results = results.filter((result) => !(result.lt(filteredItem) && (filteredItem.replacee == null ||  filteredItem.replacee == result.value )));
         });
         
-        this.propertyValues.filter((item) => item.record_type == 'deleteAction').forEach((filteredItem) => {
+        pv.filter((item) => item.record_type == 'deleteAction').forEach((filteredItem) => {
             results = results.filter((result) => !(result.lt(filteredItem) && result.value == filteredItem.value));
         });
-        
+
+        this._propertyValuesCache = results
         return results;
     }
 
@@ -232,6 +240,11 @@ export class KrProperty {
         newValueObject.metadata.inheritMetadata(metadataRecord);
         this._propertyValues.push(newValueObject);
         newValueObject.metadata.position = this._propertyValues.length;
+
+        if(this._propertyValuesCache && this._propertyValuesCache != null){
+            this._propertyValuesCache.push(newValueObject)
+        }
+        
         return newValueObject;
     }
     printScreen(suffix=''){

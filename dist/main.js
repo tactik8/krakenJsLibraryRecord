@@ -406,6 +406,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     */ constructor(propertyID = null){
         this._propertyID = propertyID;
         this._propertyValues = [];
+        this._propertyValuesCache = null;
         this.metadata = new (0, $5e45e66cef237559$export$4a4eb7d10588cc8d)();
     }
     // Base
@@ -491,18 +492,21 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         return results;
     }
     get propertyValuesNet() {
+        let pv = [];
+        if (this._propertyValuesCache && this._propertyValuesCache != null) pv = this._propertyValuesCache;
+        else pv = this.propertyValues;
         let results = [];
-        // process additions
         // Process additions        
-        results = results.concat(this.propertyValues.filter((item)=>item.record_type == "addAction"));
-        results = results.concat(this.propertyValues.filter((item)=>item.record_type == "replaceAction"));
+        results = results.concat(pv.filter((item)=>item.record_type == "addAction"));
+        results = results.concat(pv.filter((item)=>item.record_type == "replaceAction"));
         // Process deletions and replacements
-        this.propertyValues.filter((item)=>item.record_type == "replaceAction").forEach((filteredItem)=>{
+        pv.filter((item)=>item.record_type == "replaceAction").forEach((filteredItem)=>{
             results = results.filter((result)=>!(result.lt(filteredItem) && (filteredItem.replacee == null || filteredItem.replacee == result.value)));
         });
-        this.propertyValues.filter((item)=>item.record_type == "deleteAction").forEach((filteredItem)=>{
+        pv.filter((item)=>item.record_type == "deleteAction").forEach((filteredItem)=>{
             results = results.filter((result)=>!(result.lt(filteredItem) && result.value == filteredItem.value));
         });
+        this._propertyValuesCache = results;
         return results;
     }
     get propertyValuesAll() {
@@ -541,6 +545,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         newValueObject.metadata.inheritMetadata(metadataRecord);
         this._propertyValues.push(newValueObject);
         newValueObject.metadata.position = this._propertyValues.length;
+        if (this._propertyValuesCache && this._propertyValuesCache != null) this._propertyValuesCache.push(newValueObject);
         return newValueObject;
     }
     printScreen(suffix = "") {

@@ -112,6 +112,9 @@ export class KrProperty {
         return []
     }
 
+    getDetailRecord(depth=0){
+        return this.propertyValuesNet.map((x) => x.getDetailRecord(depth) )
+    }
     
     
     // ----------------------------------------------------

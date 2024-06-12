@@ -181,7 +181,31 @@ export class KrPropertyValue {
     }
 
 
+    getDetailRecord(depth=0){
+        let record = {}
+        record['@type'] = this.record_type
+        record['@id'] = this.record_id
+        record['actionStatus'] = this._record.actionStatus
+        record['object'] = {}
+        record.object['@type'] = this._record.object['@type']
+        record.object['propertyID'] = this._record.object['propertyID']
+        record.object['value'] =  null
 
+        record.metadata = this.metadata.getSystemRecord();
+
+
+        if(['previousItem', 'nextItem'].includes(this.propertyID) ){
+            return this?.value?.ref || null
+        } 
+
+
+        if (this.value && this.value.record_type ){
+            record.object['value'] = this.value.getDetailRecord(depth);
+        } else {
+            record.object['value'] = this.value
+        }
+        return record;        
+    }
     
 
     // ----------------------------------------------------

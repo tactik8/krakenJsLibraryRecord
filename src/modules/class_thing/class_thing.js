@@ -257,6 +257,27 @@ export class KrThing {
         return record;
     }
 
+    getDetailRecord(depth = 0){
+        if (depth > MAX_DEPTH) {
+            return this.ref;
+        }
+
+        let record = {};
+        record["@type"] = this.record_type;
+        record["@id"] = this.record_id;
+        record.properties = {}
+        record.summary = this.getFullRecord()
+
+        
+        for (let p of this.properties) {
+            record['properties'][p.propertyID] = p.getDetailRecord(depth);
+        }
+
+
+        return record;
+        
+    }
+
     // ----------------------------------------------------
     // System records
     // ----------------------------------------------------

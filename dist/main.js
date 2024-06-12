@@ -307,6 +307,24 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         if (this.value && this.value.record_type) value = this.value.getBestRecord(depth);
         return value;
     }
+    getDetailRecord(depth = 0) {
+        let record = {};
+        record["@type"] = this.record_type;
+        record["@id"] = this.record_id;
+        record["actionStatus"] = this._record.actionStatus;
+        record["object"] = {};
+        record.object["@type"] = this._record.object["@type"];
+        record.object["propertyID"] = this._record.object["propertyID"];
+        record.object["value"] = null;
+        record.metadata = this.metadata.getSystemRecord();
+        if ([
+            "previousItem",
+            "nextItem"
+        ].includes(this.propertyID)) return this?.value?.ref || null;
+        if (this.value && this.value.record_type) record.object["value"] = this.value.getDetailRecord(depth);
+        else record.object["value"] = this.value;
+        return record;
+    }
     // ----------------------------------------------------
     // Raw records 
     // ----------------------------------------------------
@@ -454,6 +472,9 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
             p.getBestRecord(depth)
         ];
         return [];
+    }
+    getDetailRecord(depth = 0) {
+        return this.propertyValuesNet.map((x)=>x.getDetailRecord(depth));
     }
     // ----------------------------------------------------
     // Records 
@@ -747,6 +768,16 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         for(let i = 0; i < this.properties.length; i++)record[this.properties[i].propertyID] = this.properties[i].getBestRecord(depth + 1);
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
+        return record;
+    }
+    getDetailRecord(depth = 0) {
+        if (depth > $8b9cc78875f648b9$var$MAX_DEPTH) return this.ref;
+        let record = {};
+        record["@type"] = this.record_type;
+        record["@id"] = this.record_id;
+        record.properties = {};
+        record.summary = this.getFullRecord();
+        for (let p of this.properties)record["properties"][p.propertyID] = p.getDetailRecord(depth);
         return record;
     }
     // ----------------------------------------------------

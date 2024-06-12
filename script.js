@@ -57,7 +57,7 @@ function test() {
 
     t1.replaceProperty('hasPart', null, records)
     
-   console.log(JSON.stringify(t1.getSystemRecord(), null, 4))
+   console.log(JSON.stringify(t1.getDetailRecord(), null, 4))
     
 }
 

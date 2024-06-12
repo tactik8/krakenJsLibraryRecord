@@ -155,9 +155,10 @@ export class KrProperty {
         // returns best pv for each different value
 
         var results = [];
-        const values = [...new Set(this.propertyValuesAll.map((x) => x.value ))];
+        var pvs = this.propertyValuesNet
+        const values = [...new Set(pvs.map((x) => x.value ))];
         values.forEach((value) => {
-            const filteredPV = this.propertyValuesAll.filter((item) => item.value == value);
+            const filteredPV = pvs.filter((item) => item.value == value);
             let maxPV = filteredPV.reduce((maxItem, item) => maxItem.gt(item) ? maxItem : item);
             
             results.push(maxPV)
@@ -171,7 +172,7 @@ export class KrProperty {
         if(this._propertyValuesCache && this._propertyValuesCache != null){
             pv = this._propertyValuesCache
         } else {
-            pv = this.propertyValues
+            pv = this._propertyValues
         }
 
         let results = [];

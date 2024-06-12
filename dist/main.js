@@ -502,11 +502,12 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     get propertyValues() {
         // returns best pv for each different value
         var results = [];
+        var pvs = this.propertyValuesNet;
         const values = [
-            ...new Set(this.propertyValuesAll.map((x)=>x.value))
+            ...new Set(pvs.map((x)=>x.value))
         ];
         values.forEach((value1)=>{
-            const filteredPV = this.propertyValuesAll.filter((item)=>item.value == value1);
+            const filteredPV = pvs.filter((item)=>item.value == value1);
             let maxPV = filteredPV.reduce((maxItem, item)=>maxItem.gt(item) ? maxItem : item);
             results.push(maxPV);
         });
@@ -515,7 +516,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     get propertyValuesNet() {
         let pv = [];
         if (this._propertyValuesCache && this._propertyValuesCache != null) pv = this._propertyValuesCache;
-        else pv = this.propertyValues;
+        else pv = this._propertyValues;
         let results = [];
         // Process additions        
         results = results.concat(pv.filter((item)=>item.record_type == "addAction"));

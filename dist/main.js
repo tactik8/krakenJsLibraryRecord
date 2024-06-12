@@ -868,7 +868,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         // set property value
         var newValues = property.setValues(values, metadataRecord, actionType, previousValue);
         // dispatch event
-        let newValue = this.getProperty(propertyID)?.value;
+        let newValue = this.getProperty(propertyID)?.values;
         if (oldValue != newValue) {
             let data = {
                 propertyID: propertyID,

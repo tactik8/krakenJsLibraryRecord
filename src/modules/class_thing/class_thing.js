@@ -527,7 +527,7 @@ export class KrThing {
         );
 
         // dispatch event
-        let newValue = this.getProperty(propertyID)?.value;
+        let newValue = this.getProperty(propertyID)?.values;
 
         if (oldValue != newValue) {
             let data = {

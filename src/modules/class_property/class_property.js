@@ -26,7 +26,8 @@ export class KrProperty {
         this._propertyID = propertyID;
         this._propertyValues = [];
         this._propertyValuesCache = null; 
-
+        this._propertyValuesCacheOld = null; 
+        
         this.metadata = new KrMetadata();
     }
     // Base
@@ -171,10 +172,20 @@ export class KrProperty {
         let pv = []
         if(this._propertyValuesCache && this._propertyValuesCache != null){
             pv = this._propertyValuesCache
+            if(pv == this._propertyValuesCacheOld) { return pv }
         } else {
             pv = this._propertyValues
         }
 
+        function compare(a, b) {
+            if(a.gt(b)){return -1};
+            if(a.lt(b)){return 1};
+            return 0;
+        };
+
+        pv = pv.toSorted(compare);
+
+        
         let results = [];
 
         // Process additions        
@@ -191,19 +202,17 @@ export class KrProperty {
             results = results.filter((result) => !(result.lt(filteredItem) && result.value == filteredItem.value));
         });
 
+
         this._propertyValuesCache = results
+        this._propertyValuesCacheOld = results
         return results;
     }
 
     
     get propertyValuesAll() {
         // return in reverse order
-        function compare(a, b) {
-            if(a.gt(b)){return -1};
-            if(a.lt(b)){return 1};
-            return 0;
-        };
-        return this._propertyValues.toSorted(compare);
+        
+        return this.propertyValuesNet;
     }
 
     // ----------------------------------------------------

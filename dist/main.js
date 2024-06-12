@@ -425,6 +425,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         this._propertyID = propertyID;
         this._propertyValues = [];
         this._propertyValuesCache = null;
+        this._propertyValuesCacheOld = null;
         this.metadata = new (0, $5e45e66cef237559$export$4a4eb7d10588cc8d)();
     }
     // Base
@@ -515,8 +516,16 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     }
     get propertyValuesNet() {
         let pv = [];
-        if (this._propertyValuesCache && this._propertyValuesCache != null) pv = this._propertyValuesCache;
-        else pv = this._propertyValues;
+        if (this._propertyValuesCache && this._propertyValuesCache != null) {
+            pv = this._propertyValuesCache;
+            if (pv == this._propertyValuesCacheOld) return pv;
+        } else pv = this._propertyValues;
+        function compare(a, b) {
+            if (a.gt(b)) return -1;
+            if (a.lt(b)) return 1;
+            return 0;
+        }
+        pv = pv.toSorted(compare);
         let results = [];
         // Process additions        
         results = results.concat(pv.filter((item)=>item.record_type == "addAction"));
@@ -529,16 +538,12 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
             results = results.filter((result)=>!(result.lt(filteredItem) && result.value == filteredItem.value));
         });
         this._propertyValuesCache = results;
+        this._propertyValuesCacheOld = results;
         return results;
     }
     get propertyValuesAll() {
         // return in reverse order
-        function compare(a, b) {
-            if (a.gt(b)) return -1;
-            if (a.lt(b)) return 1;
-            return 0;
-        }
-        return this._propertyValues.toSorted(compare);
+        return this.propertyValuesNet;
     }
     // ----------------------------------------------------
     // Values 

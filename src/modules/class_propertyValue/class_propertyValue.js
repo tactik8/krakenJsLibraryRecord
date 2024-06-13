@@ -104,7 +104,7 @@ export class KrPropertyValue {
     set value(value){
         this._record.object.value = ensureNotArray(value);
         this._record.replacer = ensureNotArray(value);
-        }
+    }
     get agent(){
         return this.metadata.agent;
     }

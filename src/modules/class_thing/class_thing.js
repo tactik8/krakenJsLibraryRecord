@@ -223,7 +223,7 @@ export class KrThing {
     setFullRecord(value) {
         this._properties = [];
         Object.keys(value).forEach((key) => {
-            this.addProperty(key, value[key]);
+            this.replaceProperty(key, null, value[key]);
         });
     }
 

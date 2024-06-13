@@ -757,7 +757,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     setFullRecord(value) {
         this._properties = [];
         Object.keys(value).forEach((key)=>{
-            this.addProperty(key, value[key]);
+            this.replaceProperty(key, null, value[key]);
         });
     }
     getRefRecord(depth = 0) {

@@ -643,16 +643,20 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     - fullRecord:     returns native records from class objects (nested)
     - properties:     returns list of KrProperties
     - json:           returns this.record as json
+    - _blockEvents:     prevents dispatch of events if true
 
     Methods
     - getProperty: 
     - setProperty:
     - get (same as getProperty):
     - set (same as setProperty):
+    - blockEvents:
+    - allowEvents: 
 
     */ constructor(record_type = null, record_id = null){
         this._properties = [];
         this._callbacks = {};
+        this._blockEvents = false;
         // metadata
         this.metadata = new (0, $5e45e66cef237559$export$4a4eb7d10588cc8d)();
         // if record_type is a dict, treat as record instead
@@ -671,8 +675,15 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         if (this._callbacks[eventType] === undefined) this._callbacks[eventType] = [];
         this._callbacks[eventType].push(callback);
     }
+    blockEvents() {
+        this._blockEvents = true;
+    }
+    allowEvents() {
+        this._blockEvents = false;
+    }
     dispatchEvent(eventType, data) {
         //if (this._callbacks[eventType] === undefined) return;
+        if (this._blockEvents == true) return;
         const event = {
             type: eventType,
             target: this,

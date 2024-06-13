@@ -20,12 +20,15 @@ export class KrThing {
     - fullRecord:     returns native records from class objects (nested)
     - properties:     returns list of KrProperties
     - json:           returns this.record as json
+    - _blockEvents:     prevents dispatch of events if true
 
     Methods
     - getProperty: 
     - setProperty:
     - get (same as getProperty):
     - set (same as setProperty):
+    - blockEvents:
+    - allowEvents: 
 
     */
 
@@ -33,6 +36,7 @@ export class KrThing {
         this._properties = [];
 
         this._callbacks = {};
+        this._blockEvents = false
 
         // metadata
         this.metadata = new KrMetadata();
@@ -72,9 +76,19 @@ export class KrThing {
         this._callbacks[eventType].push(callback);
     }
 
+    blockEvents(){
+        this._blockEvents = true
+    }
+    allowEvents(){
+        this._blockEvents = false
+    }
+    
     dispatchEvent(eventType, data) {
         //if (this._callbacks[eventType] === undefined) return;
 
+        if(this._blockEvents == true){ return }
+
+        
         const event = {
             type: eventType,
             target: this,

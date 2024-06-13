@@ -25,8 +25,12 @@ export class KrProperty {
     constructor(propertyID = null) {
         this._propertyID = propertyID;
         this._propertyValues = [];
+        this._propertyValuesNetCache = null; 
+        this._propertyValuesNetCacheOld = null; 
         this._propertyValuesCache = null; 
         this._propertyValuesCacheOld = null; 
+
+
         
         this.metadata = new KrMetadata();
     }
@@ -155,27 +159,21 @@ export class KrProperty {
     get propertyValues(){
         // returns best pv for each different value
 
+        // Serve from cache
+        let cache = this._propertyValuesCache
+        let cacheOld = this._propertyValuesCacheOld
+        if(cache && cache != null && cache.length > 0){
+            if(cache == cacheOld) { return cache }
+        } 
+
         var results = [];
         var pvs = this.propertyValuesNet
         const values = [...new Set(pvs.map((x) => x.value ))];
         values.forEach((value) => {
             const filteredPV = pvs.filter((item) => item.value == value);
             let maxPV = filteredPV.reduce((maxItem, item) => maxItem.gt(item) ? maxItem : item);
-            
             results.push(maxPV)
         })
-        return results;
-    }
-
-    get propertyValuesNet(){
-
-        let pv = []
-        if(this._propertyValuesCache && this._propertyValuesCache != null){
-            pv = this._propertyValuesCache
-            if(pv == this._propertyValuesCacheOld) { return pv }
-        } else {
-            pv = this._propertyValues
-        }
 
         function compare(a, b) {
             if(a.gt(b)){return -1};
@@ -183,28 +181,54 @@ export class KrProperty {
             return 0;
         };
 
-        pv = pv.toSorted(compare);
+        results.sort(compare);
 
+        // Refresh cache
+        this._propertyValuesCache = results
+        this._propertyValuesCacheOld = results
         
+        return results;
+    }
+
+    get propertyValuesNet(){
+
+        let pv = this._propertyValues
+        
+        let cache = this._propertyValuesNetCache
+        let cacheOld = this._propertyValuesNetCacheOld
+        
+        if(cache && cache != null && cache.length > 0){
+            pv = cache
+            if(cache == cacheOld) { return cache } 
+        } 
+
         let results = [];
 
         // Process additions        
         results = results.concat(pv.filter((item) => item.record_type == 'addAction'));
         results = results.concat(pv.filter((item) => item.record_type == 'replaceAction'));
-
         
         // Process deletions and replacements
         pv.filter((item) => item.record_type == 'replaceAction').forEach((filteredItem) => {
-            results = results.filter((result) => !(result.lt(filteredItem) && (filteredItem.replacee == null ||  filteredItem.replacee == result.value )));
+            results = results.filter((result) => !(result.lt(filteredItem) && (filteredItem.replacee == null || filteredItem.replacee === undefined ||  filteredItem.replacee == result.value )));
         });
         
         pv.filter((item) => item.record_type == 'deleteAction').forEach((filteredItem) => {
             results = results.filter((result) => !(result.lt(filteredItem) && result.value == filteredItem.value));
         });
 
+        function compare(a, b) {
+            if(a.gt(b)){return -1};
+            if(a.lt(b)){return 1};
+            return 0;
+        };
 
-        this._propertyValuesCache = results
-        this._propertyValuesCacheOld = results
+        results.sort(compare);
+        this._propertyValuesNetCache = []
+        this._propertyValuesNetCache = this._propertyValuesNetCache.concat(results)
+        this._propertyValuesNetCacheOld = []
+        this._propertyValuesNetCacheOld = this._propertyValuesNetCacheOld.concat(results)
+        this._propertyValuesCache = null
         return results;
     }
 
@@ -233,7 +257,7 @@ export class KrProperty {
     
     get values() {
         // Return value elements of all propertyValue object in order
-        return this.propertyValuesNet.map((x) => x.value );
+        return this.propertyValues.map((x) => x.value );
     }
 
     setValues(value, metadataRecord, actionType) {
@@ -254,9 +278,15 @@ export class KrProperty {
         this._propertyValues.push(newValueObject);
         newValueObject.metadata.position = this._propertyValues.length;
 
-        if(this._propertyValuesCache && this._propertyValuesCache != null){
-            this._propertyValuesCache.push(newValueObject)
+
+        // Add to cache
+        if(this._propertyValuesNetCache && this._propertyValuesNetCache != null){
+            this._propertyValuesNetCache.push(newValueObject)
         }
+
+        // Reset cache
+        this._propertyValuesCache = null
+        this._propertyValuesCacheOld = null
         
         return newValueObject;
     }

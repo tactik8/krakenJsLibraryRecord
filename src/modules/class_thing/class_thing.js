@@ -452,7 +452,7 @@ export class KrThing {
             );
             
         
-        return
+            return
         } 
         return this._updateProperty(
             propertyID,

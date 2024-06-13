@@ -27,6 +27,34 @@ function test() {
 
     console.log(t1.getProperty('@id').value)
 
+    t1.replaceProperty('@id', null, 'bob4')
+    console.log(t1.getProperty('@id').value)
+
+    let p = t1.getProperty('@id')
+
+    for(let pv of p.propertyValues){
+
+        console.log('value')
+        pv.printScreen()
+    }
+
+    for(let pv of p.propertyValuesNet){
+
+        console.log('valueNet')
+        pv.printScreen()
+    }
+    
+
+
+    t1.replaceProperty('@id', null, 'bob5')
+
+    t1.replaceProperty('@id', null, 'bob6')
+
+    t1.replaceProperty('@id', null, 'bob7')
+
+    console.log(t1.getProperty('@id').value)
+    
+
 }
 function ensureArray(value) {
     if (Array.isArray(value)) {

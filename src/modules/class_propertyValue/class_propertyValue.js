@@ -287,9 +287,10 @@ export class KrPropertyValue {
         var t_string = this.record_type.replace('Action', '').padEnd(10);
         var c_string = String(this.metadata.c || 0).padStart(5);
         var p_string = String(this.metadata.position).padStart(5);
+        var d_string = String(this.metadata.createdDate.toLocaleTimeString()).padStart(9);
         
         
-        console.log(suffix, " - ", c_string, p_string, t_string, v);
+        console.log(suffix, " - ", c_string, p_string, t_string, d_string, v);
         
     }
 

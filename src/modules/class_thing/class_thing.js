@@ -309,11 +309,13 @@ export class KrThing {
         this.setSystemRecord(value);
     }
 
-    getSystemRecord(depth) {
-        if (depth > MAX_DEPTH) {
+    getSystemRecord(depth=null) {
+        if (depth > MAX_DEPTH || depth == -1) {
             return this.ref;
         }
 
+        depth = -1
+        
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;

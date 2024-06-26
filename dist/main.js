@@ -839,8 +839,9 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     set rawRecord(value) {
         this.setSystemRecord(value);
     }
-    getSystemRecord(depth) {
-        if (depth > $8b9cc78875f648b9$var$MAX_DEPTH) return this.ref;
+    getSystemRecord(depth = null) {
+        if (depth > $8b9cc78875f648b9$var$MAX_DEPTH || depth == -1) return this.ref;
+        depth = -1;
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;

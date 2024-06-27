@@ -206,7 +206,7 @@ export class KrThing {
         this.setFullRecord(value);
     }
     get bestRecord() {
-        return this.simplify(getBestRecord(0));
+        return simplify(this.getBestRecord(0));
     }
     set bestRecord(value) {
         this.setBestRecord(value);

@@ -780,7 +780,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         this.setFullRecord(value);
     }
     get bestRecord() {
-        return this.simplify(getBestRecord(0));
+        return $8b9cc78875f648b9$var$simplify(this.getBestRecord(0));
     }
     set bestRecord(value) {
         this.setBestRecord(value);

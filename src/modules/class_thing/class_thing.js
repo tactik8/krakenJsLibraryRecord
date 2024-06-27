@@ -18,6 +18,7 @@ export class KrThing {
     - record: 
     - ref:            returns dict with @type and @id
     - fullRecord:     returns native records from class objects (nested)
+    - refRecord:      returns record with only 
     - properties:     returns list of KrProperties
     - json:           returns this.record as json
     - _blockEvents:     prevents dispatch of events if true
@@ -205,7 +206,7 @@ export class KrThing {
         this.setFullRecord(value);
     }
     get bestRecord() {
-        return this.getBestRecord(0);
+        return this.simplify(getBestRecord(0));
     }
     set bestRecord(value) {
         this.setBestRecord(value);
@@ -297,7 +298,7 @@ export class KrThing {
     // ----------------------------------------------------
 
     get systemRecord() {
-        return this.getSystemRecord(0);
+        return this.getSystemRecord();
     }
     set systemRecord(value) {
         this.setSystemRecord(value);
@@ -647,12 +648,26 @@ export class KrThing {
         return true;
     }
 
+
+    print(){
+        return this.printScreen()
+    }
+    
     printScreen() {
         console.log("----------------------------------");
         console.log(this.properties.length);
         console.log("thing:", this.record_type, this.record_id);
         this.properties.map((property) => {
             property.printScreen("    ");
+        });
+    }
+
+    printScreenAll() {
+        console.log("----------------------------------");
+        console.log(this.properties.length);
+        console.log("thing:", this.record_type, this.record_id);
+        this.properties.map((property) => {
+            property.printScreenAll("    ");
         });
     }
 }

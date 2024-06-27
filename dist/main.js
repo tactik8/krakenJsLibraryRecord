@@ -606,6 +606,14 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         var v = this.value;
         if (this.value && this.value.record_type) v = this.value.record_type + "/" + this.value.record_id;
         console.log(suffix, " - ", this.propertyID, ": ", v);
+        this.propertyValuesNet.map((propertyValue)=>{
+            propertyValue.printScreen(suffix + "    ");
+        });
+    }
+    printScreenAll(suffix = "") {
+        var v = this.value;
+        if (this.value && this.value.record_type) v = this.value.record_type + "/" + this.value.record_id;
+        console.log(suffix, " - ", this.propertyID, ": ", v);
         console.log(suffix, "       Net");
         this.propertyValuesNet.map((propertyValue)=>{
             propertyValue.printScreen(suffix + "        ");
@@ -641,6 +649,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     - record: 
     - ref:            returns dict with @type and @id
     - fullRecord:     returns native records from class objects (nested)
+    - refRecord:      returns record with only 
     - properties:     returns list of KrProperties
     - json:           returns this.record as json
     - _blockEvents:     prevents dispatch of events if true
@@ -771,7 +780,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         this.setFullRecord(value);
     }
     get bestRecord() {
-        return this.getBestRecord(0);
+        return this.simplify(getBestRecord(0));
     }
     set bestRecord(value) {
         this.setBestRecord(value);
@@ -828,7 +837,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     // System records
     // ----------------------------------------------------
     get systemRecord() {
-        return this.getSystemRecord(0);
+        return this.getSystemRecord();
     }
     set systemRecord(value) {
         this.setSystemRecord(value);
@@ -996,12 +1005,23 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         if (this.record_id != other.record_id) return false;
         return true;
     }
+    print() {
+        return this.printScreen();
+    }
     printScreen() {
         console.log("----------------------------------");
         console.log(this.properties.length);
         console.log("thing:", this.record_type, this.record_id);
         this.properties.map((property)=>{
             property.printScreen("    ");
+        });
+    }
+    printScreenAll() {
+        console.log("----------------------------------");
+        console.log(this.properties.length);
+        console.log("thing:", this.record_type, this.record_id);
+        this.properties.map((property)=>{
+            property.printScreenAll("    ");
         });
     }
 }

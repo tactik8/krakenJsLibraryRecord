@@ -299,6 +299,22 @@ export class KrProperty {
 
         console.log(suffix, " - ", this.propertyID, ": ", v);
 
+       
+        this.propertyValuesNet.map((propertyValue) => {
+
+            propertyValue.printScreen(suffix + '    ');
+
+        });
+    }
+    printScreenAll(suffix=''){
+
+        var v = this.value;
+        if (this.value && this.value.record_type) {
+            v = this.value.record_type + "/" + this.value.record_id;
+        };
+
+        console.log(suffix, " - ", this.propertyID, ": ", v);
+
         console.log(suffix, "       Net");
         this.propertyValuesNet.map((propertyValue) => {
 

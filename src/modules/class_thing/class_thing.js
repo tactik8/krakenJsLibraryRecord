@@ -347,7 +347,7 @@ export class KrThing {
     setSystemRecord(value) {
         // Load data into object
 
-        if (!value || !value.properties) {
+        if (!value ||  !value.properties) {
             return;
         }
         // Reset current properties
@@ -360,7 +360,7 @@ export class KrThing {
             properties = ensureArray(properties)
             for (let propertyValue of properties) {
                
-                if (propertyValue?.object.value?.["@type"]) {
+                if (propertyValue?.object?.value?.["@type"]) {
                     var thing = this.new(
                         propertyValue.object.value["@type"],
                         propertyValue.object.value["@id"],

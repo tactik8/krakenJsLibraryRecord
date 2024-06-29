@@ -876,7 +876,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         for (let key of keys){
             let properties = value.properties[key];
             properties = $8b9cc78875f648b9$var$ensureArray(properties);
-            for (let propertyValue of properties)if (propertyValue?.object.value?.["@type"]) {
+            for (let propertyValue of properties)if (propertyValue?.object?.value?.["@type"]) {
                 var thing = this.new(propertyValue.object.value["@type"], propertyValue.object.value["@id"]);
                 thing.setSystemRecord(propertyValue.object.value);
                 propertyValue.object.value = thing;

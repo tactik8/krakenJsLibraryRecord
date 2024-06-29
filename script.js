@@ -60,7 +60,7 @@ function test() {
     console.log(t2.record)
 
     console.log(t2.record_type, t2.refID)
-
+    console.log('ll', JSON.stringify(t2.record, null, 4))
     
 }
 function ensureArray(value) {
@@ -74,4 +74,4 @@ function ensureArray(value) {
 
 
 
-//test();
+test();

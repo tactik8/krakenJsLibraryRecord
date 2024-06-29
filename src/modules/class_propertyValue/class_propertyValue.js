@@ -147,23 +147,23 @@ export class KrPropertyValue {
     // Records 
     // ----------------------------------------------------
     
-    getFullRecord(depth=0){
+    getFullRecord(maxDepth, currentDepth){
         
         if (this.value && this.value?.record_type ){ 
 
             if(['previousItem', 'nextItem'].includes(this.propertyID) ){
                 return this?.value?.ref
             } else {
-                return this.value.getFullRecord(depth)  
+                return this.value.getFullRecord(maxDepth, currentDepth)  
             }
         }
         return this.value;
     }
 
-    getRefRecord(depth=0){
+    getRefRecord(maxDepth, currentDepth){
 
         let record = JSON.parse(JSON.stringify(this._record));
-        record.metadata = this.metadata.getRefRecord(depth);
+        record.metadata = this.metadata.getRefRecord(maxDepth, currentDepth);
 
         if (this.value && this.value.record_type){
             record['value'] = this.value.ref;
@@ -171,17 +171,17 @@ export class KrPropertyValue {
         return record;        
     }
 
-    getBestRecord(depth=0){
+    getBestRecord(maxDepth, currentDepth){
 
         let value = this.value;
         if (this.value && this.value.record_type){
-            value = this.value.getBestRecord(depth);
+            value = this.value.getBestRecord(maxDepth, currentDepth);
         };
         return value;        
     }
 
 
-    getDetailRecord(depth=0){
+    getDetailRecord(maxDepth, currentDepth){
         let record = {}
         record['@type'] = this.record_type
         record['@id'] = this.record_id
@@ -200,7 +200,7 @@ export class KrPropertyValue {
 
 
         if (this.value && this.value.record_type ){
-            record.object['value'] = this.value.getDetailRecord(depth);
+            record.object['value'] = this.value.getDetailRecord(maxDepth, currentDepth);
         } else {
             record.object['value'] = this.value
         }
@@ -212,7 +212,7 @@ export class KrPropertyValue {
     // Raw records 
     // ----------------------------------------------------
 
-    getSystemRecord(depth=0){
+    getSystemRecord(maxDepth, currentDepth){
 
         let record = {}
         record['@type'] = this.record_type
@@ -223,21 +223,18 @@ export class KrPropertyValue {
         record.object['propertyID'] = this._record.object['propertyID']
         record.object['value'] =  null
         
-        record.metadata = this.metadata.getSystemRecord();
-
+        record.metadata = this.metadata.getSystemRecord(maxDepth, currentDepth);
 
         if(['previousItem', 'nextItem'].includes(this.propertyID) ){
             return this?.value?.ref || null
         } 
-
-
         
         if (this.value && this.value.record_type ){
-            record.object['value'] = this.value.getSystemRecord(depth);
+            record.object['value'] = this.value.getSystemRecord(maxDepth, currentDepth);
         } else {
             record.object['value'] = this.value
         }
-        return record;        
+        return record;
     }
 
     setSystemRecord(value){

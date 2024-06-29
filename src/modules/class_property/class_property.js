@@ -99,26 +99,26 @@ export class KrProperty {
     // Records 
     // ----------------------------------------------------
     
-    getFullRecord(depth=0) {
-        return this.propertyValuesNet.map((x) => x.getFullRecord(depth) )
+    getFullRecord(maxDepth, currentDepth) {
+        return this.propertyValuesNet.map((x) => x.getFullRecord(maxDepth, currentDepth) )
     }
 
-    getRefRecord(depth=0){
-        return this.propertyValuesNet.map((x) => x.getRefRecord(depth) )
+    getRefRecord(maxDepth, currentDepth){
+        return this.propertyValuesNet.map((x) => x.getRefRecord(maxDepth, currentDepth) )
     }
 
-    getBestRecord(depth=0){
+    getBestRecord(maxDepth, currentDepth){
 
         let p = this.propertyValue
         if(p && p != null){
             
-            return [p.getBestRecord(depth)]
+            return [p.getBestRecord(maxDepth, currentDepth)]
         }
         return []
     }
 
-    getDetailRecord(depth=0){
-        return this.propertyValuesNet.map((x) => x.getDetailRecord(depth) )
+    getDetailRecord(maxDepth, currentDepth){
+        return this.propertyValuesNet.map((x) => x.getDetailRecord(maxDepth, currentDepth) )
     }
     
     
@@ -127,9 +127,9 @@ export class KrProperty {
     // ----------------------------------------------------
 
 
-    getSystemRecord(depth=0){
+    getSystemRecord(maxDepth, currentDepth){
         
-        return this._propertyValues.map((x) => x.getSystemRecord(depth) )
+        return this._propertyValues.map((x) => x.getSystemRecord(maxDepth, currentDepth) )
     }
 
     setSystemRecord(value){

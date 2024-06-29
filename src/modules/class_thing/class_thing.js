@@ -17,6 +17,7 @@ export class KrThing {
     - record_id: 
     - record: 
     - ref:            returns dict with @type and @id
+    - refID:          returns string type___id
     - fullRecord:     returns native records from class objects (nested)
     - refRecord:      returns record with only 
     - properties:     returns list of KrProperties
@@ -143,6 +144,10 @@ export class KrThing {
         return { "@type": this.record_type, "@id": this.record_id };
     }
 
+    get refID(){
+        return `${this.record_type}___${this.record_id}`
+    }
+
     get properties() {
         /**
          * Returns list of KrProperty object in alphabetical order
@@ -218,15 +223,17 @@ export class KrThing {
         this.setRefRecord(value);
     }
 
-    getFullRecord(depth = 0) {
-        if (depth && depth > MAX_DEPTH) {
+    getFullRecord(maxDepth=MAX_DEPTH, currentDepth=0) {
+        if(!maxDepth || maxDepth == null) { maxDepth = MAX_DEPTH }
+
+        if (currentDepth >= maxDepth) {
             return this.ref;
         }
 
         let record = {};
         let properties = this.properties;
         for (let p of properties) {
-            record[p.propertyID] = p.getFullRecord(depth+1);
+            record[p.propertyID] = p.getFullRecord(maxDepth, currentDepth + 1);
         }
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -242,12 +249,12 @@ export class KrThing {
         });
     }
 
-    getRefRecord(depth = 0) {
+    getRefRecord(maxDepth=MAX_DEPTH, currentDepth=0) {
         let record = {};
 
         for (let i = 0; i < this.properties.length; i++) {
             record[this.properties[i].propertyID] =
-                this.properties[i].getRefRecord(depth);
+                this.properties[i].getRefRecord(maxDepth, currentDepth + 1);
         }
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -255,8 +262,10 @@ export class KrThing {
         return record;
     }
 
-    getBestRecord(depth = 0) {
-        if (depth > MAX_DEPTH) {
+    getBestRecord(maxDepth=MAX_DEPTH, currentDepth=0) {
+        if(!maxDepth || maxDepth == null) { maxDepth = MAX_DEPTH }
+
+        if (currentDepth >= maxDepth) {
             return this.ref;
         }
 
@@ -265,15 +274,17 @@ export class KrThing {
         for (let i = 0; i < this.properties.length; i++) {
             record[this.properties[i].propertyID] = this.properties[
                 i
-            ].getBestRecord(depth+1);
+            ].getBestRecord(maxDepth, currentDepth + 1);
         }
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
         return record;
     }
 
-    getDetailRecord(depth = 0){
-        if (depth > MAX_DEPTH) {
+    getDetailRecord(maxDepth=MAX_DEPTH, currentDepth=0){
+        if(!maxDepth || maxDepth == null) { maxDepth = MAX_DEPTH }
+
+        if (currentDepth >= maxDepth) {
             return this.ref;
         }
 
@@ -285,7 +296,7 @@ export class KrThing {
 
         
         for (let p of this.properties) {
-            record['properties'][p.propertyID] = p.getDetailRecord(depth);
+            record['properties'][p.propertyID] = p.getDetailRecord(maxDepth, currentDepth + 1);
         }
 
 
@@ -310,12 +321,13 @@ export class KrThing {
         this.setSystemRecord(value);
     }
 
-    getSystemRecord(depth=null) {
-        if (depth > MAX_DEPTH || depth == -1) {
+    getSystemRecord(maxDepth=MAX_DEPTH, currentDepth=0) {
+
+        if(!maxDepth || maxDepth == null) { maxDepth = MAX_DEPTH }
+        
+        if (currentDepth >= maxDepth) {
             return this.ref;
         }
-
-        depth = -1
         
         let record = {};
         record["@type"] = this.record_type;
@@ -325,7 +337,7 @@ export class KrThing {
        
         
         for (let p of this.properties) {
-            record['properties'][p.propertyID] = p.getSystemRecord(depth);
+            record['properties'][p.propertyID] = p.getSystemRecord(maxDepth, currentDepth + 1);
         }
 
         

@@ -286,28 +286,28 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     // ----------------------------------------------------
     // Records 
     // ----------------------------------------------------
-    getFullRecord(depth = 0) {
+    getFullRecord(maxDepth, currentDepth) {
         if (this.value && this.value?.record_type) {
             if ([
                 "previousItem",
                 "nextItem"
             ].includes(this.propertyID)) return this?.value?.ref;
-            else return this.value.getFullRecord(depth);
+            else return this.value.getFullRecord(maxDepth, currentDepth);
         }
         return this.value;
     }
-    getRefRecord(depth = 0) {
+    getRefRecord(maxDepth, currentDepth) {
         let record = JSON.parse(JSON.stringify(this._record));
-        record.metadata = this.metadata.getRefRecord(depth);
+        record.metadata = this.metadata.getRefRecord(maxDepth, currentDepth);
         if (this.value && this.value.record_type) record["value"] = this.value.ref;
         return record;
     }
-    getBestRecord(depth = 0) {
+    getBestRecord(maxDepth, currentDepth) {
         let value = this.value;
-        if (this.value && this.value.record_type) value = this.value.getBestRecord(depth);
+        if (this.value && this.value.record_type) value = this.value.getBestRecord(maxDepth, currentDepth);
         return value;
     }
-    getDetailRecord(depth = 0) {
+    getDetailRecord(maxDepth, currentDepth) {
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -321,14 +321,14 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
             "previousItem",
             "nextItem"
         ].includes(this.propertyID)) return this?.value?.ref || null;
-        if (this.value && this.value.record_type) record.object["value"] = this.value.getDetailRecord(depth);
+        if (this.value && this.value.record_type) record.object["value"] = this.value.getDetailRecord(maxDepth, currentDepth);
         else record.object["value"] = this.value;
         return record;
     }
     // ----------------------------------------------------
     // Raw records 
     // ----------------------------------------------------
-    getSystemRecord(depth = 0) {
+    getSystemRecord(maxDepth, currentDepth) {
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -337,12 +337,12 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         record.object["@type"] = this._record.object["@type"];
         record.object["propertyID"] = this._record.object["propertyID"];
         record.object["value"] = null;
-        record.metadata = this.metadata.getSystemRecord();
+        record.metadata = this.metadata.getSystemRecord(maxDepth, currentDepth);
         if ([
             "previousItem",
             "nextItem"
         ].includes(this.propertyID)) return this?.value?.ref || null;
-        if (this.value && this.value.record_type) record.object["value"] = this.value.getSystemRecord(depth);
+        if (this.value && this.value.record_type) record.object["value"] = this.value.getSystemRecord(maxDepth, currentDepth);
         else record.object["value"] = this.value;
         return record;
     }
@@ -464,27 +464,27 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     // ----------------------------------------------------
     // Records 
     // ----------------------------------------------------
-    getFullRecord(depth = 0) {
-        return this.propertyValuesNet.map((x)=>x.getFullRecord(depth));
+    getFullRecord(maxDepth, currentDepth) {
+        return this.propertyValuesNet.map((x)=>x.getFullRecord(maxDepth, currentDepth));
     }
-    getRefRecord(depth = 0) {
-        return this.propertyValuesNet.map((x)=>x.getRefRecord(depth));
+    getRefRecord(maxDepth, currentDepth) {
+        return this.propertyValuesNet.map((x)=>x.getRefRecord(maxDepth, currentDepth));
     }
-    getBestRecord(depth = 0) {
+    getBestRecord(maxDepth, currentDepth) {
         let p = this.propertyValue;
         if (p && p != null) return [
-            p.getBestRecord(depth)
+            p.getBestRecord(maxDepth, currentDepth)
         ];
         return [];
     }
-    getDetailRecord(depth = 0) {
-        return this.propertyValuesNet.map((x)=>x.getDetailRecord(depth));
+    getDetailRecord(maxDepth, currentDepth) {
+        return this.propertyValuesNet.map((x)=>x.getDetailRecord(maxDepth, currentDepth));
     }
     // ----------------------------------------------------
     // Records 
     // ----------------------------------------------------
-    getSystemRecord(depth = 0) {
-        return this._propertyValues.map((x)=>x.getSystemRecord(depth));
+    getSystemRecord(maxDepth, currentDepth) {
+        return this._propertyValues.map((x)=>x.getSystemRecord(maxDepth, currentDepth));
     }
     setSystemRecord(value1) {
         this._propertyValues = [];
@@ -648,6 +648,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     - record_id: 
     - record: 
     - ref:            returns dict with @type and @id
+    - refID:          returns string type___id
     - fullRecord:     returns native records from class objects (nested)
     - refRecord:      returns record with only 
     - properties:     returns list of KrProperties
@@ -732,6 +733,9 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
             "@id": this.record_id
         };
     }
+    get refID() {
+        return `${this.record_type}___${this.record_id}`;
+    }
     get properties() {
         /**
          * Returns list of KrProperty object in alphabetical order
@@ -791,11 +795,12 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     set refRecord(value) {
         this.setRefRecord(value);
     }
-    getFullRecord(depth = 0) {
-        if (depth && depth > $8b9cc78875f648b9$var$MAX_DEPTH) return this.ref;
+    getFullRecord(maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH, currentDepth = 0) {
+        if (!maxDepth || maxDepth == null) maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH;
+        if (currentDepth >= maxDepth) return this.ref;
         let record = {};
         let properties = this.properties;
-        for (let p of properties)record[p.propertyID] = p.getFullRecord(depth + 1);
+        for (let p of properties)record[p.propertyID] = p.getFullRecord(maxDepth, currentDepth + 1);
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
         record = $8b9cc78875f648b9$var$simplify(record);
@@ -807,30 +812,32 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
             this.replaceProperty(key, null, value[key]);
         });
     }
-    getRefRecord(depth = 0) {
+    getRefRecord(maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH, currentDepth = 0) {
         let record = {};
-        for(let i = 0; i < this.properties.length; i++)record[this.properties[i].propertyID] = this.properties[i].getRefRecord(depth);
+        for(let i = 0; i < this.properties.length; i++)record[this.properties[i].propertyID] = this.properties[i].getRefRecord(maxDepth, currentDepth + 1);
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
         record = $8b9cc78875f648b9$var$simplify(record);
         return record;
     }
-    getBestRecord(depth = 0) {
-        if (depth > $8b9cc78875f648b9$var$MAX_DEPTH) return this.ref;
+    getBestRecord(maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH, currentDepth = 0) {
+        if (!maxDepth || maxDepth == null) maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH;
+        if (currentDepth >= maxDepth) return this.ref;
         let record = {};
-        for(let i = 0; i < this.properties.length; i++)record[this.properties[i].propertyID] = this.properties[i].getBestRecord(depth + 1);
+        for(let i = 0; i < this.properties.length; i++)record[this.properties[i].propertyID] = this.properties[i].getBestRecord(maxDepth, currentDepth + 1);
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
         return record;
     }
-    getDetailRecord(depth = 0) {
-        if (depth > $8b9cc78875f648b9$var$MAX_DEPTH) return this.ref;
+    getDetailRecord(maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH, currentDepth = 0) {
+        if (!maxDepth || maxDepth == null) maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH;
+        if (currentDepth >= maxDepth) return this.ref;
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
         record.properties = {};
         record.summary = this.getFullRecord();
-        for (let p of this.properties)record["properties"][p.propertyID] = p.getDetailRecord(depth);
+        for (let p of this.properties)record["properties"][p.propertyID] = p.getDetailRecord(maxDepth, currentDepth + 1);
         return record;
     }
     // ----------------------------------------------------
@@ -848,15 +855,15 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     set rawRecord(value) {
         this.setSystemRecord(value);
     }
-    getSystemRecord(depth = null) {
-        if (depth > $8b9cc78875f648b9$var$MAX_DEPTH || depth == -1) return this.ref;
-        depth = -1;
+    getSystemRecord(maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH, currentDepth = 0) {
+        if (!maxDepth || maxDepth == null) maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH;
+        if (currentDepth >= maxDepth) return this.ref;
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
         record.properties = {};
         record.summary = this.getFullRecord();
-        for (let p of this.properties)record["properties"][p.propertyID] = p.getSystemRecord(depth);
+        for (let p of this.properties)record["properties"][p.propertyID] = p.getSystemRecord(maxDepth, currentDepth + 1);
         return record;
     }
     setSystemRecord(value) {

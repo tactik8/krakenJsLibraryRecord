@@ -1,13 +1,13 @@
 
 
-
-import { KrThing } from "./src/index.js";
-//import { KrThing } from "./dist/main.js";
-
+import { exportAllDeclaration } from '@babel/types';
+import { KrThing } from '../class_thing.js';
 
 
-function test() {
-    
+
+// Run the test
+test('KrThing init', function () {
+
 
     let record = {
          "@type": "Person",
@@ -45,33 +45,22 @@ function test() {
                           "url": "https://www.test.com"
                           }
              }
-             
+
              }
      }
-
+                 
 
     let t1 = new KrThing()
     t1.record = record
 
     let t2 = new KrThing()
+    
+    t2.setSystemRecord(t1.getSystemRecord())
 
-    t2.setSystemRecord(t1.getSystemRecord(5))
 
-    console.log(t2.record)
+    // Test properties
+    expect(t2.record).toStrictEqual(t1.record);
 
-    console.log(t2.record_type, t2.refID)
 
     
-}
-function ensureArray(value) {
-    if (Array.isArray(value)) {
-        return value;
-    } else {
-        return [value];
-    }
-}
-
-
-
-
-//test();
+})

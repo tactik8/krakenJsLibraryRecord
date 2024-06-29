@@ -259,3 +259,18 @@ test('KrThing dot notation', function () {
     expect(n.value).toStrictEqual('name1');
 
 });
+
+
+
+
+
+// Run the test
+test('KrThing refID', function () {
+
+    let k1 = new KrThing('Thing', 'abc123');
+
+
+
+    expect(k1.refID).toStrictEqual('Thing___abc123');
+
+});

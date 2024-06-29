@@ -199,25 +199,25 @@ export class KrThing {
     // ----------------------------------------------------
 
     get record() {
-        return this.getFullRecord(0);
+        return this.getFullRecord();
     }
     set record(value) {
         this.setFullRecord(value);
     }
     get fullRecord() {
-        return this.getFullRecord(0);
+        return this.getFullRecord();
     }
     set fullRecord(value) {
         this.setFullRecord(value);
     }
     get bestRecord() {
-        return simplify(this.getBestRecord(0));
+        return simplify(this.getBestRecord());
     }
     set bestRecord(value) {
         this.setBestRecord(value);
     }
     get refRecord() {
-        return this.getRefRecord(0);
+        return this.getRefRecord();
     }
     set refRecord(value) {
         this.setRefRecord(value);

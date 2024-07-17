@@ -60,6 +60,17 @@ export class KrThing {
         }
     }
 
+
+    toJSON(){
+        return this.record
+    }
+
+    toString(){
+        return JSON.stringify(this.record, null, 4)
+    }
+
+
+    
     // -----------------------------------------------------
     //  events
     // -----------------------------------------------------
@@ -238,6 +249,7 @@ export class KrThing {
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
 
+        record = JSON.parse(JSON.stringify(record))
         record = simplify(record)
         return record;
     }

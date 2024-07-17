@@ -676,6 +676,12 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         if (record_id) this.setProperty("@id", record_id);
         if (!this.record_id || this.record_id == null) record_id = String((0, $5OpyM$v4)());
     }
+    toJSON() {
+        return this.record;
+    }
+    toString() {
+        return JSON.stringify(this.record, null, 4);
+    }
     // -----------------------------------------------------
     //  events
     // -----------------------------------------------------
@@ -803,6 +809,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         for (let p of properties)record[p.propertyID] = p.getFullRecord(maxDepth, currentDepth + 1);
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
+        record = JSON.parse(JSON.stringify(record));
         record = $8b9cc78875f648b9$var$simplify(record);
         return record;
     }

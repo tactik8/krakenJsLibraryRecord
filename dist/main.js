@@ -338,10 +338,10 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
-        record["actionStatus"] = this._record.actionStatus;
+        record["actionStatus"] = this._record?.actionStatus;
         record["object"] = {};
-        record.object["@type"] = this._record.object["@type"];
-        record.object["propertyID"] = this._record.object["propertyID"];
+        record.object["@type"] = this._record?.object?.["@type"];
+        record.object["propertyID"] = this._record?.object?.["propertyID"];
         record.object["value"] = null;
         record.metadata = this.metadata.getSystemRecord(maxDepth, currentDepth);
         if ([
@@ -891,7 +891,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
             let properties = value.properties[key];
             properties = $8b9cc78875f648b9$var$ensureArray(properties);
             for (let propertyValue of properties)if (propertyValue?.object?.value?.["@type"]) {
-                var thing = this.new(propertyValue.object.value["@type"], propertyValue.object.value["@id"]);
+                var thing = this.new(propertyValue?.object?.value?.["@type"], propertyValue?.object?.value?.["@id"]);
                 thing.setSystemRecord(propertyValue.object.value);
                 propertyValue.object.value = thing;
             }
@@ -900,7 +900,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         var keys = Object.keys(value.properties);
         for (let key of keys){
             var property = new (0, $0ff73647c93c411e$export$13f164945901aa88)(key);
-            property.setSystemRecord(value.properties[key]);
+            property.setSystemRecord(value.properties?.[key]);
             this._properties.push(property);
         }
     }

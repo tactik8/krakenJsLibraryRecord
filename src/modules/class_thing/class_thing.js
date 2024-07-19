@@ -374,8 +374,8 @@ export class KrThing {
                
                 if (propertyValue?.object?.value?.["@type"]) {
                     var thing = this.new(
-                        propertyValue.object.value["@type"],
-                        propertyValue.object.value["@id"],
+                        propertyValue?.object?.value?.["@type"],
+                        propertyValue?.object?.value?.["@id"],
                     );
                     thing.setSystemRecord(propertyValue.object.value);
                     propertyValue.object.value = thing;
@@ -387,7 +387,7 @@ export class KrThing {
         var keys = Object.keys(value.properties);
         for (let key of keys) {
             var property = new KrProperty(key);
-            property.setSystemRecord(value.properties[key]);
+            property.setSystemRecord(value.properties?.[key]);
             this._properties.push(property);
         }
     }

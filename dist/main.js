@@ -347,7 +347,7 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         if ([
             "previousItem",
             "nextItem"
-        ].includes(this.propertyID)) return this?.value?.ref || null;
+        ].includes(this.propertyID)) record.object["value"] = this?.value?.ref;
         if (this.value && this.value.record_type) record.object["value"] = this.value.getSystemRecord(maxDepth, currentDepth);
         else record.object["value"] = this.value;
         return record;
@@ -646,7 +646,7 @@ function $0ff73647c93c411e$var$ensureArray(value1) {
 
 
 //import { KrListItem } from "../../../kraken_thing.js";
-let $8b9cc78875f648b9$var$MAX_DEPTH = 6;
+let $8b9cc78875f648b9$var$MAX_DEPTH = 1;
 class $8b9cc78875f648b9$export$3138a16edeb45799 {
     /*
 

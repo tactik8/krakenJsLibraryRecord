@@ -226,7 +226,7 @@ export class KrPropertyValue {
         record.metadata = this.metadata.getSystemRecord(maxDepth, currentDepth);
 
         if(['previousItem', 'nextItem'].includes(this.propertyID) ){
-            return this?.value?.ref || null
+            record.object['value'] = this?.value?.ref
         } 
         
         if (this.value && this.value.record_type ){

@@ -7,7 +7,7 @@ import { KrProperty } from "../class_property/class_property.js";
 import { KrMetadata } from "../class_metadata/class_metadata.js";
 //import { KrListItem } from "../../../kraken_thing.js";
 
-let MAX_DEPTH = 6;
+let MAX_DEPTH = 1;
 
 export class KrThing {
     /*

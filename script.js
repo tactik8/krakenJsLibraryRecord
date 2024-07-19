@@ -9,21 +9,46 @@ import { KrThing } from "./src/index.js";
     function test(){
 
 
-        let r = getRecord2()
-        r = r.replaceAll('"\"', '"')
-        r = r.replaceAll('\""', '"')
+        let record = {
+                 "@type": "Person",
+                 "@id": "person_1",
+                 "givenName": "givenName_1",
+                 "familyName": "familyName_1",
+                 "email": "test@test.com",
+                 "telephone": "1-514-111-2222",
+                 "hasOccupation": {
+                     "@type": "Occupation",
+                     "@id": "occupation_1",
+                     "name": "occupation_1"
+                     },
+                 "worksfor": {
+                     "@type": "Organization",
+                     "@id": "organization_1",
+                     "name": "test_org_1",
+                     "url": "https://www.test.com"
+                     }
+             }
+        //r = r.replaceAll('"\"', '"')
+        //r = r.replaceAll('\""', '"')
 
-        console.log(r.slice(3, 10))
-        let record = JSON.parse(r)
+        //console.log(r.slice(3, 10))
+        //let record = JSON.parse(r)
 
 
-console.log('pp')
-        let thing = new KrThing()
-        thing.setSystemRecord(record)
-       
+        let t = new KrThing()
+        t.record = record
+        
+        let ts = [t.getSystemRecord()]
+        for(let t0 of t.things){
+            ts.push(t0.getSystemRecord())
+        }        
+        console.log(ts.length)
 
 
-        console.log(JSON.stringify(thing, null, 4))
+        for(let ts0 of ts){
+            let t0 = new KrThing()
+            t0.setSystemRecord(ts0)
+        }
 
     
 }

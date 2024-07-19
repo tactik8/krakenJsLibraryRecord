@@ -51,6 +51,7 @@ export class KrMetadata {
     }
 
     setSystemRecord(value){
+        if(!value || value == null) { return }
         this._record = JSON.parse(JSON.stringify(value));
     }
 

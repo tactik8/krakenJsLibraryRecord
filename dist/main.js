@@ -42,6 +42,7 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
         return JSON.parse(JSON.stringify(this._record));
     }
     setSystemRecord(value) {
+        if (!value || value == null) return;
         this._record = JSON.parse(JSON.stringify(value));
     }
     inheritMetadata(metadataRecord) {
@@ -352,7 +353,8 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         return record;
     }
     setSystemRecord(value) {
-        this.metadata.setSystemRecord(value.metadata);
+        if (!value || value == null) return;
+        this.metadata.setSystemRecord(value?.metadata);
         delete value.metadata;
         this._record = JSON.parse(JSON.stringify(value));
         this._record = value;

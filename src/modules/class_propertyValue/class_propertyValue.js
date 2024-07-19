@@ -239,7 +239,9 @@ export class KrPropertyValue {
 
     setSystemRecord(value){
 
-        this.metadata.setSystemRecord(value.metadata);
+        if(!value || value == null){ return }
+        
+        this.metadata.setSystemRecord(value?.metadata);
         delete value.metadata;
         this._record = JSON.parse(JSON.stringify(value));
         this._record = value;

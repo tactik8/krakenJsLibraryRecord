@@ -67,15 +67,15 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
         this.credibility = value;
     }
     get createdDate() {
-        try {
-            let value = JSON.parse(this._record?.createdDate);
-            return new Date(value);
-        } catch  {
-            return new Date();
-        }
+        return this._record?.createdDate;
     }
     set createdDate(value) {
-        if (value && value instanceof Date) this._record.createdDate = JSON.stringify(value);
+        if (value instanceof Date) this._record.createdDate = value;
+        else try {
+            this._record.createdDate = new Date(value);
+        } catch  {
+            this._record.createdDate = null;
+        }
     }
     get position() {
         return this._record.position;

@@ -9,28 +9,12 @@ import { KrThing } from "./src/index.js";
     function test1(){
 
         let recordContent = getRecord2()
-        let record = {
-                 "@type": "Person",
-                 "@id": "person_1",
-                 "telephone": "1-514-111-2222",
-                 "hasOccupation": {
-                     "@type": "Occupation",
-                     "@id": "occupation_1",
-                     "name": "occupation_1"
-                     },
-                 "worksfor": {
-                     "@type": "Organization",
-                     "@id": "organization_1",
-                     "name": "test_org_1",
-                     "url": "https://www.test.com"
-                     }
-             }
-       
-        let t = new KrThing()
-        t.record = record
         
-        let ts = [t.getSystemRecord(1)]
-        console.log(JSON.stringify(ts, null, 4))
+        let t = new KrThing()
+        t.setSystemRecord(recordContent)
+        
+        
+        console.log(t.record)
         
 
     
@@ -41,21 +25,44 @@ import { KrThing } from "./src/index.js";
 
 function test2(){
 
-    let recordContent = getRecord2()
 
-    let t = new KrThing()
-    t.setSystemRecord(recordContent)
+    console.log('step 0')
+    let t0 = new KrThing()
+    t0.record = {
+            "@context": "https://schema.org/",
+            "@type": "Thing",
+            "@id": "thing1",
+            "name": "thing1",
+            "itemListElement": [
+                {
+                    "@context": "https://schema.org/",
+                    "@type": "Thing",
+                    "@id": "thing2",
+                    "name": "thing2"
+                }
+            ]
+        }
 
-    console.log(t.record)
+    console.log('t0', t0.record)
 
 
-    let c1 = JSON.parse(recordContent)
+    console.log('step 1')
+    let t1 = new KrThing()
+    t1.setSystemRecord(t0.getSystemRecord())
+    console.log('t1', t1.record)
+    
 
-    let c2 = JSON.stringify(c1)
+
+    console.log('step 2')
+    let c1 = t1.getSystemRecord()
+
+   
 
     let t2 = new KrThing()
 
-    t2.setSystemRecord(c2)
+    t2.setSystemRecord(c1)
+
+    console.log('t2', t2.record)
     
 }
 
@@ -85,108 +92,80 @@ function getRecord(){
 function getRecord2(){
     return `
     {
-        "@type": "Person",
-        "@id": "person_1",
-        "properties": {
-            "@type": [
-                {
-                    "@type": "replaceAction",
-                    "@id": "e9901488-306c-40ed-b8e8-c4561a869c3b",
-                    "actionStatus": "completedActionStatus",
-                    "object": {
-                        "@type": "propertyValue",
-                        "propertyID": "@type",
-                        "value": "Person"
-                    },
-                    "metadata": {
-                        "createdDate": "2024-07-20T15:30:57.658Z",
-                        "position": 1
-                    }
+    "properties": {
+        "@type": [
+            {
+                "@type": "replaceAction",
+                "@id": "89358f27-0eac-46c5-b8d1-8d75cbc86c17",
+                "actionStatus": "completedActionStatus",
+                "object": {
+                    "@type": "propertyValue",
+                    "propertyID": "@type",
+                    "value": "ItemList"
+                },
+                "metadata": {
+                    "createdDate": "2024-07-20T15:36:40.833Z"
                 }
-            ],
-            "@id": [
-                {
-                    "@type": "replaceAction",
-                    "@id": "e479b6eb-69b3-48b2-9e4a-8ea08e56ac83",
-                    "actionStatus": "completedActionStatus",
-                    "object": {
-                        "@type": "propertyValue",
-                        "propertyID": "@id",
-                        "value": "person_1"
-                    },
-                    "metadata": {
-                        "createdDate": "2024-07-20T15:30:57.658Z",
-                        "position": 1
-                    }
-                }
-            ],
-            "telephone": [
-                {
-                    "@type": "replaceAction",
-                    "@id": "1793687b-b08c-42d5-ba33-055178b667f7",
-                    "actionStatus": "completedActionStatus",
-                    "object": {
-                        "@type": "propertyValue",
-                        "propertyID": "telephone",
-                        "value": "1-514-111-2222"
-                    },
-                    "metadata": {
-                        "createdDate": "2024-07-20T15:30:57.658Z",
-                        "position": 1
-                    }
-                }
-            ],
-            "hasOccupation": [
-                {
-                    "@type": "replaceAction",
-                    "@id": "c60b74bd-cd89-410f-935a-2039807b5ebc",
-                    "actionStatus": "completedActionStatus",
-                    "object": {
-                        "@type": "propertyValue",
-                        "propertyID": "hasOccupation",
-                        "value": {
-                            "@type": "Occupation",
-                            "@id": "occupation_1"
-                        }
-                    },
-                    "metadata": {
-                        "createdDate": "2024-07-20T15:30:57.658Z",
-                        "position": 1
-                    }
-                }
-            ],
-            "worksfor": [
-                {
-                    "@type": "replaceAction",
-                    "@id": "12c673ba-0f4a-4c90-b33c-a0bc5fbc1c88",
-                    "actionStatus": "completedActionStatus",
-                    "object": {
-                        "@type": "propertyValue",
-                        "propertyID": "worksfor",
-                        "value": {
-                            "@type": "Organization",
-                            "@id": "organization_1"
-                        }
-                    },
-                    "metadata": {
-                        "createdDate": "2024-07-20T15:30:57.658Z",
-                        "position": 1
-                    }
-                }
-            ]
-        },
-        "summary": {
-            "@type": "Person",
-            "@id": "person_1",
-            "telephone": "1-514-111-2222",
-            "hasOccupation": {
-                "@type": "Occupation",
-                "@id": "occupation_1"
-            },
-            "worksfor": {
-                "@type": "Organization",
-                "@id": "organization_1"
             }
+        ],
+        "@id": [
+            {
+                "@type": "replaceAction",
+                "@id": "471baa8e-8ec5-49aa-b33b-1046e74a3e2f",
+                "actionStatus": "completedActionStatus",
+                "object": {
+                    "@type": "propertyValue",
+                    "propertyID": "@id",
+                    "value": "test002"
+                },
+                "metadata": {
+                    "createdDate": "2024-07-20T15:36:40.833Z"
+                }
+            }
+        ],
+        "name": [
+            {
+                "@type": "replaceAction",
+                "@id": "471baa8e-8ec5-49aa-b33b-1046e74a3e2f",
+                "actionStatus": "completedActionStatus",
+                "object": {
+                    "@type": "propertyValue",
+                    "propertyID": "name",
+                    "value": "testname002"
+                },
+                "metadata": {
+                    "createdDate": "2024-07-20T15:36:40.833Z"
+                }
+            }
+        ],
+        "itemListElement": [
+            {
+                "@type": "replaceAction",
+                "@id": "a454314f-fae2-42c3-a4bb-52d2def9e051",
+                "actionStatus": "completedActionStatus",
+                "object": {
+                    "@type": "propertyValue",
+                    "propertyID": "itemListElement",
+                    "value": {
+                        "@type": "ListItem",
+                        "@id": "6ee1dd65-3341-4dca-b39b-443a4a97e987"
+                    }
+                },
+                "metadata": {
+                    "createdDate": "2024-07-20T15:36:40.833Z"
+                }
+            }
+        ]
+    },
+    "summary": {
+        "@type": "ItemList",
+        "@id": "test002",
+        "itemListElement": {
+            "@type": "ListItem",
+            "@id": "6ee1dd65-3341-4dca-b39b-443a4a97e987"
         }
-    }`
+    },
+    "@type": "ItemList",
+    "@id": "test002"
+}`
 }

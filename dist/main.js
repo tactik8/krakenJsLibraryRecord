@@ -882,6 +882,13 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     }
     setSystemRecord(value) {
         // Load data into object
+        // Convert from string if one
+        if (typeof value === "string" | value instanceof String) try {
+            value = JSON.parse(value);
+        } catch  {
+            return;
+        }
+        // Check if valid format
         if (!value || !value.properties) return;
         // Reset current properties
         this._properties = [];

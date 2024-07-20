@@ -359,9 +359,21 @@ export class KrThing {
     setSystemRecord(value) {
         // Load data into object
 
-        if (!value ||  !value.properties) {
+        // Convert from string if one
+        if(typeof value === 'string' | value instanceof String){
+
+            try{
+                value = JSON.parse(value)
+            } catch {
+                return
+            }
+        } 
+        
+        // Check if valid format
+        if (!value || !value.properties) {
             return;
         }
+        
         // Reset current properties
         this._properties = [];
 
@@ -371,7 +383,7 @@ export class KrThing {
             let properties = value.properties[key];
             properties = ensureArray(properties)
             for (let propertyValue of properties) {
-               
+
                 if (propertyValue?.object?.value?.["@type"]) {
                     var thing = this.new(
                         propertyValue?.object?.value?.["@type"],

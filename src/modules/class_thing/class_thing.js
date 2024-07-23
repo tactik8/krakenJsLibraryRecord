@@ -377,6 +377,8 @@ export class KrThing {
             record['properties'][p.propertyID] = p.getSystemRecord(maxDepth, currentDepth + 1);
         }
 
+        record.references = this.things.map(x => x.ref)
+        
         
         return record;
     }

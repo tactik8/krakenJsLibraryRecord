@@ -923,6 +923,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         record.properties = {};
         record.summary = this.getFullRecord();
         for (let p of this.properties)record["properties"][p.propertyID] = p.getSystemRecord(maxDepth, currentDepth + 1);
+        record.references = this.things.map((x)=>x.ref);
         return record;
     }
     setSystemRecord(value) {

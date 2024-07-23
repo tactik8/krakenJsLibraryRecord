@@ -7,7 +7,7 @@ import { KrProperty } from "../class_property/class_property.js";
 import { KrMetadata } from "../class_metadata/class_metadata.js";
 //import { KrListItem } from "../../../kraken_thing.js";
 
-let MAX_DEPTH = 1;
+let MAX_DEPTH = 10;
 
 export class KrThing {
     /*
@@ -203,7 +203,32 @@ export class KrThing {
     }
 
 
+    // -----------------------------------------------------
+    //  System attributes 
+    // -----------------------------------------------------
 
+    get systemCreatedDate(){
+        let resultDate = null
+        for(let pv of this.properties){
+            let itemDate = pv.systemCreatedDate
+            if(itemDate && (resultDate == null || itemDate < resultDate )){
+                resultDate = itemDate
+            }
+        }
+        return resultDate
+    }
+
+    get systemUpdatedDate(){
+
+        let resultDate = null
+        for(let pv of this.properties){
+            let itemDate = pv.systemCreatedDate
+            if(itemDate && (resultDate == null || itemDate > resultDate )){
+                resultDate = itemDate
+            }
+        }
+        return resultDate
+    }
     
     // ----------------------------------------------------
     // Records

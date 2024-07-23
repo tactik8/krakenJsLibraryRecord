@@ -144,6 +144,36 @@ export class KrProperty {
     }
     
 
+
+    // -----------------------------------------------------
+    //  System attributes 
+    // -----------------------------------------------------
+
+    get systemCreatedDate(){
+
+        let resultDate = null
+        for(let pv of this._propertyValues){
+            let itemDate = pv.systemCreatedDate
+            if(itemDate && (resultDate == null || itemDate < resultDate )){
+                resultDate = itemDate
+            }
+        }
+        return resultDate
+        
+    }
+
+    get systemUpdatedDate(){
+
+        let resultDate = null
+        for(let pv of this._propertyValues){
+            let itemDate = pv.systemCreatedDate
+            if(itemDate && (resultDate == null || itemDate > resultDate )){
+                resultDate = itemDate
+            }
+        }
+        return resultDate
+    }
+    
     // ----------------------------------------------------
     // PropertyValues 
     // ----------------------------------------------------

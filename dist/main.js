@@ -24,7 +24,7 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
 
     */ constructor(record){
         this._record = {};
-        this.createdDate = new Date();
+        if (!this._record.createdDate || this._record.createdDate == null) this._record.createdDate = new Date();
     }
     get record() {
         return this._record;
@@ -52,7 +52,9 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
     }
     set record(value) {
         if (!value) return;
+        let tempCreatedDate = this.createdDate;
         this._record = JSON.parse(JSON.stringify(value));
+        if (!this.createdDate || this.createdDate == null) this.createdDate = tempCreatedDate;
     }
     get credibility() {
         return this._record.credibility;
@@ -67,14 +69,16 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
         this.credibility = value;
     }
     get createdDate() {
-        return this._record?.createdDate;
+        let createdDate = this._record?.createdDate;
+        if (createdDate instanceof String) createdDate = new Date(createdDate);
+        return createdDate;
     }
     set createdDate(value) {
         if (value instanceof Date) this._record.createdDate = value;
         else try {
             this._record.createdDate = new Date(value);
-        } catch  {
-            this._record.createdDate = null;
+        } catch (error) {
+            console.log(error);
         }
     }
     get position() {
@@ -289,6 +293,9 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     set d(value) {
         this.metadata.observationDate = value;
     }
+    get systemCreatedDate() {
+        return this.metadata.createdDate;
+    }
     // ----------------------------------------------------
     // Records 
     // ----------------------------------------------------
@@ -502,6 +509,25 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
             this._propertyValues.push(propertyValue);
         }
     }
+    // -----------------------------------------------------
+    //  System attributes 
+    // -----------------------------------------------------
+    get systemCreatedDate() {
+        let resultDate = null;
+        for (let pv of this._propertyValues){
+            let itemDate = pv.systemCreatedDate;
+            if (itemDate && (resultDate == null || itemDate < resultDate)) resultDate = itemDate;
+        }
+        return resultDate;
+    }
+    get systemUpdatedDate() {
+        let resultDate = null;
+        for (let pv of this._propertyValues){
+            let itemDate = pv.systemCreatedDate;
+            if (itemDate && (resultDate == null || itemDate > resultDate)) resultDate = itemDate;
+        }
+        return resultDate;
+    }
     // ----------------------------------------------------
     // PropertyValues 
     // ----------------------------------------------------
@@ -646,7 +672,7 @@ function $0ff73647c93c411e$var$ensureArray(value1) {
 
 
 //import { KrListItem } from "../../../kraken_thing.js";
-let $8b9cc78875f648b9$var$MAX_DEPTH = 1;
+let $8b9cc78875f648b9$var$MAX_DEPTH = 10;
 class $8b9cc78875f648b9$export$3138a16edeb45799 {
     /*
 
@@ -780,6 +806,25 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
             return el != null;
         });
         return results;
+    }
+    // -----------------------------------------------------
+    //  System attributes 
+    // -----------------------------------------------------
+    get systemCreatedDate() {
+        let resultDate = null;
+        for (let pv of this.properties){
+            let itemDate = pv.systemCreatedDate;
+            if (itemDate && (resultDate == null || itemDate < resultDate)) resultDate = itemDate;
+        }
+        return resultDate;
+    }
+    get systemUpdatedDate() {
+        let resultDate = null;
+        for (let pv of this.properties){
+            let itemDate = pv.systemCreatedDate;
+            if (itemDate && (resultDate == null || itemDate > resultDate)) resultDate = itemDate;
+        }
+        return resultDate;
     }
     // ----------------------------------------------------
     // Records

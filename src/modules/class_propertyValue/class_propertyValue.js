@@ -142,6 +142,9 @@ export class KrPropertyValue {
         this.metadata.observationDate = value;
     }
 
+    get systemCreatedDate(){
+        return this.metadata.createdDate
+    }
 
     // ----------------------------------------------------
     // Records 

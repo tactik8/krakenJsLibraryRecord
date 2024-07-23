@@ -26,7 +26,10 @@ export class KrMetadata {
     
     constructor(record) {
         this._record = {};
-        this.createdDate = new Date();
+        
+        if(!this._record.createdDate || this._record.createdDate == null){
+            this._record.createdDate = new Date();
+        }
         
     }
 
@@ -57,15 +60,21 @@ export class KrMetadata {
 
     inheritMetadata(metadataRecord){
 
+       
         let currentPosition = this.position;
         this.record = metadataRecord;
         this.position = currentPosition;
+        
         
     }
     
     set record(value){
         if(!value){return;};
+        let tempCreatedDate = this.createdDate
         this._record = JSON.parse(JSON.stringify(value));
+        if(!this.createdDate || this.createdDate == null){
+            this.createdDate = tempCreatedDate
+        }
     }
     
     get credibility(){
@@ -85,19 +94,26 @@ export class KrMetadata {
 
     get createdDate(){
 
-        return this._record?.createdDate
+        let createdDate = this._record?.createdDate
+
+        if(createdDate instanceof String){
+            createdDate =  new Date(createdDate)
+        }
+        
+        return createdDate
         
     }
 
     set createdDate(value){
 
+        
         if(value instanceof Date){
             this._record.createdDate = value
         } else {
             try{
                 this._record.createdDate = new Date(value)
-            } catch {
-                this._record.createdDate = null
+            } catch (error) {
+                console.log(error)
             }
         }
     }

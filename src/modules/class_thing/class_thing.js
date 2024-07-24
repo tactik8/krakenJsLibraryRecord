@@ -653,6 +653,27 @@ export class KrThing {
         return new KrThing(record_type, record_id);
     }
 
+
+
+    // -----------------------------------------------------
+    //  Query 
+    // -----------------------------------------------------
+
+
+    findValue(value){
+        // Returns the properties with given value
+        let properties = []
+        for(let p of this._properties){
+            if(p.containsValue(value)){
+                properties.push(p.propertyID)
+            }
+        }
+        return properties
+    }
+
+
+
+    
     // ----------------------------------------------------
     // Dot notation
     // ----------------------------------------------------

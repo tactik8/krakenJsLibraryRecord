@@ -656,6 +656,27 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
             propertyValue.printScreen(suffix + "        ");
         });
     }
+    // -----------------------------------------------------
+    //  Query 
+    // -----------------------------------------------------
+    containsValue(value1) {
+        // Return true if value is part of values
+        if (value1.record_type) value1 = value1.ref;
+        if (value1["@type"]) value1 = {
+            "@type": value1?.["@type"],
+            "@id": value1?.["@id"]
+        };
+        for (let pv of this.propertyValues){
+            let value0 = pv.value;
+            if (value0.record_type) value0 = value0.ref;
+            if (value0["@type"]) value0 = {
+                "@type": value0?.["@type"],
+                "@id": value0?.["@id"]
+            };
+            if (JSON.stringify(value1) == JSON.stringify(value0)) return true;
+        }
+        return false;
+    }
 }
 function $0ff73647c93c411e$var$ensureNotArray(value1) {
     let new_value = $0ff73647c93c411e$var$ensureArray(value1);
@@ -1051,6 +1072,15 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     }
     new(record_type, record_id) {
         return new $8b9cc78875f648b9$export$3138a16edeb45799(record_type, record_id);
+    }
+    // -----------------------------------------------------
+    //  Query 
+    // -----------------------------------------------------
+    findValue(value) {
+        // Returns the properties with given value
+        let properties = [];
+        for (let p of this._properties)if (p.containsValue(value)) properties.push(p.propertyID);
+        return properties;
     }
     // ----------------------------------------------------
     // Dot notation

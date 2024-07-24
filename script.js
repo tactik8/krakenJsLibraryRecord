@@ -12,8 +12,24 @@ function test1(){
             "@context": "https://schema.org/",
             "@type": "Thing",
             "@id": "thing1",
-            "name": "thing1"
+            "name": "thing1",
+            "other": {
+                    "@context": "https://schema.org/",
+                    "@type": "Thing",
+                    "@id": "thing2",
+                    "name": "thing2"
+                }
+
+
         }
+
+    let record2 = {
+        "@context": "https://schema.org/",
+        "@type": "Thing",
+        "@id": "thing2",
+        "name": "thing2"
+    }
+
 
 
     
@@ -29,7 +45,8 @@ function test1(){
     }
         
 
-    
+    let r = t.findValue(record2)
+    console.log('r', r)
 }
 
 

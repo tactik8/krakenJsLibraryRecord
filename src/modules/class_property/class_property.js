@@ -358,6 +358,38 @@ export class KrProperty {
 
         });
     }
+
+    // -----------------------------------------------------
+    //  Query 
+    // -----------------------------------------------------
+
+    containsValue(value){
+        // Return true if value is part of values
+
+        if(value.record_type){
+            value = value.ref
+        }
+
+        if(value['@type']){
+            value = {"@type": value?.["@type"], "@id": value?.["@id"]}
+        }
+        
+        for(let pv of this.propertyValues){
+            let value0 = pv.value
+            if(value0.record_type){
+                value0 = value0.ref
+            }
+
+            if(value0['@type']){
+                value0 = {"@type": value0?.["@type"], "@id": value0?.["@id"]}
+            }
+
+            if(JSON.stringify(value)==JSON.stringify(value0)){ 
+                return true 
+            }
+        }
+        return false   
+    }
 }
 
 

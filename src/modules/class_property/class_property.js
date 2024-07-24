@@ -301,6 +301,15 @@ export class KrProperty {
 
     setValue(value, metadataRecord, actionType) {
         let newValueObject = value;
+
+
+        // Check if date
+        let d = convertToDate(newValueObject)
+        if(d && d != null){
+            newValueObject = d
+        }
+        
+        
         if (!(newValueObject instanceof KrPropertyValue)) {
             newValueObject = new KrPropertyValue(this.propertyID, value, actionType);
         }
@@ -408,4 +417,22 @@ function ensureArray(value) {
     } else {
         return [value];
     }
+}
+
+
+
+
+
+
+function convertToDate(value) {
+    if (value instanceof Date && !isNaN(value)) {
+        return value;
+    }
+
+    const date = new Date(value);
+    if (!isNaN(date.getTime())) {
+        return date;
+    }
+
+    return null;
 }

@@ -624,6 +624,9 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     }
     setValue(value1, metadataRecord, actionType) {
         let newValueObject = value1;
+        // Check if date
+        let d = $0ff73647c93c411e$var$convertToDate(newValueObject);
+        if (d && d != null) newValueObject = d;
         if (!(newValueObject instanceof (0, $9ef8378eb9810880$export$90601469cef9e14f))) newValueObject = new (0, $9ef8378eb9810880$export$90601469cef9e14f)(this.propertyID, value1, actionType);
         newValueObject.metadata.inheritMetadata(metadataRecord);
         this._propertyValues.push(newValueObject);
@@ -688,6 +691,12 @@ function $0ff73647c93c411e$var$ensureArray(value1) {
     else return [
         value1
     ];
+}
+function $0ff73647c93c411e$var$convertToDate(value1) {
+    if (value1 instanceof Date && !isNaN(value1)) return value1;
+    const date = new Date(value1);
+    if (!isNaN(date.getTime())) return date;
+    return null;
 }
 
 

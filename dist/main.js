@@ -972,13 +972,13 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     setSystemRecord(value) {
         // Load data into object
         // Convert from string if one
-        if (typeof value === "string" | value instanceof String) try {
+        if (typeof value === "string" || value instanceof String) try {
             value = JSON.parse(value);
         } catch  {
             return;
         }
         // Check if valid format
-        if (!value) return;
+        if (!value || !value.propertyValues && !value.properties) return;
         // Reset current properties
         this._properties = [];
         // Convert from old format to new
@@ -992,10 +992,14 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
             value.propertyValues = value.propertyValues.filter((item)=>item && item != null);
         }
         // Set pvRecords
+        if (!value.propertyValues || value.propertyValues == null) return;
         let pvRecords = $8b9cc78875f648b9$var$ensureArray(value.propertyValues);
+        if (pvRecords.length == 0) return;
         // convert sub things to KrThing
-        for (let pvRecord of pvRecords)if (pvRecord && pvRecord != null) {
-            let value = pvRecord.object.value;
+        for (let pvRecord of pvRecords){
+            if (!pvRecord || pvRecord == null) continue;
+            let value = pvRecord?.object?.value;
+            if (!value || value == null) continue;
             if (value["@type"] && value["@type"] != null) {
                 var thing = this.new(value?.["@type"], value?.["@id"]);
                 thing.setSystemRecord(value);

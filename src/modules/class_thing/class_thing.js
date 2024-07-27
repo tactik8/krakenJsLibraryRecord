@@ -388,7 +388,7 @@ export class KrThing {
         // Load data into object
 
         // Convert from string if one
-        if(typeof value === 'string' | value instanceof String){
+        if(typeof value === 'string' || value instanceof String){
 
             try{
                 value = JSON.parse(value)
@@ -398,7 +398,7 @@ export class KrThing {
         } 
         
         // Check if valid format
-        if (!value ) {
+        if (!value || (!value.propertyValues && !value.properties ) ) {
             return;
         }
         
@@ -408,7 +408,7 @@ export class KrThing {
 
 
         // Convert from old format to new
-        if(value.properties && value.properties != null){
+        if(value.properties && value.properties != null ){
             value.propertyValues = []
             for(let k of Object.keys(value.properties)){
                 let pvs = value.properties[k]
@@ -421,22 +421,22 @@ export class KrThing {
 
         
         // Set pvRecords
-        let pvRecords = ensureArray(value.propertyValues)
 
+        if(!value.propertyValues || value.propertyValues == null){ return }
+        
+        let pvRecords = ensureArray(value.propertyValues)
+        
+        if(pvRecords.length == 0 ){ return }
+        
         // convert sub things to KrThing
         for(let pvRecord of pvRecords){
-
-            if(pvRecord && pvRecord != null){
-                
-                let value = pvRecord.object.value
-                if (value["@type"] && value["@type"] != null) {
-                    var thing = this.new(
-                        value?.["@type"],
-                        value?.["@id"]
-                    );
-                    thing.setSystemRecord(value);
-                    pvRecord.object.value = thing;
-                }
+            if(!pvRecord || pvRecord == null) { continue }
+            let value = pvRecord?.object?.value
+            if(!value || value == null) { continue }
+            if (value["@type"] && value["@type"] != null) {
+                var thing = this.new(value?.["@type"],value?.["@id"]);
+                thing.setSystemRecord(value);
+                pvRecord.object.value = thing;
             }
         }
         

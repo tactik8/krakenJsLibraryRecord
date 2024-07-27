@@ -369,17 +369,14 @@ export class KrThing {
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
-        record.properties = {}
+        record.propertyValues = []
         record.summary = this.getFullRecord()
        
         
         for (let p of this.properties) {
-            record['properties'][p.propertyID] = p.getSystemRecord(maxDepth, currentDepth + 1);
+            record.propertyValues = record.propertyValues.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
         }
-
         record.references = this.things.map(x => x.ref)
-        
-        
         return record;
     }
 
@@ -397,10 +394,101 @@ export class KrThing {
         } 
         
         // Check if valid format
-        if (!value || !value.properties) {
+        if (!value || !value.propertyValues) {
             return;
         }
         
+        // Reset current properties
+        this._properties = [];
+
+
+
+        // Convert from old format to new
+        if(value.properties && value.properties != null){
+            value.propertyValues = []
+            for(let k in value.properties){
+                value.propertyValues = value.propertyValues.concat(ensureArray(value.properties[k]))
+            }            
+        }
+
+
+        
+        // Set pvRecords
+        let pvRecords = ensureArray(value.propertyValues)
+
+        // convert sub things to KrThing
+        for(let pvRecord of pvRecords){
+            if (pvRecord?.object?.value?.["@type"]) {
+                var thing = this.new(
+                    pvRecord?.object?.value?.["@type"],
+                    pvRecord?.object?.value?.["@id"]
+                );
+                thing.setSystemRecord(pvRecord.object.value);
+                    pvRecord.object.value = thing;
+            }
+        }
+        
+        // Group pvRecords by propertyID
+        let propertyIDs = [...new Set(pvRecords.map((x) => x?.object?.propertyID ))];
+
+        console.log('pID', propertyIDs)
+        for(let propertyID of propertyIDs){
+
+            let subPropertyValues = pvRecords.filter((item) => item?.object?.propertyID == propertyID);
+            
+            var property = new KrProperty(propertyID);
+            property.setSystemRecord(subPropertyValues);
+            this._properties.push(property);
+            
+            
+        }
+
+
+    }
+
+    getSystemRecord2(maxDepth=MAX_DEPTH, currentDepth=0) {
+
+        if(!maxDepth || maxDepth == null) { maxDepth = MAX_DEPTH }
+
+        if (currentDepth >= maxDepth) {
+            return this.ref;
+        }
+
+        let record = {};
+        record["@type"] = this.record_type;
+        record["@id"] = this.record_id;
+        record.properties = {}
+        record.summary = this.getFullRecord()
+
+
+        for (let p of this.properties) {
+            record['properties'][p.propertyID] = p.getSystemRecord(maxDepth, currentDepth + 1);
+        }
+
+        record.references = this.things.map(x => x.ref)
+
+
+        return record;
+    }
+
+    setSystemRecord2(value) {
+        // Load data into object
+
+        // Convert from string if one
+        if(typeof value === 'string' | value instanceof String){
+
+            try{
+                value = JSON.parse(value)
+            } catch {
+                return
+            }
+        } 
+
+        // Check if valid format
+        if (!value || !value.properties) {
+            return;
+        }
+
         // Reset current properties
         this._properties = [];
 
@@ -430,7 +518,6 @@ export class KrThing {
             this._properties.push(property);
         }
     }
-
     // ----------------------------------------------------
     // Methods
     // ----------------------------------------------------
@@ -587,11 +674,8 @@ export class KrThing {
             return p
             
         }
-
-
-
         
-        // Get olf value
+        // Get old value
         let oldValue = this.getProperty(propertyID)?.values;
 
         // get or create property object

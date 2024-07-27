@@ -190,7 +190,8 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
             },
             actionStatus: "completedActionStatus",
             replacee: previousValue,
-            replacer: value
+            replacer: value,
+            valid: true
         };
         this.metadata = new (0, $5e45e66cef237559$export$4a4eb7d10588cc8d)();
     }
@@ -221,6 +222,12 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     set replacer(value) {
         this._record.object.value = $9ef8378eb9810880$var$ensureNotArray(value);
         this._record.replacer = $9ef8378eb9810880$var$ensureNotArray(value);
+    }
+    get valid() {
+        return this._record.valid;
+    }
+    set valid(value) {
+        this._record.valid = value;
     }
     get record() {
         let record = this._record;
@@ -346,6 +353,7 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
         record["actionStatus"] = this._record?.actionStatus;
+        record["valid"] = this._record?.valid;
         record["object"] = {};
         record.object["@type"] = this._record?.object?.["@type"];
         record.object["propertyID"] = this._record?.object?.["propertyID"];
@@ -595,6 +603,10 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         this._propertyValuesNetCacheOld = [];
         this._propertyValuesNetCacheOld = this._propertyValuesNetCacheOld.concat(results);
         this._propertyValuesCache = null;
+        // Disable validity
+        for (let pv of this._propertyValues)pv.valid = false;
+        // Reenable validity 
+        for (let pv of this._propertyValuesNetCache)pv.valid = true;
         return results;
     }
     get propertyValuesAll() {
@@ -950,13 +962,62 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
+        record.propertyValues = [];
+        record.summary = this.getFullRecord();
+        for (let p of this.properties)record.propertyValues = record.propertyValues.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
+        record.references = this.things.map((x)=>x.ref);
+        return record;
+    }
+    setSystemRecord(value) {
+        // Load data into object
+        // Convert from string if one
+        if (typeof value === "string" | value instanceof String) try {
+            value = JSON.parse(value);
+        } catch  {
+            return;
+        }
+        // Check if valid format
+        if (!value || !value.propertyValues) return;
+        // Reset current properties
+        this._properties = [];
+        // Convert from old format to new
+        if (value.properties && value.properties != null) {
+            value.propertyValues = [];
+            for(let k in value.properties)value.propertyValues = value.propertyValues.concat($8b9cc78875f648b9$var$ensureArray(value.properties[k]));
+        }
+        // Set pvRecords
+        let pvRecords = $8b9cc78875f648b9$var$ensureArray(value.propertyValues);
+        // convert sub things to KrThing
+        for (let pvRecord of pvRecords)if (pvRecord?.object?.value?.["@type"]) {
+            var thing = this.new(pvRecord?.object?.value?.["@type"], pvRecord?.object?.value?.["@id"]);
+            thing.setSystemRecord(pvRecord.object.value);
+            pvRecord.object.value = thing;
+        }
+        // Group pvRecords by propertyID
+        let propertyIDs = [
+            ...new Set(pvRecords.map((x)=>x?.object?.propertyID))
+        ];
+        console.log("pID", propertyIDs);
+        for (let propertyID of propertyIDs){
+            let subPropertyValues = pvRecords.filter((item)=>item?.object?.propertyID == propertyID);
+            var property = new (0, $0ff73647c93c411e$export$13f164945901aa88)(propertyID);
+            property.setSystemRecord(subPropertyValues);
+            this._properties.push(property);
+        }
+    }
+    getSystemRecord2(maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH, currentDepth = 0) {
+        if (!maxDepth || maxDepth == null) maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH;
+        if (currentDepth >= maxDepth) return this.ref;
+        let record = {};
+        record["@type"] = this.record_type;
+        record["@id"] = this.record_id;
         record.properties = {};
         record.summary = this.getFullRecord();
         for (let p of this.properties)record["properties"][p.propertyID] = p.getSystemRecord(maxDepth, currentDepth + 1);
         record.references = this.things.map((x)=>x.ref);
         return record;
     }
-    setSystemRecord(value) {
+    setSystemRecord2(value) {
         // Load data into object
         // Convert from string if one
         if (typeof value === "string" | value instanceof String) try {
@@ -1044,7 +1105,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
             p.value.setProperty(otherIDS.join("."), value);
             return p;
         }
-        // Get olf value
+        // Get old value
         let oldValue = this.getProperty(propertyID)?.values;
         // get or create property object
         let property = this.getProperty(propertyID);

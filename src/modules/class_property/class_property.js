@@ -259,6 +259,18 @@ export class KrProperty {
         this._propertyValuesNetCacheOld = []
         this._propertyValuesNetCacheOld = this._propertyValuesNetCacheOld.concat(results)
         this._propertyValuesCache = null
+
+
+        // Disable validity
+        for(let pv of this._propertyValues){
+            pv.valid = false
+        }
+
+        // Reenable validity 
+        for(let pv of this._propertyValuesNetCache){
+            pv.valid = true
+        }
+        
         return results;
     }
 
@@ -313,6 +325,7 @@ export class KrProperty {
         if (!(newValueObject instanceof KrPropertyValue)) {
             newValueObject = new KrPropertyValue(this.propertyID, value, actionType);
         }
+        
         newValueObject.metadata.inheritMetadata(metadataRecord);
         this._propertyValues.push(newValueObject);
         newValueObject.metadata.position = this._propertyValues.length;
@@ -329,6 +342,8 @@ export class KrProperty {
         
         return newValueObject;
     }
+
+    
     printScreen(suffix=''){
 
         var v = this.value;

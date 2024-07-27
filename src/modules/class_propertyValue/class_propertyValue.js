@@ -24,7 +24,8 @@ export class KrPropertyValue {
             },
             actionStatus: 'completedActionStatus',
             replacee: previousValue,
-            replacer: value
+            replacer: value,
+            valid: true
         };
 
         this.metadata = new KrMetadata();
@@ -61,6 +62,15 @@ export class KrPropertyValue {
         this._record.replacer = ensureNotArray(value);
         }
 
+    get valid(){
+        return this._record.valid;
+    }
+    
+    set valid(value){
+        this._record.valid = value
+        }
+
+    
     get record(){
 
         let record = this._record
@@ -221,6 +231,7 @@ export class KrPropertyValue {
         record['@type'] = this.record_type
         record['@id'] = this.record_id
         record['actionStatus'] = this._record?.actionStatus
+        record['valid'] = this._record?.valid
         record['object'] = {}
         record.object['@type'] = this._record?.object?.['@type']
         record.object['propertyID'] = this._record?.object?.['propertyID']

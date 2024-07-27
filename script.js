@@ -19,8 +19,6 @@ function test1(){
                     "@id": "thing2",
                     "name": "thing2"
                 }
-
-
         }
 
     let record2 = {
@@ -31,22 +29,30 @@ function test1(){
     }
 
 
+    let thing = new KrThing()
+    thing.record = record
+    //console.log(JSON.stringify(thing.getSystemRecord(), null, 4))
+
+
+   
 
     
-    let t = new KrThing()
-    t.record = record
-    console.log(t.systemUpdatedDate)
-    
-    
-    let p = t.getProperty('name')
+     thing.name = 'thing4'
 
-    for(let pv of p.propertyValues){
-        console.log('a', pv)
-    }
-        
+    let sr = thing.getSystemRecord()
 
-    let r = t.findValue(record2)
-    console.log('r', r)
+    console.log(JSON.stringify(sr, null, 4))
+
+    
+
+
+
+
+
+
+
+
+    
 }
 
 

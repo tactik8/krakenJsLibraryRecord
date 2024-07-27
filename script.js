@@ -37,7 +37,8 @@ function test1(){
     thing2.setSystemRecord(thing.getSystemRecord())
     
 
-    console.log(JSON.stringify(thing2.record, null, 4))
+    console.log('ff', thing2.things[0].record)
+    //console.log(JSON.stringify(thing2.record, null, 4))
 
     
 

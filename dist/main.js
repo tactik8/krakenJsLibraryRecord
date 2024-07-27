@@ -985,7 +985,6 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         if (value.properties && value.properties != null) {
             value.propertyValues = [];
             for (let k of Object.keys(value.properties)){
-                console.log("k", k, value.properties[k]);
                 let pvs = value.properties[k];
                 pvs = $8b9cc78875f648b9$var$ensureArray(pvs);
                 value.propertyValues = value.propertyValues.concat(pvs);
@@ -995,21 +994,20 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         // Set pvRecords
         let pvRecords = $8b9cc78875f648b9$var$ensureArray(value.propertyValues);
         // convert sub things to KrThing
-        for (let pvRecord of pvRecords){
+        for (let pvRecord of pvRecords)if (pvRecord && pvRecord != null) {
             let value = pvRecord.object.value;
-            console.log("v", value);
-            if (pvRecord?.object?.value?.["@type"] && pvRecord?.object?.value?.["@type"] != null) {
-                var thing = this.new(pvRecord?.object?.value?.["@type"], pvRecord?.object?.value?.["@id"]);
-                thing.setSystemRecord(pvRecord.object.value);
+            if (value["@type"] && value["@type"] != null) {
+                var thing = this.new(value?.["@type"], value?.["@id"]);
+                thing.setSystemRecord(value);
                 pvRecord.object.value = thing;
             }
         }
         // Group pvRecords by propertyID
         let propertyIDs = [
-            ...new Set(pvRecords.map((x)=>x?.object?.propertyID))
+            ...new Set(pvRecords.map((x)=>x.object.propertyID))
         ];
         for (let propertyID of propertyIDs){
-            let subPropertyValues = pvRecords.filter((item)=>item?.object?.propertyID == propertyID);
+            let subPropertyValues = pvRecords.filter((item)=>item.object.propertyID == propertyID);
             var property = new (0, $0ff73647c93c411e$export$13f164945901aa88)(propertyID);
             property.setSystemRecord(subPropertyValues);
             this._properties.push(property);

@@ -977,7 +977,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
             return;
         }
         // Check if valid format
-        if (!value || !value.propertyValues) return;
+        if (!value) return;
         // Reset current properties
         this._properties = [];
         // Convert from old format to new

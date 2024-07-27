@@ -394,7 +394,7 @@ export class KrThing {
         } 
         
         // Check if valid format
-        if (!value || !value.propertyValues) {
+        if (!value ) {
             return;
         }
         

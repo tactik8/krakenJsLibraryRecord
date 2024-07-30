@@ -1103,7 +1103,6 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         return this._updateProperty(propertyID, newValue, credibility, observationDate, "replaceAction", previousValue);
     }
     setProperty(propertyID, value, credibility, observationDate) {
-        console.log("v2", value);
         return this.replaceProperty(propertyID, undefined, value, credibility, observationDate);
     }
     _updateProperty(propertyID, value, credibility, observationDate, actionType, previousValue) {

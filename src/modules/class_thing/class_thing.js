@@ -638,7 +638,6 @@ export class KrThing {
 
     setProperty(propertyID, value, credibility, observationDate) {
 
-        console.log('v2', value)
         return this.replaceProperty(
             propertyID,
             undefined,

@@ -14,11 +14,11 @@ function test1(){
     thing.setProperty('qty', 0)
 
     let p = thing.getProperty('qty')
-    console.log('pp', p.value, p)
-    console.log('ff', thing.record)
+    //console.log('pp', p.value, p)
+    //console.log('ff', thing.record)
     //console.log(JSON.stringify(thing2.record, null, 4))
 
-    console.log(thing.getSystemRecord())
+    //console.log(thing.getSystemRecord())
 
 
 

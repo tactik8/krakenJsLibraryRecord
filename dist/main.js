@@ -1091,7 +1091,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         return this._updateProperty(propertyID, value, credibility, observationDate, "deleteAction");
     }
     replaceProperty(propertyID, previousValue, newValue, credibility, observationDate) {
-        if (!newValue && newValue != null) {
+        if (!newValue && newValue !== 0) {
             newValue = previousValue;
             previousValue = null;
         }
@@ -1103,7 +1103,8 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         return this._updateProperty(propertyID, newValue, credibility, observationDate, "replaceAction", previousValue);
     }
     setProperty(propertyID, value, credibility, observationDate) {
-        return this.replaceProperty(propertyID, null, value, credibility, observationDate);
+        console.log("v2", value);
+        return this.replaceProperty(propertyID, undefined, value, credibility, observationDate);
     }
     _updateProperty(propertyID, value, credibility, observationDate, actionType, previousValue) {
         // Handle dot notation

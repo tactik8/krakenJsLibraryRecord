@@ -599,12 +599,10 @@ export class KrThing {
         credibility,
         observationDate,
     ) {
-        if(!newValue && newValue != null){
+        if(!newValue && newValue !==0){
             newValue = previousValue
             previousValue = null
         }
-
-       
         
         if(newValue && newValue != null && Array.isArray(newValue) && newValue.length > 0){
             
@@ -639,9 +637,11 @@ export class KrThing {
     }
 
     setProperty(propertyID, value, credibility, observationDate) {
+
+        console.log('v2', value)
         return this.replaceProperty(
             propertyID,
-            null,
+            undefined,
             value,
             credibility,
             observationDate,
@@ -657,7 +657,7 @@ export class KrThing {
         previousValue,
     ) {
 
-
+        
         // Handle dot notation
         if(propertyID.includes('.')){
 

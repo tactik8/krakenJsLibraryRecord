@@ -14,6 +14,8 @@ export class KrPropertyValue {
     */
     constructor(propertyID, value, actionType="replaceAction", previousValue) {
 
+
+        
         this._record = {
             "@type": actionType,
             "@id": String(uuidv4()),

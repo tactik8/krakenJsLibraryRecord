@@ -94,6 +94,38 @@ export class KrProperty {
         return false;
     }
 
+    getPropertyValueById(propertyValueID){
+
+        if(!propertyValueID || propertyValueID == null) { return }
+
+        for(let pv of this._propertyValues){
+
+            if (pv.record_id == propertyValueID){
+                return pv
+            }
+            
+        }
+        return null
+        
+    }
+
+    merge(other){
+        // merge other property with this property
+
+        if(!other || other == null){ return }
+        console.log(other.propertyID)
+        for(let otherPV of other._propertyValues){
+            let thisPV = this.getPropertyValueById(otherPV.record_id)
+            if(thisPV == null){
+                console.log('push')
+                this._propertyValues.push(otherPV)
+            }
+        }
+
+        this.compilePropertyValues(true)
+        
+    }
+
     //
     // ----------------------------------------------------
     // Records 
@@ -222,27 +254,40 @@ export class KrProperty {
 
     get propertyValuesNet(){
 
-        let pv = this._propertyValues
         
+        this.compilePropertyValues()
+
+        return this._propertyValuesNetCache
+        
+
+    }
+
+
+    compilePropertyValues(force=false){
+        
+        let pv = this._propertyValues
+
         let cache = this._propertyValuesNetCache
         let cacheOld = this._propertyValuesNetCacheOld
-        
-        if(cache && cache != null && cache.length > 0){
-            pv = cache
-            if(cache == cacheOld) { return cache } 
-        } 
 
+        if(force == false){
+            if(cache && cache != null && cache.length > 0){
+                pv = cache
+                if(cache == cacheOld) { return cache } 
+            } 
+        }
+        
         let results = [];
 
         // Process additions        
         results = results.concat(pv.filter((item) => item.record_type == 'addAction'));
         results = results.concat(pv.filter((item) => item.record_type == 'replaceAction'));
-        
+
         // Process deletions and replacements
         pv.filter((item) => item.record_type == 'replaceAction').forEach((filteredItem) => {
             results = results.filter((result) => !(result.lt(filteredItem) && (filteredItem.replacee == null || filteredItem.replacee === undefined ||  filteredItem.replacee == result.value )));
         });
-        
+
         pv.filter((item) => item.record_type == 'deleteAction').forEach((filteredItem) => {
             results = results.filter((result) => !(result.lt(filteredItem) && result.value == filteredItem.value));
         });
@@ -270,10 +315,8 @@ export class KrProperty {
         for(let pv of this._propertyValuesNetCache){
             pv.valid = true
         }
-        
-        return results;
     }
-
+    
     
     get propertyValuesAll() {
         // return in reverse order

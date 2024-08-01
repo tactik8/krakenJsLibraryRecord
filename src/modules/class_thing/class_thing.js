@@ -823,6 +823,23 @@ export class KrThing {
     }
 
 
+    merge(other){
+        // Inserts other in this thing
+
+        if(this.eq(other) == false){ return }
+
+        for(let otherP of other._properties){
+
+            let thisP = this.getProperty(otherP.propertyID)
+            thisP.merge(otherP)
+            
+        }
+        return
+        
+    }
+
+    
+
     print(){
         return this.printScreen()
     }

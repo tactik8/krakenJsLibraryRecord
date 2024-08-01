@@ -482,6 +482,26 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         if (this.propertyID && this.propertyID == other.propertyID) return true;
         return false;
     }
+    getPropertyValueById(propertyValueID) {
+        if (!propertyValueID || propertyValueID == null) return;
+        for (let pv of this._propertyValues){
+            if (pv.record_id == propertyValueID) return pv;
+        }
+        return null;
+    }
+    merge(other) {
+        // merge other property with this property
+        if (!other || other == null) return;
+        console.log(other.propertyID);
+        for (let otherPV of other._propertyValues){
+            let thisPV = this.getPropertyValueById(otherPV.record_id);
+            if (thisPV == null) {
+                console.log("push");
+                this._propertyValues.push(otherPV);
+            }
+        }
+        this.compilePropertyValues(true);
+    }
     //
     // ----------------------------------------------------
     // Records 
@@ -574,12 +594,18 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         return results;
     }
     get propertyValuesNet() {
+        this.compilePropertyValues();
+        return this._propertyValuesNetCache;
+    }
+    compilePropertyValues(force = false) {
         let pv = this._propertyValues;
         let cache = this._propertyValuesNetCache;
         let cacheOld = this._propertyValuesNetCacheOld;
-        if (cache && cache != null && cache.length > 0) {
-            pv = cache;
-            if (cache == cacheOld) return cache;
+        if (force == false) {
+            if (cache && cache != null && cache.length > 0) {
+                pv = cache;
+                if (cache == cacheOld) return cache;
+            }
         }
         let results = [];
         // Process additions        
@@ -607,7 +633,6 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         for (let pv of this._propertyValues)pv.valid = false;
         // Reenable validity 
         for (let pv of this._propertyValuesNetCache)pv.valid = true;
-        return results;
     }
     get propertyValuesAll() {
         // return in reverse order
@@ -1190,6 +1215,15 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         if (this.record_type != other.record_type) return false;
         if (this.record_id != other.record_id) return false;
         return true;
+    }
+    merge(other) {
+        // Inserts other in this thing
+        if (this.eq(other) == false) return;
+        for (let otherP of other._properties){
+            let thisP = this.getProperty(otherP.propertyID);
+            thisP.merge(otherP);
+        }
+        return;
     }
     print() {
         return this.printScreen();

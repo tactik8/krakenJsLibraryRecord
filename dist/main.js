@@ -1069,6 +1069,7 @@ function $15777fe91204fd32$var$getSystemUpdatedDate(thisThing) {
 const $1e5076492b5590f0$export$a2adb632404a3e74 = {
     getFirstItem: $1e5076492b5590f0$var$getFirstItem,
     getLastItem: $1e5076492b5590f0$var$getLastItem,
+    getItems: $1e5076492b5590f0$var$getItems,
     setItems: $1e5076492b5590f0$var$setItems,
     pushItem: $1e5076492b5590f0$var$pushItem,
     reCalculatePosition: $1e5076492b5590f0$var$reCalculatePosition,
@@ -1609,6 +1610,12 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         return (0, $1e5076492b5590f0$export$a2adb632404a3e74).getItems(this);
     }
     set items(value) {
+        return (0, $1e5076492b5590f0$export$a2adb632404a3e74).setItems(this, value);
+    }
+    getItems() {
+        return (0, $1e5076492b5590f0$export$a2adb632404a3e74).getItems(this);
+    }
+    setItems(value) {
         return (0, $1e5076492b5590f0$export$a2adb632404a3e74).setItems(this, value);
     }
     get firstItem() {

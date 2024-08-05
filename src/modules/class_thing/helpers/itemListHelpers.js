@@ -1,6 +1,7 @@
 export const itemListHelpers = {
     getFirstItem: getFirstItem,
     getLastItem: getLastItem,
+    getItems: getItems,
     setItems: setItems,
     pushItem: pushItem,
     reCalculatePosition: reCalculatePosition,

@@ -459,7 +459,14 @@ export class KrThing {
         return itemListHelpers.setItems(this, value)
     }
 
-    
+    getItems(){
+        return itemListHelpers.getItems(this)
+    }
+
+    setItems(value){
+        return itemListHelpers.setItems(this, value)
+    }
+
     get firstItem(){
         return itemListHelpers.getFirstItem(this)
     }

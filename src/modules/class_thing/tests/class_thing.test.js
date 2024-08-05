@@ -149,8 +149,6 @@ test('KrThing fullRecord', function () {
     k2.fullRecord = k1.fullRecord;
     //console.log(JSON.stringify(k2.fullRecord, null, 4));
 
-
-    
     expect(k2.name).toStrictEqual(k1.name);
     expect(k2.fullRecord).toStrictEqual(k1.fullRecord);
 
@@ -172,14 +170,11 @@ test('KrThing refRecord', function () {
     k1.setProperty('url', 'https://www.test.com');
     k1.setProperty('object', k2);
 
-    k3.fullRecord = k1.refRecord;
+    k3.record = k1.recordRef;
 
     var object = k3.getProperty('object').value;
-    
-
-    var nameProperty = object.getProperty('name');
-    
-    expect(nameProperty.value).toStrictEqual(null);
+    expect(object).toStrictEqual(null);
+   
     
 });
 

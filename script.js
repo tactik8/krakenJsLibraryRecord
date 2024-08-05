@@ -9,46 +9,45 @@ import { KrThing } from "./src/index.js";
 function test1(){
 
 
+    var t = new KrThing()
 
-    let record1 = {
-            "@context": "https://schema.org/",
-            "@type": "Thing",
-            "@id": "thing1",
-            "name": "thing1"
-        }
-    let record2 = {
-        "@context": "https://schema.org/",
-        "@type": "Thing",
-        "@id": "thing1",
-        "name": "thing1",
-        "test": "test1"
-    }
+    let k0 = new KrThing('Thing', 'id0')
+    let k1 = new KrThing('Thing', 'id1')
+    let k2 = new KrThing('Thing', 'id2')
+    let k3 = new KrThing('Thing', 'id3')
+    let k4 = new KrThing('Thing', 'id4')
 
+    var i0 = t.add(k0)
+    var i1 = t.add(k1)
+    var i2 = t.add(k2)
+    var i3 = t.add(k3)
+    var i4 = t.add(k4)
 
-    let t1 = new KrThing()
-    t1.record = record1
+    var last = t.lastItem
 
-    for(let p of t1._properties){
-        console.log('a', p.propertyID)
-    }
-
+    console.log(last.position)
 
     
-    let t2 = new KrThing()
-    t2.record = record2
+    console.log(t.firstItem.position)
 
-    for(let p of t2._properties){
-        console.log('b', p.propertyID)
-    }
+    expect(i1.nextItem.ref).toStrictEqual(i2.ref)
+    expect(i2.nextItem.ref).toStrictEqual(i3.ref)
+    expect(i3.nextItem.ref).toStrictEqual(i4.ref)
+    expect(i4.nextItem).toStrictEqual(null)
 
-    console.log(t1._properties.length)
-    console.log(t2._properties.length)
+    expect(i0.previousItem).toStrictEqual(null)
+    expect(i2.previousItem.ref).toStrictEqual(i1.ref)
+    expect(i3.previousItem.ref).toStrictEqual(i2.ref)
+    expect(i4.previousItem.ref).toStrictEqual(i3.ref)
 
-    t1.merge(t2)
-    
-    console.log(t1._properties.length)
-    console.log(t1.record)
+    //
+    t.remove(k2.ref)
+    expect(i1.nextItem.ref).toStrictEqual(i3.ref)
+    expect(i2.nextItem).toStrictEqual(null)
+    expect(i3.nextItem.ref).toStrictEqual(i4.ref)
+    expect(i4.nextItem).toStrictEqual(null)
 
+    expect(t.items.length).toStrictEqual(4)
 
 
 

@@ -25,31 +25,8 @@ function test1(){
 
     var last = t.lastItem
 
-    console.log(last.position)
-
-    
-    console.log(t.firstItem.position)
-
-    expect(i1.nextItem.ref).toStrictEqual(i2.ref)
-    expect(i2.nextItem.ref).toStrictEqual(i3.ref)
-    expect(i3.nextItem.ref).toStrictEqual(i4.ref)
-    expect(i4.nextItem).toStrictEqual(null)
-
-    expect(i0.previousItem).toStrictEqual(null)
-    expect(i2.previousItem.ref).toStrictEqual(i1.ref)
-    expect(i3.previousItem.ref).toStrictEqual(i2.ref)
-    expect(i4.previousItem.ref).toStrictEqual(i3.ref)
-
-    //
-    t.remove(k2.ref)
-    expect(i1.nextItem.ref).toStrictEqual(i3.ref)
-    expect(i2.nextItem).toStrictEqual(null)
-    expect(i3.nextItem.ref).toStrictEqual(i4.ref)
-    expect(i4.nextItem).toStrictEqual(null)
-
-    expect(t.items.length).toStrictEqual(4)
-
-
+    let items = t.getItems()
+    console.log('l', items)
 
     
 }

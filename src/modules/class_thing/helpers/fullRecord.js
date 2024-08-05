@@ -1,7 +1,7 @@
 
 import { KrProperty } from "../../class_property/class_property.js";
 
-import { recordHelpers } from './recordHelpers'
+import { recordHelpers } from './recordHelpers.js'
 
 let MAX_DEPTH = 10;
 

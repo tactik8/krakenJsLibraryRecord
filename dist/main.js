@@ -117,10 +117,16 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
     set object(value) {
         this._record.object = value;
     }
+    eq(other) {
+        return this.equal(other);
+    }
     equal(other) {
         // returns true if data comes from same object
-        if (this.object == other.object) return true;
-        return false;
+        if (this.object != other.object) return false;
+        if (this.instrument != other.instrument) return false;
+        if (this.credibility != other.credibility) return false;
+        if (this.observationDate != other.observationDate) return false;
+        return true;
     }
     isValid(comparisonDate = null) {
         // Returns true if value is within velidFrom, validThrough. Uses today's date if not provided
@@ -363,7 +369,7 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
             "previousItem",
             "nextItem"
         ].includes(this.propertyID)) record.object["value"] = this?.value?.ref;
-        if (this.value && this.value.record_type) record.object["value"] = this.value.getSystemRecord(maxDepth, currentDepth);
+        else if (this.value && this.value.record_type) record.object["value"] = this.value.getSystemRecord(maxDepth, currentDepth);
         else record.object["value"] = this.value;
         return record;
     }
@@ -386,8 +392,9 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     }
     eq(other) {
         // returns true if equal
-        if (this.value == other.value) return true;
-        return false;
+        if (this.value != other.value) return false;
+        if (this.metadata.eq(other.metadata) == false) return false;
+        return true;
     }
     gt(other) {
         return this.metadata.gt(other.metadata);
@@ -489,18 +496,23 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         }
         return null;
     }
+    contains(newPV) {
+        // Return true if already contains same propertyValue
+        if (!newPV || newPV == null) return;
+        for (let pv of this._propertyValues){
+            if (pv.eq(newPV)) return true;
+        }
+        return false;
+    }
     merge(other) {
         // merge other property with this property
+        let needCompileFlag = false;
         if (!other || other == null) return;
-        console.log(other.propertyID);
-        for (let otherPV of other._propertyValues){
-            let thisPV = this.getPropertyValueById(otherPV.record_id);
-            if (thisPV == null) {
-                console.log("push");
-                this._propertyValues.push(otherPV);
-            }
+        for (let pv of other._propertyValues)if (this.contains(pv) == false) {
+            this._propertyValues.push(other);
+            needCompileFlag = true;
         }
-        this.compilePropertyValues(true);
+        if (needCompileFlag == true) this.compilePropertyValues(true);
     }
     //
     // ----------------------------------------------------
@@ -668,6 +680,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         newValueObject.metadata.inheritMetadata(metadataRecord);
         this._propertyValues.push(newValueObject);
         newValueObject.metadata.position = this._propertyValues.length;
+        if (this.contains(newValueObject) == true) return;
         // Add to cache
         if (this._propertyValuesNetCache && this._propertyValuesNetCache != null) this._propertyValuesNetCache.push(newValueObject);
         // Reset cache
@@ -806,6 +819,56 @@ function $5023fd7783d7f1f5$var$ensureArray(value) {
 
 
 
+class $1d5c0a80bf95d833$export$f5bc5036afac6116 {
+    /**
+     * Cache to store things
+     */ constructor(maxTime = null){
+        this._db = {};
+        this._maxTime = maxTime;
+    }
+    get(record_type, record_id) {
+        if (!record_type || record_type == null) return null;
+        if (!record_id || record_id == null) return null;
+        return this._db?.[record_type]?.[record_id]?.["item"] || null;
+    }
+    add(thing) {
+        return this.set(thing);
+    }
+    push(thing) {
+        return this.set(thing);
+    }
+    set(thing) {
+        if (Array.isArray(thing)) thing.map((x)=>set(x));
+        let record_type = thing.record_type;
+        let record_id = thing.record_id;
+        if (!record_type || record_type == null) return null;
+        if (!record_id || record_id == null) return null;
+        this._db[record_type] = this._db[record_type] || {};
+        this._db[record_type][record_id] = this._db[record_type][record_id] || {};
+        // Merge with current item if exists
+        let currentElement = this._db[record_type][record_id]?.item;
+        if (currentElement && currentElement.record_type) currentElement.merge(thing);
+        else this._db[record_type][record_id].item = thing;
+        this._db[record_type][record_id].date = Date();
+    }
+    post(thing) {
+        return this.set(thing);
+    }
+    get things() {
+        let things = [];
+        for (let record_type of Object.keys(this._db))for (let record_id of Object.keys(this._db[record_type])){
+            if (record_type && record_type != null) {
+                if (record_id && record_id != null) {
+                    let thing = this.get(record_type, record_id);
+                    things.push(thing);
+                }
+            }
+        }
+        return things;
+    }
+}
+
+
 let $abae92a4b70ab60a$var$MAX_DEPTH = 10;
 const $abae92a4b70ab60a$export$bb6f43e012b3136d = {
     get: $abae92a4b70ab60a$var$getSystemRecord,
@@ -818,14 +881,16 @@ function $abae92a4b70ab60a$var$getSystemRecord(thing, maxDepth = $abae92a4b70ab6
     record["@type"] = thing.record_type;
     record["@id"] = thing.record_id;
     record.propertyValues = [];
-    record.summary = thing.getFullRecord();
-    for (let p of thing.properties)record.propertyValues = record.propertyValues.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
-    record.propertyValues.filter((x)=>x && x != null);
-    record.references = thing.things.map((x)=>x.ref);
+    record.summary = thing.getFullRecord(1);
+    let pvs = [];
+    for (let p of thing.properties)pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
+    record.propertyValues = pvs;
+    //record.propertyValues.filter(x => x && x != null)
     return record;
 }
-function $abae92a4b70ab60a$var$setSystemRecord(thing, value) {
+function $abae92a4b70ab60a$var$setSystemRecord(thing, value, cache) {
     // Load data into object
+    if (!cache || cache == null) cache = new (0, $1d5c0a80bf95d833$export$f5bc5036afac6116)();
     // Convert from string if one
     if (typeof value === "string" || value instanceof String) try {
         value = JSON.parse(value);
@@ -851,14 +916,19 @@ function $abae92a4b70ab60a$var$setSystemRecord(thing, value) {
     let pvRecords = $abae92a4b70ab60a$var$ensureArray(value.propertyValues);
     if (pvRecords.length == 0) return;
     // convert sub things to KrThing
+    let counter = 0;
     for (let pvRecord of pvRecords){
         if (!pvRecord || pvRecord == null) continue;
         let value = pvRecord?.object?.value;
         if (!value || value == null) continue;
         if (value["@type"] && value["@type"] != null) {
             var t = thing.new(value?.["@type"], value?.["@id"]);
-            t.setSystemRecord(value);
+            t.setSystemRecord(value, cache);
+            // Store and retrieve to cache to avoid duplicate things
+            cache.set(t);
+            t = cache.get(t.record_type, t.record_id);
             pvRecord.object.value = t;
+            counter += 1;
         }
     }
     // Group pvRecords by propertyID
@@ -1026,26 +1096,23 @@ function $34a656a0ca5890da$var$printScreenAll() {
 }
 
 
+
+let $15777fe91204fd32$var$MAXLEVEL = 5;
 const $15777fe91204fd32$export$c35ca6a8a122f0b9 = {
     getThings: $15777fe91204fd32$var$getThings,
     getSystemCreatedDate: $15777fe91204fd32$var$getSystemCreatedDate,
     getSystemUpdatedDate: $15777fe91204fd32$var$getSystemUpdatedDate
 };
-function $15777fe91204fd32$var$getThings(thisThing, db = []) {
-    let results = [];
+function $15777fe91204fd32$var$getThings(thisThing, cache, maxLevel = $15777fe91204fd32$var$MAXLEVEL, currentLevel = 0) {
+    // Gets all things objects used as values of this 
+    if (!cache || cache == null) cache = new (0, $1d5c0a80bf95d833$export$f5bc5036afac6116)();
     for (let p of thisThing._properties){
         for (let v of p.values)if (v?.record_type) {
-            let id = v?.record_type + "/" + v.record_id;
-            if (!db.includes(id)) {
-                results.push(v);
-                db.push(id);
-                results = results.concat(v.getThings(db));
-            }
+            cache.push(v);
+            if (currentLevel < maxLevel) $15777fe91204fd32$var$getThings(v, cache, maxLevel, currentLevel + 1);
         }
     }
-    results = results.filter(function(el) {
-        return el != null;
-    });
+    let results = cache.things;
     return results;
 }
 function $15777fe91204fd32$var$getSystemCreatedDate(thisThing) {
@@ -1110,43 +1177,41 @@ function $1e5076492b5590f0$var$getItems(thisThing) {
 }
 function $1e5076492b5590f0$var$setItems(thisThing, values) {
     values = $1e5076492b5590f0$var$ensureArray(values);
-    // Sort values
-    function compare(a, b) {
-        if (a.position < b.position) return -1;
-        if (a.position > b.position) return 1;
-        return 0;
-    }
-    values.sort(compare);
-    for (let value of values)thisThing.add(value);
-    return;
+    pushItems(thisThing, values);
 }
 function $1e5076492b5590f0$var$pushItem(thisThing, listItems) {
-    let lastItem = $1e5076492b5590f0$var$getLastItem(thisThing);
     listItems = $1e5076492b5590f0$var$ensureArray(listItems);
+    // Prepare listItems
+    let newListItems = [];
     for (let listItem of listItems){
+        // Check if thing, else convert to one
         if (!listItem.record_type) {
             let newListItem = thisThing.new();
             newListItem.record = listItem;
             listItem = newListItem;
         }
+        // Check if ListItem, else convert to one
         if (listItem.record_type != "ListItem") {
             let newListItem = thisThing.new("ListItem");
             newListItem.item = listItem;
             listItem = newListItem;
         }
-        if (lastItem && lastItem != null) {
-            listItem.position = lastItem.position + 1;
-            listItem.previousItem = lastItem;
-            listItem.nextItem = null;
-            lastItem.nextItem = listItem;
-        } else {
-            listItem.position = 0;
-            listItem.previousItem = null;
-            listItem.nextItem = null;
-        }
-        thisThing.addProperty("itemListElement", listItem);
-        lastItem = listItem;
+        newListItems.push(listItem);
     }
+    // Set previous, next and position
+    let lastListItem = $1e5076492b5590f0$var$getLastItem(thisThing);
+    let newListItemsLength = newListItems.length;
+    for(let i = 0; i < newListItemsLength; i++){
+        let listItem = newListItems[i];
+        if (lastListItem && lastListItem != null) {
+            listItem.position = lastListItem.position + 1;
+            listItem.previousItem = lastListItem;
+            lastListItem.nextItem = listItem;
+        } else listItem.position = 0;
+        lastListItem = listItem;
+    }
+    // Add to property
+    thisThing.addProperty("itemListElement", newListItems);
     return; //listItem
 }
 function $1e5076492b5590f0$var$reCalculatePosition(thisThing) {
@@ -1456,12 +1521,10 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         return (0, $86c66b9faa0c31b0$export$a99cefbafba9661b).getAll(this);
     }
     get things() {
-        return this.getThings([
-            this.record_type + "/" + this.record_id
-        ]);
+        return this.getThings();
     }
-    getThings(db = []) {
-        return (0, $15777fe91204fd32$export$c35ca6a8a122f0b9).getThings(this, db);
+    getThings() {
+        return (0, $15777fe91204fd32$export$c35ca6a8a122f0b9).getThings(this);
     }
     // -----------------------------------------------------
     //  System attributes
@@ -1591,6 +1654,12 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     set item(value) {
         return this.setProperty("item", value);
     }
+    get position() {
+        return this.getProperty("position").value;
+    }
+    set position(value) {
+        return this.setProperty("position", value);
+    }
     get previousItem() {
         return this.getProperty("previousItem").value;
     }
@@ -1681,7 +1750,6 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     set query(value) {
         this._query = value;
     }
-    item;
     get basePath() {
         return this._basePath;
     }

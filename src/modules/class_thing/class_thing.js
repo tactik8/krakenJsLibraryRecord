@@ -183,11 +183,11 @@ export class KrThing {
     }
 
     get things() {
-        return this.getThings([this.record_type + "/" + this.record_id]);
+        return this.getThings();
     }
 
-    getThings(db = []) {
-        return valueManipulation.getThings(this, db)
+    getThings() {
+        return valueManipulation.getThings(this)
     }
 
     // -----------------------------------------------------
@@ -430,6 +430,14 @@ export class KrThing {
         return this.setProperty('item', value)
     }
 
+    get position(){
+        return this.getProperty('position').value
+    }
+
+    set position(value){
+        return this.setProperty('position', value)
+    }
+
     get previousItem(){
         return this.getProperty('previousItem').value
     }
@@ -550,7 +558,7 @@ export class KrThing {
 
     set query(value){
         this._query = value
-    } item
+    } 
 
 
     get basePath(){

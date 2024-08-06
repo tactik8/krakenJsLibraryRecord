@@ -1,4 +1,7 @@
 
+import { KrCache } from './krakenCache.js'
+
+let MAXLEVEL = 5
 
 export const valueManipulation = {
 
@@ -8,24 +11,28 @@ export const valueManipulation = {
 }
 
 
-function getThings(thisThing, db = []) {
-    let results = [];
+function getThings(thisThing, cache, maxLevel=MAXLEVEL, currentLevel=0) {
+    // Gets all things objects used as values of this 
 
+    if(!cache || cache == null){
+        cache = new KrCache()
+        //cache.add(thisThing)
+    }
+    
     for (let p of thisThing._properties) {
         for (let v of p.values) {
             if (v?.record_type) {
-                let id = v?.record_type + "/" + v.record_id;
-                if (!db.includes(id)) {
-                    results.push(v);
-                    db.push(id);
-                    results = results.concat(v.getThings(db));
+                cache.push(v)
+
+                if(currentLevel < maxLevel){
+                    getThings(v, cache, maxLevel, currentLevel + 1)
                 }
+                
             }
         }
     }
-    results = results.filter(function (el) {
-        return el != null;
-    });
+    
+    let results = cache.things
 
     return results;
 }

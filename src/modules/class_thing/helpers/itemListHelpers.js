@@ -68,58 +68,57 @@ function getItems(thisThing) {
 function setItems(thisThing, values) {
     values = ensureArray(values);
 
-    // Sort values
-    function compare(a, b) {
-        if (a.position < b.position) {
-            return -1;
-        }
-        if (a.position > b.position) {
-            return 1;
-        }
-        return 0;
-    }
-
-    values.sort(compare);
-
-    for (let value of values) {
-        thisThing.add(value);
-    }
-
-    return;
+    pushItems(thisThing, values)
 }
 
 function pushItem(thisThing, listItems) {
-    let lastItem = getLastItem(thisThing);
-
+    
     listItems = ensureArray(listItems);
 
+    // Prepare listItems
+    let newListItems = []
     for (let listItem of listItems) {
+
+        // Check if thing, else convert to one
         if (!listItem.record_type) {
             let newListItem = thisThing.new();
             newListItem.record = listItem;
             listItem = newListItem;
         }
 
+        // Check if ListItem, else convert to one
         if (listItem.record_type != "ListItem") {
             let newListItem = thisThing.new("ListItem");
             newListItem.item = listItem;
             listItem = newListItem;
         }
-
-        if (lastItem && lastItem != null) {
-            listItem.position = lastItem.position + 1;
-            listItem.previousItem = lastItem;
-            listItem.nextItem = null;
-            lastItem.nextItem = listItem;
-        } else {
-            listItem.position = 0;
-            listItem.previousItem = null;
-            listItem.nextItem = null;
-        }
-        thisThing.addProperty("itemListElement", listItem);
-        lastItem = listItem;
+        newListItems.push(listItem)
     }
 
+
+    
+    // Set previous, next and position
+    let lastListItem = getLastItem(thisThing);
+    let newListItemsLength = newListItems.length
+    
+    for(let i=0; i< newListItemsLength; i++){
+        
+        let listItem = newListItems[i]
+        
+        if (lastListItem && lastListItem != null) {
+            listItem.position = lastListItem.position + 1;
+            listItem.previousItem = lastListItem;
+            lastListItem.nextItem = listItem
+        } else {
+            listItem.position = 0;
+        }
+        lastListItem = listItem
+
+    }
+
+    // Add to property
+    thisThing.addProperty("itemListElement", newListItems);
+    
     return; //listItem
 }
 

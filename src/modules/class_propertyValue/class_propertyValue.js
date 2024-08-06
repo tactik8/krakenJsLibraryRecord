@@ -243,9 +243,7 @@ export class KrPropertyValue {
 
         if(['previousItem', 'nextItem'].includes(this.propertyID) ){
             record.object['value'] = this?.value?.ref
-        } 
-        
-        if (this.value && this.value.record_type ){
+        } else if (this.value && this.value.record_type ){
             record.object['value'] = this.value.getSystemRecord(maxDepth, currentDepth);
         } else {
             record.object['value'] = this.value
@@ -279,10 +277,12 @@ export class KrPropertyValue {
     
     eq(other){
         // returns true if equal
-        if (this.value == other.value){
-            return true
-        };
-        return false;
+        
+        if (this.value != other.value){ return false }
+        if (this.metadata.eq(other.metadata) == false ){ return false }
+        
+        return true
+       
     }
     
     gt(other){

@@ -109,20 +109,39 @@ export class KrProperty {
         
     }
 
+
+    contains(newPV){
+        // Return true if already contains same propertyValue
+
+
+        if(!newPV || newPV == null ){ return }
+        
+        for(let pv of this._propertyValues){
+            if(pv.eq(newPV)){ return true}
+        }
+        return false
+        
+    }
+
+    
     merge(other){
         // merge other property with this property
 
+        let needCompileFlag = false
+        
         if(!other || other == null){ return }
-        console.log(other.propertyID)
-        for(let otherPV of other._propertyValues){
-            let thisPV = this.getPropertyValueById(otherPV.record_id)
-            if(thisPV == null){
-                console.log('push')
-                this._propertyValues.push(otherPV)
+     
+        for(let pv of other._propertyValues){
+            if(this.contains(pv) == false){
+                this._propertyValues.push(other)
+                needCompileFlag = true
             }
+            
         }
 
-        this.compilePropertyValues(true)
+        if(needCompileFlag == true){
+            this.compilePropertyValues(true)
+        }
         
     }
 
@@ -364,7 +383,6 @@ export class KrProperty {
             newValueObject = d
         }
         
-        
         if (!(newValueObject instanceof KrPropertyValue)) {
             newValueObject = new KrPropertyValue(this.propertyID, value, actionType);
         }
@@ -374,6 +392,9 @@ export class KrProperty {
         newValueObject.metadata.position = this._propertyValues.length;
 
 
+        if(this.contains(newValueObject) == true){ return }
+
+        
         // Add to cache
         if(this._propertyValuesNetCache && this._propertyValuesNetCache != null){
             this._propertyValuesNetCache.push(newValueObject)

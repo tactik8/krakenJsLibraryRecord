@@ -164,12 +164,18 @@ export class KrMetadata {
         this._record.object = value;
     }
 
+
+    eq(other){
+        return this.equal(other)
+    }
+    
     equal(other){
         // returns true if data comes from same object
-        if (this.object == other.object){
-            return true
-        };
-        return false;
+        if (this.object != other.object){ return false }
+        if (this.instrument != other.instrument){ return false }
+        if (this.credibility != other.credibility){ return false }
+        if ( this.observationDate != other.observationDate){ return false };
+        return true;
     }
 
 

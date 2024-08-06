@@ -30,6 +30,10 @@ test('KrThings init', function () {
 
     expect(last.position).toStrictEqual(4);
 
+
+    let items = t.getItems()
+    expect(items.length).toStrictEqual(5);
+
     
 
 

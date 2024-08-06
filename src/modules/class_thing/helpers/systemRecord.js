@@ -1,6 +1,9 @@
 
 import { KrProperty } from "../../class_property/class_property.js";
 
+import { KrCache } from './krakenCache.js'
+
+
 let MAX_DEPTH = 10;
 
 
@@ -23,24 +26,30 @@ function getSystemRecord(thing, maxDepth=MAX_DEPTH, currentDepth=0) {
     record["@type"] = thing.record_type;
     record["@id"] = thing.record_id;
     record.propertyValues = []
-    record.summary = thing.getFullRecord()
+    record.summary = thing.getFullRecord(1)
 
-
+    let pvs = []
     for (let p of thing.properties) {
-        record.propertyValues = record.propertyValues.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
+            pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
     }
+    record.propertyValues = pvs
 
-    record.propertyValues.filter(x => x && x != null)
+    //record.propertyValues.filter(x => x && x != null)
 
-
-    record.references = thing.things.map(x => x.ref)
     return record;
 }
 
 
-function setSystemRecord(thing, value) {
+function setSystemRecord(thing, value, cache) {
     // Load data into object
 
+    if(!cache || cache == null){
+        cache = new KrCache()
+        
+    }
+
+    
+    
     // Convert from string if one
     if(typeof value === 'string' || value instanceof String){
 
@@ -58,7 +67,6 @@ function setSystemRecord(thing, value) {
 
     // Reset current properties
     thing._properties = [];
-
 
 
     // Convert from old format to new
@@ -83,16 +91,24 @@ function setSystemRecord(thing, value) {
     if(pvRecords.length == 0 ){ return }
 
     // convert sub things to KrThing
+    let counter = 0
     for(let pvRecord of pvRecords){
         if(!pvRecord || pvRecord == null) { continue }
         let value = pvRecord?.object?.value
         if(!value || value == null) { continue }
         if (value["@type"] && value["@type"] != null) {
             var t = thing.new(value?.["@type"],value?.["@id"]);
-            t.setSystemRecord(value);
+            t.setSystemRecord(value, cache);
+
+            // Store and retrieve to cache to avoid duplicate things
+            cache.set(t)
+            t = cache.get(t.record_type, t.record_id)
+
             pvRecord.object.value = t;
+            counter += 1
         }
     }
+    
 
     // Group pvRecords by propertyID
     let propertyIDs = [...new Set(pvRecords.map((x) => x.object.propertyID ))];
@@ -105,6 +121,9 @@ function setSystemRecord(thing, value) {
         thing._properties.push(property);
 
     }
+
+    
+
 }
 
 

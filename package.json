@@ -15,8 +15,9 @@
   },
   "name": "krakenrecord",
   "description": "Record utilities",
-  "version": "1.0.53",
+  "version": "1.0.54",
   "dependencies": {
+    "krakenhelper": "^0.0.2",
     "uuid": "^9.0.1"
   },
   "author": "Tactik8",

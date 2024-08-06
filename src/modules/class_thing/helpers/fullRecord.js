@@ -42,7 +42,7 @@ function setFullRecord(thisThing, value) {
     
     thisThing._properties = [];
     Object.keys(value).forEach((key) => {
-            thisThing.replaceProperty(key, null, value[key]);
+        thisThing.replaceProperty(key, null, value[key]);
     });
 }
 

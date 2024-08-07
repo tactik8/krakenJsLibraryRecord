@@ -4,6 +4,7 @@ import { KrProperty } from "../class_property/class_property.js";
 import { KrMetadata } from "../class_metadata/class_metadata.js";
 
 import { fullRecord } from "./helpers/fullRecord.js";
+import { bestRecord } from "./helpers/bestRecord.js";
 
 import { systemRecord } from "./helpers/systemRecord.js";
 import { thingComparison } from "./helpers/thingComparison.js";
@@ -187,6 +188,7 @@ export class KrThing {
     }
 
     getThings() {
+        // Returns itself and all things references in values
         return valueManipulation.getThings(this)
     }
 
@@ -218,7 +220,9 @@ export class KrThing {
     set fullRecord(value) {
         this.setFullRecord(value);
     }
- 
+    get bestRecord() {
+        return this.getBestRecord();
+    }
 
     getFullRecord(maxDepth = MAX_DEPTH, currentDepth = 0) {
         return fullRecord.get(this, maxDepth, currentDepth);
@@ -228,7 +232,9 @@ export class KrThing {
         return fullRecord.set(this, value);
     }
 
-
+    getBestRecord(maxDepth = MAX_DEPTH, currentDepth = 0) {
+        return bestRecord.get(this, maxDepth, currentDepth);
+    }
    
 
     // ----------------------------------------------------

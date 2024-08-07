@@ -61,12 +61,24 @@ function merge(thisThing, otherThing){
 
     if(thisThing.eq(otherThing) == false){ return }
 
+    // Merge properties
     for(let otherThingP of otherThing._properties){
 
         let thisThingP = thisThing.getProperty(otherThingP.propertyID)
         thisThingP.merge(otherThingP)
 
     }
+
+    // Merge callbacks and reset other
+    for(let k in otherThing._callbacks){
+        for(let c of otherThing._callbacks[k]){
+            thisThing.addEventListener(k, c)
+        }
+        
+    }
+    otherThing._callbacks = {}
+    
+    
     return
 
 }

@@ -793,7 +793,10 @@ const $5023fd7783d7f1f5$export$36a45895aad18260 = {
 };
 function $5023fd7783d7f1f5$var$getFullRecord(thisThing, maxDepth = $5023fd7783d7f1f5$var$MAX_DEPTH, currentDepth = 0) {
     if (!maxDepth || maxDepth == null) maxDepth = $5023fd7783d7f1f5$var$MAX_DEPTH;
-    if (currentDepth >= maxDepth) return thisThing.ref;
+    if (currentDepth >= maxDepth) {
+        if (this.record_type == "QuantitativeValue") ;
+        else return thisThing.ref;
+    }
     let record = {};
     let properties = thisThing.properties;
     for (let p of properties)record[p.propertyID] = p.getFullRecord(maxDepth, currentDepth + 1);
@@ -811,6 +814,35 @@ function $5023fd7783d7f1f5$var$setFullRecord(thisThing, value) {
     });
 }
 function $5023fd7783d7f1f5$var$ensureArray(value) {
+    if (Array.isArray(value)) return value;
+    else return [
+        value
+    ];
+}
+
+
+
+
+let $84ed72b58e467906$var$MAX_DEPTH = 10;
+const $84ed72b58e467906$export$c782758d24e32a9e = {
+    get: $84ed72b58e467906$var$getBestRecord
+};
+function $84ed72b58e467906$var$getBestRecord(thisThing, maxDepth = $84ed72b58e467906$var$MAX_DEPTH, currentDepth = 0) {
+    if (!maxDepth || maxDepth == null) maxDepth = $84ed72b58e467906$var$MAX_DEPTH;
+    if (currentDepth >= maxDepth) {
+        if (this.record_type == "QuantitativeValue") ;
+        else return thisThing.ref;
+    }
+    let record = {};
+    let properties = thisThing.properties;
+    for (let p of properties)record[p.propertyID] = p.getBestRecord(maxDepth, currentDepth + 1);
+    record["@type"] = thisThing.record_type;
+    record["@id"] = thisThing.record_id;
+    record = JSON.parse(JSON.stringify(record));
+    record = (0, $151dfb829471dec1$export$e91e7af1be86f42e).simplify(record);
+    return record;
+}
+function $84ed72b58e467906$var$ensureArray(value) {
     if (Array.isArray(value)) return value;
     else return [
         value
@@ -978,10 +1010,14 @@ function $68c2e8efd001e0e2$var$eq(thisThing, otherThing) {
 function $68c2e8efd001e0e2$var$merge(thisThing, otherThing) {
     // Inserts otherThing in thisThing thing
     if (thisThing.eq(otherThing) == false) return;
+    // Merge properties
     for (let otherThingP of otherThing._properties){
         let thisThingP = thisThing.getProperty(otherThingP.propertyID);
         thisThingP.merge(otherThingP);
     }
+    // Merge callbacks and reset other
+    for(let k in otherThing._callbacks)for (let c of otherThing._callbacks[k])thisThing.addEventListener(k, c);
+    otherThing._callbacks = {};
     return;
 }
 
@@ -1105,7 +1141,10 @@ const $15777fe91204fd32$export$c35ca6a8a122f0b9 = {
 };
 function $15777fe91204fd32$var$getThings(thisThing, cache, maxLevel = $15777fe91204fd32$var$MAXLEVEL, currentLevel = 0) {
     // Gets all things objects used as values of this 
-    if (!cache || cache == null) cache = new (0, $1d5c0a80bf95d833$export$f5bc5036afac6116)();
+    if (!cache || cache == null) {
+        cache = new (0, $1d5c0a80bf95d833$export$f5bc5036afac6116)();
+        cache.add(thisThing);
+    }
     for (let p of thisThing._properties){
         for (let v of p.values)if (v?.record_type) {
             cache.push(v);
@@ -1524,6 +1563,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         return this.getThings();
     }
     getThings() {
+        // Returns itself and all things references in values
         return (0, $15777fe91204fd32$export$c35ca6a8a122f0b9).getThings(this);
     }
     // -----------------------------------------------------
@@ -1550,11 +1590,17 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     set fullRecord(value) {
         this.setFullRecord(value);
     }
+    get bestRecord() {
+        return this.getBestRecord();
+    }
     getFullRecord(maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH, currentDepth = 0) {
         return (0, $5023fd7783d7f1f5$export$36a45895aad18260).get(this, maxDepth, currentDepth);
     }
     setFullRecord(value) {
         return (0, $5023fd7783d7f1f5$export$36a45895aad18260).set(this, value);
+    }
+    getBestRecord(maxDepth = $8b9cc78875f648b9$var$MAX_DEPTH, currentDepth = 0) {
+        return (0, $84ed72b58e467906$export$c782758d24e32a9e).get(this, maxDepth, currentDepth);
     }
     // ----------------------------------------------------
     // System records

@@ -16,7 +16,7 @@ function getThings(thisThing, cache, maxLevel=MAXLEVEL, currentLevel=0) {
 
     if(!cache || cache == null){
         cache = new KrCache()
-        //cache.add(thisThing)
+        cache.add(thisThing)
     }
     
     for (let p of thisThing._properties) {

@@ -363,6 +363,7 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     // Raw records 
     // ----------------------------------------------------
     getSystemRecord(maxDepth, currentDepth) {
+        //console.log('Get system value', this.propertyID)
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -376,9 +377,12 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         if ([
             "previousItem",
             "nextItem"
-        ].includes(this.propertyID)) record.object["value"] = this?.value?.ref;
-        else if (this.value && this.value.record_type) record.object["value"] = this.value.getSystemRecord(maxDepth, currentDepth);
-        else record.object["value"] = this.value;
+        ].includes(this.propertyID)) //console.log('x')
+        record.object["value"] = this?.value?.ref;
+        else if (this.value && this.value.record_type) //console.log('s')
+        record.object["value"] = this.value.export.getSystem(maxDepth, currentDepth);
+        else //console.log('v')
+        record.object["value"] = this.value;
         return record;
     }
     setSystemRecord(value) {
@@ -555,7 +559,10 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     // Records 
     // ----------------------------------------------------
     getSystemRecord(maxDepth, currentDepth) {
-        return this._propertyValues.map((x)=>x.getSystemRecord(maxDepth, currentDepth));
+        //console.log('Get system property', this.propertyID, this._propertyValues.length)
+        let results = this._propertyValues.map((x)=>x.getSystemRecord(maxDepth, currentDepth));
+        //console.log('p', results.length)
+        return results;
     }
     setSystemRecord(value1) {
         this._propertyValues = [];
@@ -796,6 +803,7 @@ function $68c2e8efd001e0e2$var$eq(thisThing, otherThing) {
 function $68c2e8efd001e0e2$var$merge(thisThing, otherThing) {
     // Inserts otherThing in thisThing thing
     if (thisThing.eq(otherThing) == false) return;
+    if (thisThing.id == otherThing.id) return;
     // Merge properties
     for (let otherThingP of otherThing._properties){
         let thisThingP = thisThing.getProperty(otherThingP.propertyID);
@@ -899,6 +907,7 @@ class $b07a281446d81d05$export$320d46383f3d0ef0 {
         if (currentElement && currentElement.record_type) currentElement.merge(thing);
         else this._db[record_type][record_id].item = thing;
         this._db[record_type][record_id].date = Date();
+        return this.get(record_type, record_id);
     }
     post(thing) {
         return this.set(thing);
@@ -1251,6 +1260,9 @@ class $986206abb55bdef7$export$89929189f1e51a0b {
     get record() {
         return $986206abb55bdef7$var$getFullRecord(this.thing);
     }
+    getRecord(maxDepth, currentDepth) {
+        return $986206abb55bdef7$var$getFullRecord(this.thing, maxDepth, currentDepth);
+    }
     set record(value) {
         return $986206abb55bdef7$var$setFullRecord(this.thing, value);
     }
@@ -1259,6 +1271,12 @@ class $986206abb55bdef7$export$89929189f1e51a0b {
     }
     get system() {
         return $986206abb55bdef7$var$getSystemRecord(this.thing);
+    }
+    get systemFlat() {
+        return $986206abb55bdef7$var$getSystemRecordFlat(this.thing);
+    }
+    getSystem(maxDepth, currentDepth) {
+        return $986206abb55bdef7$var$getSystemRecord(this.thing, maxDepth, currentDepth);
     }
     set system(value) {
         return $986206abb55bdef7$var$setSystemRecord(this.thing, value);
@@ -1310,18 +1328,28 @@ function $986206abb55bdef7$var$setFullRecord(thisThing, value) {
 // -----------------------------------------------------
 //  System record 
 // -----------------------------------------------------
-function $986206abb55bdef7$var$getSystemRecord(thing, maxDepth = $986206abb55bdef7$var$MAX_DEPTH, currentDepth = 0) {
-    if (!maxDepth || maxDepth == null) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
+function $986206abb55bdef7$var$getSystemRecordFlat(thing) {
+    console.log("Get flat", thing.record_type, thing.record_id);
+    let records = [];
+    for (let t of thing.things)records.push($986206abb55bdef7$var$getSystemRecord(t, 1, 0));
+    return records;
+}
+function $986206abb55bdef7$var$getSystemRecord(thing, maxDepth, currentDepth) {
+    if ((!maxDepth || maxDepth == null) && maxDepth != 0) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
+    if ((!currentDepth || currentDepth == null) && currentDepth != 0) currentDepth = 0;
     if (currentDepth >= maxDepth) return thing.ref;
     let record = {};
     record["@type"] = thing.record_type;
     record["@id"] = thing.record_id;
     record.propertyValues = [];
-    record.summary = $986206abb55bdef7$var$getFullRecord(thing, 1);
+    record.summary = $986206abb55bdef7$var$getFullRecord(thing, maxDepth, currentDepth);
     let pvs = [];
-    for (let p of thing.properties)pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
+    let count = 0;
+    for (let p of thing.properties){
+        count += 1;
+        pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
+    }
     record.propertyValues = pvs;
-    //record.propertyValues.filter(x => x && x != null)
     return record;
 }
 function $986206abb55bdef7$var$setSystemRecord(thing, value, cache) {
@@ -1529,7 +1557,7 @@ function $681e59e95589c3c8$var$pushItem(thisThing, listItems) {
         // Check if thing, else convert to one
         if (!listItem.record_type) {
             let newListItem = thisThing.new();
-            newListItem.record = listItem;
+            newListItem.export.record = listItem;
             listItem = newListItem;
         }
         // Check if ListItem, else convert to one
@@ -1553,7 +1581,7 @@ function $681e59e95589c3c8$var$pushItem(thisThing, listItems) {
         lastListItem = listItem;
     }
     // Add to property
-    thisThing.addProperty("itemListElement", newListItems);
+    thisThing.p.add("itemListElement", newListItems);
     return; //listItem
 }
 function $681e59e95589c3c8$var$reCalculatePosition(thisThing) {
@@ -2240,6 +2268,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     - allowEvents: 
 
     */ constructor(record_type = null, record_id = null){
+        this.id = String(crypto.randomUUID());
         this._properties = [];
         this._callbacks = {};
         this._blockEvents = false;

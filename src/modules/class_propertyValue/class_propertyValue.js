@@ -248,6 +248,7 @@ export class KrPropertyValue {
 
     getSystemRecord(maxDepth, currentDepth){
 
+        //console.log('Get system value', this.propertyID)
         let record = {}
         record['@type'] = this.record_type
         record['@id'] = this.record_id
@@ -261,10 +262,13 @@ export class KrPropertyValue {
         record.metadata = this.metadata.getSystemRecord(maxDepth, currentDepth);
 
         if(['previousItem', 'nextItem'].includes(this.propertyID) ){
+            //console.log('x')
             record.object['value'] = this?.value?.ref
         } else if (this.value && this.value.record_type ){
-            record.object['value'] = this.value.getSystemRecord(maxDepth, currentDepth);
+            //console.log('s')
+            record.object['value'] = this.value.export.getSystem(maxDepth, currentDepth);
         } else {
+            //console.log('v')
             record.object['value'] = this.value
         }
         return record;

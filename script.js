@@ -126,9 +126,15 @@ async function test2(){
     }
     t1.list.add(records)
 
-
+    console.log(JSON.stringify(t1.export.systemFlat, null, 4))
     console.log(t1.things.length)
 
+    let p = []
+    for(let tx of t1.things){
+       // p.push(tx.export.getSystem(0))
+    }
+
+    console.log(p)
 
 
 

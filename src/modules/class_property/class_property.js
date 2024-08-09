@@ -192,8 +192,11 @@ export class KrProperty {
 
 
     getSystemRecord(maxDepth, currentDepth){
-        
-        return this._propertyValues.map((x) => x.getSystemRecord(maxDepth, currentDepth) )
+        //console.log('Get system property', this.propertyID, this._propertyValues.length)
+        let results = this._propertyValues.map((x) => x.getSystemRecord(maxDepth, currentDepth) )
+
+        //console.log('p', results.length)
+        return results
     }
 
     setSystemRecord(value){

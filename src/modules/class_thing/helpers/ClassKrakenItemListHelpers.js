@@ -218,7 +218,7 @@ function pushItem(thisThing, listItems) {
         // Check if thing, else convert to one
         if (!listItem.record_type) {
             let newListItem = thisThing.new();
-            newListItem.record = listItem;
+            newListItem.export.record = listItem;
             listItem = newListItem;
         }
 
@@ -253,7 +253,7 @@ function pushItem(thisThing, listItems) {
     }
 
     // Add to property
-    thisThing.addProperty("itemListElement", newListItems);
+    thisThing.p.add("itemListElement", newListItems);
     
     return; //listItem
 }

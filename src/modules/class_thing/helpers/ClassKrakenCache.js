@@ -54,6 +54,9 @@ export class ClassKrakenCache {
             this._db[record_type][record_id].item = thing
         }
         this._db[record_type][record_id].date = Date()
+
+        return this.get(record_type, record_id)
+        
     }
 
 

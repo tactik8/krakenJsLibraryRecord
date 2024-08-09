@@ -46,6 +46,11 @@ export class KrThing {
     */
 
     constructor(record_type = null, record_id = null) {
+
+
+        this.id = String(crypto.randomUUID())
+
+        
         this._properties = [];
 
         this._callbacks = {};

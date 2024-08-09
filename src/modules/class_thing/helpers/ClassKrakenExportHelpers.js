@@ -20,6 +20,10 @@ export class ClassKrakenExportHelpers{
         return getFullRecord(this.thing) 
     }
 
+    getRecord(maxDepth, currentDepth){
+        return getFullRecord(this.thing, maxDepth, currentDepth) 
+    }
+
     set record(value){
         return setFullRecord(this.thing, value) 
     }
@@ -32,6 +36,15 @@ export class ClassKrakenExportHelpers{
         return getSystemRecord(this.thing)
     }
 
+    get systemFlat(){
+        return getSystemRecordFlat(this.thing)
+    }
+
+    getSystem(maxDepth, currentDepth){
+        return getSystemRecord(this.thing, maxDepth, currentDepth)
+    }
+
+    
     set system(value){
         return setSystemRecord(this.thing, value)
     }
@@ -126,10 +139,24 @@ function setFullRecord(thisThing, value) {
 
 
 
-function getSystemRecord(thing, maxDepth=MAX_DEPTH, currentDepth=0) {
+function getSystemRecordFlat(thing) {
 
-    if(!maxDepth || maxDepth == null) { maxDepth = MAX_DEPTH }
+    console.log('Get flat', thing.record_type, thing.record_id)
+    let records = []
+    
+    for(let t of thing.things){
+        records.push(getSystemRecord(t, 1, 0))
+    }
+    return records
+}
 
+
+function getSystemRecord(thing, maxDepth, currentDepth) {
+
+    if((!maxDepth || maxDepth == null) && maxDepth != 0){ maxDepth = MAX_DEPTH }
+
+    if((!currentDepth || currentDepth == null) && currentDepth != 0 ){ currentDepth = 0 }
+    
     if (currentDepth >= maxDepth) {
         return thing.ref;
     }
@@ -138,15 +165,16 @@ function getSystemRecord(thing, maxDepth=MAX_DEPTH, currentDepth=0) {
     record["@type"] = thing.record_type;
     record["@id"] = thing.record_id;
     record.propertyValues = []
-    record.summary = getFullRecord(thing, 1)
+    record.summary = getFullRecord(thing, maxDepth, currentDepth)
 
     let pvs = []
+    let count = 0
     for (let p of thing.properties) {
-            pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
+        
+        count += 1
+        pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
     }
     record.propertyValues = pvs
-
-    //record.propertyValues.filter(x => x && x != null)
 
     return record;
 }

@@ -61,6 +61,12 @@ function merge(thisThing, otherThing){
 
     if(thisThing.eq(otherThing) == false){ return }
 
+
+    if(thisThing.id == otherThing.id){
+        return
+    }
+
+    
     // Merge properties
     for(let otherThingP of otherThing._properties){
 

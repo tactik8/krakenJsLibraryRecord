@@ -266,6 +266,6 @@ test('KrThing refID', function () {
 
 
 
-    expect(k1.refID).toStrictEqual('Thing___abc123');
+    expect(k1.refID).toStrictEqual('Thing/abc123');
 
 });

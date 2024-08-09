@@ -1,18 +1,130 @@
 
 import { KrProperty } from "../../class_property/class_property.js";
 
-import { KrCache } from './krakenCache.js'
+import { ClassKrakenCache } from './ClassKrakenCache.js'
 
+
+import { recordHelpers } from './recordHelpers.js'
 
 let MAX_DEPTH = 10;
 
 
-export const systemRecord = {
 
-    get: getSystemRecord,
-    set: setSystemRecord
+export class ClassKrakenExportHelpers{
+    constructor(thing){
+        this.thing = thing
+        
+    }
+
+    get record(){
+        return getFullRecord(this.thing) 
+    }
+
+    set record(value){
+        return setFullRecord(this.thing, value) 
+    }
+
+    get best(){
+        return getBestRecord(this.thing)
+    }
+
+    get system(){
+        return getSystemRecord(this.thing)
+    }
+
+    set system(value){
+        return setSystemRecord(this.thing, value)
+    }
+
     
 }
+
+
+// -----------------------------------------------------
+//  Best record 
+// -----------------------------------------------------
+
+
+
+function getBestRecord(thisThing, maxDepth=MAX_DEPTH, currentDepth=0) {
+
+    if (!maxDepth || maxDepth == null) {
+        maxDepth = MAX_DEPTH;
+    }
+
+    if (currentDepth >= maxDepth) {
+        if(this.record_type == "QuantitativeValue"){
+            // Do nothing
+        } else {
+            return thisThing.ref;
+        }
+
+    }
+
+    let record = {};
+    let properties = thisThing.properties;
+    for (let p of properties) {
+        record[p.propertyID] = p.getBestRecord(maxDepth, currentDepth + 1);
+    }
+    record["@type"] = thisThing.record_type;
+    record["@id"] = thisThing.record_id;
+
+    record = JSON.parse(JSON.stringify(record));
+    record = recordHelpers.simplify(record);
+    return record;
+}
+
+
+
+// -----------------------------------------------------
+//  Full record 
+// -----------------------------------------------------
+
+function getFullRecord(thisThing, maxDepth=MAX_DEPTH, currentDepth=0) {
+
+    if (!maxDepth || maxDepth == null) {
+        maxDepth = MAX_DEPTH;
+    }
+
+    if (currentDepth >= maxDepth) {
+        if(this.record_type == "QuantitativeValue"){
+            // Do nothing
+        } else {
+            return thisThing.ref;
+        }
+
+    }
+
+    let record = {};
+    let properties = thisThing.properties;
+    for (let p of properties) {
+        record[p.propertyID] = p.getFullRecord(maxDepth, currentDepth + 1);
+    }
+    record["@type"] = thisThing.record_type;
+    record["@id"] = thisThing.record_id;
+
+    record = JSON.parse(JSON.stringify(record));
+    record = recordHelpers.simplify(record);
+    return record;
+}
+
+function setFullRecord(thisThing, value) {
+
+    if(!value || value == null){ return }
+
+    thisThing._properties = [];
+    Object.keys(value).forEach((key) => {
+        thisThing.p.replace(key, null, value[key]);
+    });
+}
+
+
+// -----------------------------------------------------
+//  System record 
+// -----------------------------------------------------
+
+
+
 
 function getSystemRecord(thing, maxDepth=MAX_DEPTH, currentDepth=0) {
 
@@ -26,7 +138,7 @@ function getSystemRecord(thing, maxDepth=MAX_DEPTH, currentDepth=0) {
     record["@type"] = thing.record_type;
     record["@id"] = thing.record_id;
     record.propertyValues = []
-    record.summary = thing.getFullRecord(1)
+    record.summary = getFullRecord(thing, 1)
 
     let pvs = []
     for (let p of thing.properties) {
@@ -44,12 +156,12 @@ function setSystemRecord(thing, value, cache) {
     // Load data into object
 
     if(!cache || cache == null){
-        cache = new KrCache()
-        
+        cache = new ClassKrakenCache()
+
     }
 
-    
-    
+
+
     // Convert from string if one
     if(typeof value === 'string' || value instanceof String){
 
@@ -108,7 +220,7 @@ function setSystemRecord(thing, value, cache) {
             counter += 1
         }
     }
-    
+
 
     // Group pvRecords by propertyID
     let propertyIDs = [...new Set(pvRecords.map((x) => x.object.propertyID ))];
@@ -122,9 +234,10 @@ function setSystemRecord(thing, value, cache) {
 
     }
 
-    
+
 
 }
+
 
 
 

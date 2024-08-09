@@ -1,6 +1,6 @@
 
 
-export class KrCache {
+export class ClassKrakenCache {
     /**
      * Cache to store things
      */

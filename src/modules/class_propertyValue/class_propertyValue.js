@@ -31,9 +31,28 @@ export class KrPropertyValue {
         };
 
         this.metadata = new KrMetadata();
-    
+
+        this.schema = null
+        
         }
 
+
+
+    toString(){
+        if(this.value.record_type){
+            return `${this.value.record_type}/${this.value.record_id}`
+        } else {
+            return String(this.value)
+        }
+    }
+
+    toJSON(){
+        
+        return this.value
+    }
+
+
+    
     // ----------------------------------------------------
     // Attributes - action
     // ----------------------------------------------------

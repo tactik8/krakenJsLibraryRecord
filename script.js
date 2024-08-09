@@ -43,52 +43,98 @@ function getRecord(n){
 }
 
 
-function test1(){
+async function test1(){
 
 
-    let t = new KrThing('ItemList')
+
+    function getRecord(n){
+
+        let record = {
+            "@context": "https://schema.org/",
+            "@type": "Thing",
+            "@id": "thing" + String(n),
+            "name": "thing" + String(n)
+        }
+        return record
+    }
+
+    let apiConfig = {
+        apiUrl: 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev',
+        apiCollection: 'unitTest'
+    }
 
 
-    let timer = new k.Timer()
+    // Post records
+    var t1 = new KrThing('ItemList')
+    t1.api.apiConfig = apiConfig
 
     let records = []
-
-    for(let i =0; i < 10; i++){
-        let t1 = new KrThing(getRecord(i))
-        records.push(t1)
-    }    
-    t.add(records)
+    for(let i =0; i< 10; i++){
+        records.push(getRecord(i))
+    }
+    t1.list.add(records)
 
 
-    //console.log(JSON.stringify(t.record, null, 4))
+    let r1 = await t1.api.post()
+
+
+    // Get records
+    let t2 = new KrThing()
+    t2.api.apiConfig = apiConfig
+    t2.api.record_type = 'Thing'
+    t2.api.limit = 20
+
+    let r2 = await t2.api.search()
+
+    console.log(t1.list.length, t2.list.length)
+    //expect(t2.list.length).toStrictEqual(10);
+    console.log(t1.heading.textDetails)
+    console.log(t2.heading.textDetails)
+
 
 
     
-    timer.break('1')
-
-    let content = t.getSystemRecord()
-
-
-    //console.log(JSON.stringify(content, null, 4))
-
-    //return
-    
-    timer.break('2')
-
-    let tt = new KrThing()
-    tt.setSystemRecord(content)
-
-    timer.break('3')
-
-    console.log('t length', t.items.length)
-    console.log('tt length', tt.items.length)
-
-    //console.log('tt length', tt.things.length)
-
-    timer.end()
-    console.log(timer.console())
-    console.log(t.things.length)
 }
 
 
-test1()
+async function test2(){
+
+
+
+    function getRecord(n){
+
+        let record = {
+            "@context": "https://schema.org/",
+            "@type": "Thing",
+            "@id": "thing" + String(n),
+            "name": "thing" + String(n)
+        }
+        return record
+    }
+
+    let apiConfig = {
+        apiUrl: 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev',
+        apiCollection: 'unitTest'
+    }
+
+    var t1 = new KrThing('ItemList')
+    t1.api.apiConfig = apiConfig
+
+    let records = []
+    for(let i =0; i< 10; i++){
+        records.push(getRecord(i))
+    }
+    t1.list.add(records)
+
+
+    console.log(t1.things.length)
+
+
+
+
+}
+
+//test1()
+
+
+test2()

@@ -2,36 +2,168 @@
 
 
 
-export const itemListHelpers = {
-    getFirstItem: getFirstItem,
-    getLastItem: getLastItem,
-    getItems: getItems,
-    setItems: setItems,
-    pushItem: pushItem,
-    reCalculatePosition: reCalculatePosition,
-    remove: remove,
-    insertBefore: insertBefore,
-    insertAfter: insertAfter,
-    getItem: getItem,
-    getByListItem: getByListItem,
-    getByItem: getByItem,
-};
+export class ClassKrakenItemListHelpers {
+
+    constructor(thing){
+        this.thing = thing
+    }
+
+
+
+    new(){
+        let newItemList = this.thing.new('ItemList')
+        return newItemList
+    }
+    
+    getFirstItem(){ 
+        return getFirstItem(this.thing) 
+    } 
+    get firstItem(){
+        return getFirstItem(this.thing)
+    } 
+    get first(){
+        return getFirstItem(this.thing)
+    } 
+    
+    getLastItem(){
+        return getLastItem(this.thing)
+    } 
+    get lastItem(){
+        return getLastItem(this.thing)
+    } 
+    get last(){
+        return getLastItem(this.thing)
+    } 
+
+
+
+    // Items
+    get items(){
+        return getItems(this.thing)
+    } 
+
+    // Items
+    getItems(){
+        return getItems(this.thing)
+    } 
+    
+    // ListItems
+    
+    get getListItems(){
+        return getListItems(this.thing)
+    } 
+    set items(value){
+        return pushItem(this.thing, value)
+    } 
+
+    getListItems(){
+        return getListItems(this.thing)
+    } 
+
+    addItems(value){
+        return pushItem(this.thing, value)
+    } 
+    setItems(value){
+        return pushItem(this.thing, value)
+    } 
+   
+
+    // Item
+
+    set item(value){
+        return pushItem(this.thing, value)
+    }
+    
+    getItem(ref){
+        return getItem(this.thing)
+    } 
+    pushItem(value){
+        return pushItem(this.thing, value)
+    }
+    setItem(value){
+        return pushItem(this.thing, value)
+    } 
+    push(value){
+        return pushItem(this.thing, value)
+    } 
+    add(value){
+        return pushItem(this.thing, value)
+    } 
+
+
+    reCalculatePosition(){
+        return reCalculatePosition(this.thing)
+    } 
+   
+    remove(value){
+        return remove(this.thing, value)
+    } 
+  
+    insertBefore(refItem, itemToInsert){
+        return insertBefore(this.thing, refItem, itemToInsert)
+    } 
+  
+    insertAfter(refItem, itemToInsert){
+        return insertAfter(this.thing, refItem, itemToInsert)
+    } 
+   
+    getItem(ref){
+        return getItem(this.thing, ref)
+    } 
+    
+    
+    getByListItem(listItem){
+        return getByListItem(this.thing, listItem)
+    } 
+    
+    getByItem(item){
+        return getByItem(this.thing, item)
+    } 
+
+
+    get length(){
+        return getListItems(this.thing).length
+    }
+
+
+
+    // -----------------------------------------------------
+    //  filters 
+    // -----------------------------------------------------
+
+    
+    filter(propertyID, value){
+        // Basic filter, returns new ItemList
+        return filter(this.thing, propertyID, value )
+    }
+    
+
+
+    
+}
+
+
+
+
+
+
+
 
 function getFirstItem(thisThing) {
-    let items = thisThing.getProperty("itemListElement").values;
+    let items = thisThing.p.get("itemListElement").values;
 
     if (items.length == 0) {
         return null;
     }
 
     for (let item of items) {
-        if (!item.previousItem || item.previousItem == null) {
+        if (!item.p.previousItem || item.p.previousItem == null) {
             return item;
         }
     }
 
     for (let item of items) {
-        if (item.position == 0) {
+        if (item.p.position == 0) {
             return item;
         }
     }
@@ -40,36 +172,40 @@ function getFirstItem(thisThing) {
 }
 
 function getLastItem(thisThing) {
-    let items = thisThing.getProperty("itemListElement").values;
+    let items = thisThing.p.get("itemListElement").values;
 
     if (items.length == 0) {
         return null;
     }
     for (let item of items) {
-        if (item.nextItem === undefined || item.nextItem == null) {
+        if (item.p.nextItem === undefined || item.p.nextItem == null) {
             return item;
         }
     }
     return null;
 }
 
-function getItems(thisThing) {
+function getListItems(thisThing) {
     let results = [];
-    let t = thisThing.firstItem;
+    let t = thisThing.list.first;
 
     while (t && t != null) {
         results.push(t);
-        t = t.nextItem;
+        t = t.p.nextItem;
     }
 
     return results;
 }
 
-function setItems(thisThing, values) {
-    values = ensureArray(values);
 
-    pushItems(thisThing, values)
+function getItems(thing){
+
+    let listItems = getListItems(thing)
+    let items = listItems.map(x => x?.p.get('item').value)
+    items = items.filter( x => x !== undefined && x != null);
+    return items
 }
+
 
 function pushItem(thisThing, listItems) {
     
@@ -89,7 +225,7 @@ function pushItem(thisThing, listItems) {
         // Check if ListItem, else convert to one
         if (listItem.record_type != "ListItem") {
             let newListItem = thisThing.new("ListItem");
-            newListItem.item = listItem;
+            newListItem.p.item = listItem;
             listItem = newListItem;
         }
         newListItems.push(listItem)
@@ -106,11 +242,11 @@ function pushItem(thisThing, listItems) {
         let listItem = newListItems[i]
         
         if (lastListItem && lastListItem != null) {
-            listItem.position = lastListItem.position + 1;
-            listItem.previousItem = lastListItem;
-            lastListItem.nextItem = listItem
+            listItem.p.position = lastListItem.p.position + 1;
+            listItem.p.previousItem = lastListItem;
+            lastListItem.p.nextItem = listItem
         } else {
-            listItem.position = 0;
+            listItem.p.position = 0;
         }
         lastListItem = listItem
 
@@ -124,14 +260,14 @@ function pushItem(thisThing, listItems) {
 
 function reCalculatePosition(thisThing) {
     return;
-    let t = thisThing.firstItem;
+    let t = thisThing.list.first;
 
     var position = 0;
 
     while (t && t != null) {
-        t.position = position;
+        t.p.position = position;
         position = position + 1;
-        t = t.nextItem;
+        t = t.p.nextItem;
     }
 }
 
@@ -145,42 +281,42 @@ function remove(thisThing, itemRef) {
         return null;
     }
 
-    var p = item.previousItem;
-    var n = item.nextItem;
+    var p = item.p.previousItem;
+    var n = item.p.nextItem;
 
     // Ressign before and after links to one another
     if (p) {
-        p.nextItem = n;
+        p.p.nextItem = n;
     }
     if (n) {
-        n.previousItem = p;
+        n.p.previousItem = p;
     }
 
     // Remove from list
     thisThing.deleteProperty("itemListElement", item);
 
     // Sets position
-    item.position = null;
+    item.p.position = null;
 
     // Sets position
     let position = 0;
     if (n) {
-        position = n.position - 1;
-        n.position = position;
+        position = n.p.position - 1;
+        n.p.position = position;
     }
 
     let nextItem = n?.nextItem;
     while (nextItem) {
-        nextItem.position = position + 1;
+        nextItem.p.position = position + 1;
         position = position + 1;
-        nextItem = nextItem.nextItem;
+        nextItem = nextItem.p.nextItem;
     }
 
     //thisThing.reCalculatePosition()
 
     // Remove links
-    item.previousItem = null;
-    item.nextItem = null;
+    item.p.previousItem = null;
+    item.p.nextItem = null;
 
     return;
 }
@@ -192,13 +328,13 @@ function insertBefore(thisThing, referenceItem, refItemtoInsert) {
         refItemtoInsert = new KrListItem(refItemtoInsert);
         item = refItemtoInsert;
     } else {
-        item = thisThing.getItem(refItemtoInsert.ref);
+        item = thisThing.list.getItem(refItemtoInsert.ref);
     }
 
     // Retrieve latest ListItem record
 
-    var n = thisThing.getItem(referenceItem);
-    var p = p.previousItem;
+    var n = thisThing.list.getItem(referenceItem);
+    var p = p.p.previousItem;
 
     // Stop events
     thisThing.blockEvents();
@@ -214,25 +350,25 @@ function insertBefore(thisThing, referenceItem, refItemtoInsert) {
 
     // Remove previous links of items
     if (
-        (item.previousItem && item.previousItem != null) ||
-        (item.nextItem && item.nextItem != null)
+        (item.p.previousItem && item.p.previousItem != null) ||
+        (item.p.nextItem && item.p.nextItem != null)
     ) {
         thisThing.remove(item.ref);
     }
 
     // Change allocation
-    item.previousItem = p;
-    item.nextItem = n;
+    item.p.previousItem = p;
+    item.p.nextItem = n;
 
     if (p) {
-        p.nextItem = item;
+        p.p.nextItem = item;
     } else {
-        p.nextItem = null;
+        p.p.nextItem = null;
     }
     if (n) {
-        n.previousItem = item;
+        n.p.previousItem = item;
     } else {
-        n.previousItem = null;
+        n.p.previousItem = null;
     }
 
     // Start events
@@ -250,21 +386,21 @@ function insertBefore(thisThing, referenceItem, refItemtoInsert) {
     // Sets position
     let position = 0;
     if (p) {
-        position = p.position + 1;
+        position = p.p.position + 1;
     }
 
     item.position = position;
-    let nextItem = item.nextItem;
+    let nextItem = item.p.nextItem;
     while (nextItem) {
-        nextItem.position = position + 1;
+        nextItem.p.position = position + 1;
         position = position + 1;
-        nextItem = nextItem.nextItem;
+        nextItem = nextItem.p.nextItem;
     }
 
     //  Add to list
     let t = thisThing.getItem(refItemtoInsert.ref);
     if (!t || t == null) {
-        thisThing.addProperty("itemListElement", refItemtoInsert);
+        thisThing.p.add("itemListElement", refItemtoInsert);
     }
 
     return item;
@@ -298,28 +434,28 @@ function insertAfter(thisThing, referenceItem, refItemtoInsert) {
 
     // Remove previous links of items
     if (
-        (item.previousItem && item.previousItem != null) ||
-        (item.nextItem && item.nextItem != null)
+        (item.p.previousItem && item.p.previousItem != null) ||
+        (item.p.nextItem && item.p.nextItem != null)
     ) {
         thisThing.remove(item.ref);
     }
 
-    var p = thisThing.getItem(referenceItem);
-    var n = p.nextItem;
+    var p = thisThing.list.getItem(referenceItem);
+    var n = p.p.nextItem;
 
     // Change allocation
-    item.previousItem = p;
-    item.nextItem = n;
+    item.p.previousItem = p;
+    item.p.nextItem = n;
 
     if (p) {
-        p.nextItem = item;
+        p.p.nextItem = item;
     } else {
-        p.nextItem = null;
+        p.p.nextItem = null;
     }
     if (n) {
-        n.previousItem = item;
+        n.p.previousItem = item;
     } else {
-        n.previousItem = null;
+        n.p.previousItem = null;
     }
 
     // Start events
@@ -337,21 +473,21 @@ function insertAfter(thisThing, referenceItem, refItemtoInsert) {
     // Change position
     let position = 0;
     if (p) {
-        position = p.position + 1;
+        position = p.p.position + 1;
     }
 
-    item.position = position;
-    let nextItem = item.nextItem;
+    item.p.position = position;
+    let nextItem = item.p.nextItem;
     while (nextItem) {
-        nextItem.position = position + 1;
+        nextItem.p.position = position + 1;
         position = position + 1;
-        nextItem = nextItem.nextItem;
+        nextItem = nextItem.p.nextItem;
     }
 
     //  Add to list
     let t = thisThing.getItem(refItemtoInsert.ref);
     if (!t || t == null) {
-        thisThing.addProperty("itemListElement", refItemtoInsert);
+        thisThing.p.add("itemListElement", refItemtoInsert);
     }
 
     return item;
@@ -378,7 +514,7 @@ function getItem(thisThing, ref) {
 }
 
 function getByListItem(thisThing, ref) {
-    let items = thisThing.getProperty("itemListElement").values;
+    let items = thisThing.p.get("itemListElement").values;
 
     for (let item of items) {
         if (item.record_type == ref["@type"] && item.record_id == ref["@id"]) {
@@ -389,7 +525,7 @@ function getByListItem(thisThing, ref) {
 }
 
 function getByItem(thisThing, ref) {
-    let items = thisThing.getProperty("itemListElement").values;
+    let items = thisThing.p.get("itemListElement").values;
     for (let item of items) {
         if (
             item.item.record_type == ref["@type"] &&
@@ -431,7 +567,44 @@ function setParams(thisThing, value) {
 //  Filters
 // -----------------------------------------------------
 
-function filter(thisThing, propertyValueSpecifications) {
+
+
+
+
+
+function filter(thing, propertyID, value) {
+    //
+
+    // Convert to thing if one
+    if(value['@type']){
+        value = thing.new(value)
+    }
+
+    // Init new list
+    let newList = thing.list.new()
+
+    // Iterate through values
+    for(let item of thing.list.items){
+        let values = item.p.get(propertyID)?.values
+        for(let v of values){
+            if(v.record_type){
+                if(v.eq(value)){
+                    newList.list.add(item)
+                    continue
+                }
+            } else {
+                if(v == value){
+                    newList.list.add(item)
+                    continue
+                }
+            }   
+        }
+    }
+    return newList
+
+}
+
+function filterAdvanced(thisThing, propertyValueSpecifications) {
     /**
      * Returns new Things with filtered items
      */
@@ -444,7 +617,7 @@ function filter(thisThing, propertyValueSpecifications) {
         );
 
         if (result.every(Boolean) == true) {
-            newThings.add(item.item);
+            newThings.list.add(item.item);
         }
     }
 

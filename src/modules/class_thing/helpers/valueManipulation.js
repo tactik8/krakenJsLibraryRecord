@@ -1,5 +1,5 @@
 
-import { KrCache } from './krakenCache.js'
+import { ClassKrakenCache } from './ClassKrakenCache.js'
 
 let MAXLEVEL = 5
 
@@ -15,7 +15,7 @@ function getThings(thisThing, cache, maxLevel=MAXLEVEL, currentLevel=0) {
     // Gets all things objects used as values of this 
 
     if(!cache || cache == null){
-        cache = new KrCache()
+        cache = new ClassKrakenCache()
         cache.add(thisThing)
     }
     

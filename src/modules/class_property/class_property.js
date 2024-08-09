@@ -30,10 +30,23 @@ export class KrProperty {
         this._propertyValuesCache = null; 
         this._propertyValuesCacheOld = null; 
 
-
+        this.schema = null
         
         this.metadata = new KrMetadata();
     }
+
+
+    toString(){
+        return `Property: ${this._propertyID}`
+    }
+
+    toJSON(){
+        let record = {}
+        record[this._propertyID]= this.propertyValues.map(x => x.toJSON())
+        return record
+    }
+
+    
     // Base
     get propertyID() {
         return this._propertyID;

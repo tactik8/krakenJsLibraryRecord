@@ -1387,7 +1387,7 @@ function $986206abb55bdef7$var$setSystemRecord(thing, value, cache) {
         if (!value || value == null) continue;
         if (value["@type"] && value["@type"] != null) {
             var t = thing.new(value?.["@type"], value?.["@id"]);
-            t.setSystemRecord(value, cache);
+            $986206abb55bdef7$var$setSystemRecord(t, value, cache);
             // Store and retrieve to cache to avoid duplicate things
             cache.set(t);
             t = cache.get(t.record_type, t.record_id);

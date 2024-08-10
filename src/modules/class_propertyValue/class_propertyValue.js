@@ -300,6 +300,7 @@ export class KrPropertyValue {
     
     eq(other){
         // returns true if equal
+
         
         if (this.value != other.value){ return false }
         if (this.metadata.eq(other.metadata) == false ){ return false }

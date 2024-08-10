@@ -127,6 +127,7 @@ export class KrMetadata {
     }
     
     get observationDate(){
+        if(!this._record.observationDate || this._record.observationDate == null) { return null }
         return new Date(JSON.parse(this._record.observationDate || null));
     }
 
@@ -171,6 +172,14 @@ export class KrMetadata {
     
     equal(other){
         // returns true if data comes from same object
+
+        
+        let c1 = this.object == other.object
+        let c2 = this.instrument == other.instrument
+        let c3 = this.credibility == other.credibility
+        let c4 = this.observationDate == other.observationDate
+        
+        
         if (this.object != other.object){ return false }
         if (this.instrument != other.instrument){ return false }
         if (this.credibility != other.credibility){ return false }

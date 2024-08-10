@@ -69,10 +69,8 @@ function merge(thisThing, otherThing){
     
     // Merge properties
     for(let otherThingP of otherThing._properties){
-
         let thisThingP = thisThing.getProperty(otherThingP.propertyID)
         thisThingP.merge(otherThingP)
-
     }
 
     // Merge callbacks and reset other
@@ -83,7 +81,6 @@ function merge(thisThing, otherThing){
         
     }
     otherThing._callbacks = {}
-    
     
     return
 

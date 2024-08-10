@@ -88,6 +88,7 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
         this._record.position = value;
     }
     get observationDate() {
+        if (!this._record.observationDate || this._record.observationDate == null) return null;
         return new Date(JSON.parse(this._record.observationDate || null));
     }
     set observationDate(value) {
@@ -122,6 +123,10 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
     }
     equal(other) {
         // returns true if data comes from same object
+        let c1 = this.object == other.object;
+        let c2 = this.instrument == other.instrument;
+        let c3 = this.credibility == other.credibility;
+        let c4 = this.observationDate == other.observationDate;
         if (this.object != other.object) return false;
         if (this.instrument != other.instrument) return false;
         if (this.credibility != other.credibility) return false;
@@ -530,7 +535,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         let needCompileFlag = false;
         if (!other || other == null) return;
         for (let pv of other._propertyValues)if (this.contains(pv) == false) {
-            this._propertyValues.push(other);
+            this._propertyValues.push(pv);
             needCompileFlag = true;
         }
         if (needCompileFlag == true) this.compilePropertyValues(true);
@@ -559,9 +564,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     // Records 
     // ----------------------------------------------------
     getSystemRecord(maxDepth, currentDepth) {
-        //console.log('Get system property', this.propertyID, this._propertyValues.length)
         let results = this._propertyValues.map((x)=>x.getSystemRecord(maxDepth, currentDepth));
-        //console.log('p', results.length)
         return results;
     }
     setSystemRecord(value1) {

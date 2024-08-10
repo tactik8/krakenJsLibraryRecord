@@ -130,7 +130,9 @@ export class KrProperty {
         if(!newPV || newPV == null ){ return }
         
         for(let pv of this._propertyValues){
-            if(pv.eq(newPV)){ return true}
+            if(pv.eq(newPV)){ 
+                return true 
+            }
         }
         return false
         
@@ -146,7 +148,7 @@ export class KrProperty {
      
         for(let pv of other._propertyValues){
             if(this.contains(pv) == false){
-                this._propertyValues.push(other)
+                this._propertyValues.push(pv)
                 needCompileFlag = true
             }
             
@@ -192,10 +194,7 @@ export class KrProperty {
 
 
     getSystemRecord(maxDepth, currentDepth){
-        //console.log('Get system property', this.propertyID, this._propertyValues.length)
         let results = this._propertyValues.map((x) => x.getSystemRecord(maxDepth, currentDepth) )
-
-        //console.log('p', results.length)
         return results
     }
 

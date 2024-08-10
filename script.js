@@ -134,13 +134,55 @@ async function test2(){
        // p.push(tx.export.getSystem(0))
     }
 
-    console.log(p)
+    console.log()
 
 
 
 }
 
-test1()
+function test3(){
+
+    let t1 = new KrThing()
+
+    t1.record = {
+            "@context": "https://schema.org/",
+            "@type": "Thing",
+            "@id": "thing1",
+            "name": "thing1"
+        }
+
+
+
+    let t2 = new KrThing()
+
+    t2.record = {
+            "@context": "https://schema.org/",
+            "@type": "Thing",
+            "@id": "thing1",
+            "name": "thing2"
+        }
+
+    t1.merge(t2)
+
+    console.log(t1.record)
+
+    console.log(JSON.stringify(t1.export.system, null, 4))
+
+
+    let t3 = new KrThing()
+    t3.export.system = t1.export.system
+
+    console.log(JSON.stringify(t3.export.system, null, 4))
+    
+
+    
+    
+}
+
+
+test3()
+//test1()
 
 
 //test2()
+

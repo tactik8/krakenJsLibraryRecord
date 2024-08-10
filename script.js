@@ -60,7 +60,7 @@ async function test1(){
 
     let apiConfig = {
         apiUrl: 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev',
-        apiCollection: 'unitTest'
+        apiCollection: 'unitTest2'
     }
 
 
@@ -142,46 +142,63 @@ async function test2(){
 
 function test3(){
 
+    let record = {
+         "@type": "Person",
+         "@id": "person_1",
+         "givenName": "givenName_1",
+         "familyName": "familyName_1",
+         "email": "test@test.com",
+         "telephone": "1-514-111-2222",
+         "hasOccupation": {
+             "@type": "Occupation",
+             "@id": "occupation_1",
+             "name": "occupation_1"
+             },
+         "worksfor": {
+             "@type": "Organization",
+             "@id": "test_org_1",
+             "name": "test_org_1",
+             "url": "https://www.test.com",
+             "test": {
+                      "@type": "Person",
+                      "@id": "person_1",
+                      "givenName": "givenName_1",
+                      "familyName": "familyName_1",
+                      "email": "test@test.com",
+                      "telephone": "1-514-111-2222",
+                      "hasOccupation": {
+                          "@type": "Occupation",
+                          "@id": "occupation_1",
+                          "name": "occupation_1"
+                          },
+                      "worksfor": {
+                          "@type": "Organization",
+                          "@id": "organization_1",
+                          "name": "test_org_1",
+                          "url": "https://www.test.com"
+                          }
+             }
+
+             }
+     }
+
+
     let t1 = new KrThing()
-
-    t1.record = {
-            "@context": "https://schema.org/",
-            "@type": "Thing",
-            "@id": "thing1",
-            "name": "thing1"
-        }
-
-
+    t1.record = record
 
     let t2 = new KrThing()
 
-    t2.record = {
-            "@context": "https://schema.org/",
-            "@type": "Thing",
-            "@id": "thing1",
-            "name": "thing2"
-        }
-
-    t1.merge(t2)
-
-    console.log(t1.record)
-
-    console.log(JSON.stringify(t1.export.system, null, 4))
-
-
-    let t3 = new KrThing()
-    t3.export.system = t1.export.system
-
-    console.log(JSON.stringify(t3.export.system, null, 4))
+    console.log(t1.export.system)
     
+    t2.export.system = t1.export.system
 
-    
+    console.log(t2.record)
     
 }
 
 
-test3()
-//test1()
+//test3()
+test1()
 
 
 //test2()

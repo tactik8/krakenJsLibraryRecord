@@ -141,7 +141,6 @@ function setFullRecord(thisThing, value) {
 
 function getSystemRecordFlat(thing) {
 
-    console.log('Get flat', thing.record_type, thing.record_id)
     let records = []
     
     for(let t of thing.things){
@@ -192,7 +191,6 @@ function setSystemRecord(thing, value, cache) {
 
     // Convert from string if one
     if(typeof value === 'string' || value instanceof String){
-
         try{
             value = JSON.parse(value)
         } catch {
@@ -201,7 +199,7 @@ function setSystemRecord(thing, value, cache) {
     } 
 
     // Check if valid format
-    if (!value || (!value.propertyValues && !value.properties ) ) {
+    if (!value || !value.propertyValues  ) {
         return;
     }
 
@@ -209,44 +207,68 @@ function setSystemRecord(thing, value, cache) {
     thing._properties = [];
 
 
-    // Convert from old format to new
-    if(value.properties && value.properties != null ){
-        value.propertyValues = []
-        for(let k of Object.keys(value.properties)){
-            let pvs = value.properties[k]
-            pvs = ensureArray(pvs)
-            value.propertyValues = value.propertyValues.concat(pvs)
-        }            
-        value.propertyValues = value.propertyValues.filter((item) => item && item != null);
-    }
-
-
 
     // Set pvRecords
 
-    if(!value.propertyValues || value.propertyValues == null){ return }
+    if(!value.propertyValues || value.propertyValues == null){ 
+            return 
+    }
 
     let pvRecords = ensureArray(value.propertyValues)
 
-    if(pvRecords.length == 0 ){ return }
+    pvRecords = pvRecords.filter( x => x !== undefined && x != null)
+
+    
+    // Remove arrays of 1
+    //todo: figure out why this happens
+
+    if(1==1){
+        let newPvRecords = []
+        for(let p of pvRecords){
+            if(Array.isArray(p) && p.length == 1){
+                p = p[0]
+                newPvRecords.push(p)
+            } else if (Array.isArray(p) && p.length == 0){
+                
+            } else {
+                newPvRecords.push(p)
+            }
+           
+        }
+        pvRecords = newPvRecords
+    }
+    //
+    
+
+    if(pvRecords.length == 0 ){ 
+            return 
+    }
 
     // convert sub things to KrThing
     let counter = 0
     for(let pvRecord of pvRecords){
-        if(!pvRecord || pvRecord == null) { continue }
+        
+        if(!pvRecord || pvRecord == null) { 
+                continue 
+        }
+        
         let value = pvRecord?.object?.value
-        if(!value || value == null) { continue }
+        
+        if(!value || value == null) { 
+                continue 
+        }
+        
         if (value["@type"] && value["@type"] != null) {
-            var t = thing.new(value?.["@type"],value?.["@id"]);
+            var t = thing.new(value?.["@type"], value?.["@id"]);
             setSystemRecord(t, value, cache);
 
             // Store and retrieve to cache to avoid duplicate things
             cache.set(t)
-            t = cache.get(t.record_type, t.record_id)
+            t = cache.get(value?.["@type"], value?.["@id"])
 
             pvRecord.object.value = t;
             counter += 1
-        }
+        } 
     }
 
 
@@ -255,10 +277,12 @@ function setSystemRecord(thing, value, cache) {
 
     for(let propertyID of propertyIDs){
 
-        let subPropertyValues = pvRecords.filter((item) => item.object.propertyID == propertyID);            
-        var property = new KrProperty(propertyID);
-        property.setSystemRecord(subPropertyValues);
-        thing._properties.push(property);
+        if(propertyID && propertyID != null){
+            let subPropertyValues = pvRecords.filter((item) => item.object.propertyID == propertyID);        
+            var property = new KrProperty(propertyID);
+            property.setSystemRecord(subPropertyValues);
+            thing._properties.push(property);
+        }
 
     }
 

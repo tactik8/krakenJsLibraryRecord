@@ -25,28 +25,26 @@ export class KrProperty {
     constructor(propertyID = null) {
         this._propertyID = propertyID;
         this._propertyValues = [];
-        this._propertyValuesNetCache = null; 
-        this._propertyValuesNetCacheOld = null; 
-        this._propertyValuesCache = null; 
-        this._propertyValuesCacheOld = null; 
+        this._propertyValuesNetCache = null;
+        this._propertyValuesNetCacheOld = null;
+        this._propertyValuesCache = null;
+        this._propertyValuesCacheOld = null;
 
-        this.schema = null
-        
+        this.schema = null;
+
         this.metadata = new KrMetadata();
     }
 
-
-    toString(){
-        return `Property: ${this._propertyID}`
+    toString() {
+        return `Property: ${this._propertyID}`;
     }
 
-    toJSON(){
-        let record = {}
-        record[this._propertyID]= this.propertyValues.map(x => x.toJSON())
-        return record
+    toJSON() {
+        let record = {};
+        record[this._propertyID] = this.propertyValues.map((x) => x.toJSON());
+        return record;
     }
 
-    
     // Base
     get propertyID() {
         return this._propertyID;
@@ -107,264 +105,288 @@ export class KrProperty {
         return false;
     }
 
-    getPropertyValueById(propertyValueID){
-
-        if(!propertyValueID || propertyValueID == null) { return }
-
-        for(let pv of this._propertyValues){
-
-            if (pv.record_id == propertyValueID){
-                return pv
-            }
-            
+    getPropertyValueById(propertyValueID) {
+        if (!propertyValueID || propertyValueID == null) {
+            return;
         }
-        return null
-        
+
+        for (let pv of this._propertyValues) {
+            if (pv.record_id == propertyValueID) {
+                return pv;
+            }
+        }
+        return null;
     }
 
-
-    contains(newPV){
+    contains(newPV) {
         // Return true if already contains same propertyValue
 
+        if (!newPV || newPV == null) {
+            return;
+        }
 
-        if(!newPV || newPV == null ){ return }
-        
-        for(let pv of this._propertyValues){
-            if(pv.eq(newPV)){ 
-                return true 
+        for (let pv of this._propertyValues) {
+            if (pv.eq(newPV)) {
+                return true;
             }
         }
-        return false
-        
+        return false;
     }
 
-    
-    merge(other){
+    merge(other) {
         // merge other property with this property
 
-        let needCompileFlag = false
-        
-        if(!other || other == null){ return }
-     
-        for(let pv of other._propertyValues){
-            if(this.contains(pv) == false){
-                this._propertyValues.push(pv)
-                needCompileFlag = true
-            }
-            
+        let needCompileFlag = false;
+
+        if (!other || other == null) {
+            return;
         }
 
-        if(needCompileFlag == true){
-            this.compilePropertyValues(true)
+        for (let pv of other._propertyValues) {
+            if (this.contains(pv) == false) {
+                this._propertyValues.push(pv);
+                needCompileFlag = true;
+            }
         }
-        
+
+        if (needCompileFlag == true) {
+            this.compilePropertyValues(true);
+        }
     }
 
     //
     // ----------------------------------------------------
-    // Records 
+    // Records
     // ----------------------------------------------------
-    
+
     getFullRecord(maxDepth, currentDepth) {
-        return this.propertyValuesNet.map((x) => x.getFullRecord(maxDepth, currentDepth) )
+        return this.propertyValuesNet.map((x) =>
+            x.getFullRecord(maxDepth, currentDepth),
+        );
     }
 
-    getRefRecord(maxDepth, currentDepth){
-        return this.propertyValuesNet.map((x) => x.getRefRecord(maxDepth, currentDepth) )
+    getRefRecord(maxDepth, currentDepth) {
+        return this.propertyValuesNet.map((x) =>
+            x.getRefRecord(maxDepth, currentDepth),
+        );
     }
 
-    getBestRecord(maxDepth, currentDepth){
-
-        let p = this.propertyValue
-        if(p && p != null){
-            
-            return [p.getBestRecord(maxDepth, currentDepth)]
+    getBestRecord(maxDepth, currentDepth) {
+        let p = this.propertyValue;
+        if (p && p != null) {
+            return [p.getBestRecord(maxDepth, currentDepth)];
         }
-        return []
+        return [];
     }
 
-    getDetailRecord(maxDepth, currentDepth){
-        return this.propertyValuesNet.map((x) => x.getDetailRecord(maxDepth, currentDepth) )
+    getDetailRecord(maxDepth, currentDepth) {
+        return this.propertyValuesNet.map((x) =>
+            x.getDetailRecord(maxDepth, currentDepth),
+        );
     }
-    
-    
+
     // ----------------------------------------------------
-    // Records 
+    // Records
     // ----------------------------------------------------
 
-
-    getSystemRecord(maxDepth, currentDepth){
-        let results = this._propertyValues.map((x) => x.getSystemRecord(maxDepth, currentDepth) )
-        return results
+    getSystemRecord(maxDepth, currentDepth) {
+        let results = this._propertyValues.map((x) =>
+            x.getSystemRecord(maxDepth, currentDepth),
+        );
+        return results;
     }
 
-    setSystemRecord(value){
-
-        this._propertyValues=[];
+    setSystemRecord(value) {
+        this._propertyValues = [];
         var values = ensureArray(value);
-        for(let value of values){
+        for (let value of values) {
             var propertyValue = new KrPropertyValue();
-            propertyValue.setSystemRecord(value)
+            propertyValue.setSystemRecord(value);
             this._propertyValues.push(propertyValue);
-        };
+        }
     }
-    
-
 
     // -----------------------------------------------------
-    //  System attributes 
+    //  System attributes
     // -----------------------------------------------------
 
-    get systemCreatedDate(){
-
-        let resultDate = null
-        for(let pv of this._propertyValues){
-            let itemDate = pv.systemCreatedDate
-            if(itemDate && (resultDate == null || itemDate < resultDate )){
-                resultDate = itemDate
+    get systemCreatedDate() {
+        let resultDate = null;
+        for (let pv of this._propertyValues) {
+            let itemDate = pv.systemCreatedDate;
+            if (itemDate && (resultDate == null || itemDate < resultDate)) {
+                resultDate = itemDate;
             }
         }
-        return resultDate
-        
+        return resultDate;
     }
 
-    get systemUpdatedDate(){
-
-        let resultDate = null
-        for(let pv of this._propertyValues){
-            let itemDate = pv.systemCreatedDate
-            if(itemDate && (resultDate == null || itemDate > resultDate )){
-                resultDate = itemDate
+    get systemUpdatedDate() {
+        let resultDate = null;
+        for (let pv of this._propertyValues) {
+            let itemDate = pv.systemCreatedDate;
+            if (itemDate && (resultDate == null || itemDate > resultDate)) {
+                resultDate = itemDate;
             }
         }
-        return resultDate
+        return resultDate;
     }
-    
+
     // ----------------------------------------------------
-    // PropertyValues 
+    // PropertyValues
     // ----------------------------------------------------
 
     get propertyValue() {
         // return best property value object
-        if(this.propertyValues && this.propertyValues.length > 0){
+        if (this.propertyValues && this.propertyValues.length > 0) {
             return this.propertyValues[0];
         }
-        return null
+        return null;
     }
 
-    get propertyValues(){
+    get propertyValues() {
         // returns best pv for each different value
 
         // Serve from cache
-        let cache = this._propertyValuesCache
-        let cacheOld = this._propertyValuesCacheOld
-        if(cache && cache != null && cache.length > 0){
-            if(cache == cacheOld) { return cache }
-        } 
+        let cache = this._propertyValuesCache;
+        let cacheOld = this._propertyValuesCacheOld;
+        if (cache && cache != null && cache.length > 0) {
+            if (cache == cacheOld) {
+                return cache;
+            }
+        }
 
         var results = [];
-        var pvs = this.propertyValuesNet
-        const values = [...new Set(pvs.map((x) => x.value ))];
+        var pvs = this.propertyValuesNet;
+        const values = [...new Set(pvs.map((x) => x.value))];
         values.forEach((value) => {
             const filteredPV = pvs.filter((item) => item.value == value);
-            let maxPV = filteredPV.reduce((maxItem, item) => maxItem.gt(item) ? maxItem : item);
-            results.push(maxPV)
-        })
+            let maxPV = filteredPV.reduce((maxItem, item) =>
+                maxItem.gt(item) ? maxItem : item,
+            );
+            results.push(maxPV);
+        });
 
         function compare(a, b) {
-            if(a.gt(b)){return -1};
-            if(a.lt(b)){return 1};
+            if (a.gt(b)) {
+                return -1;
+            }
+            if (a.lt(b)) {
+                return 1;
+            }
             return 0;
-        };
+        }
 
         results.sort(compare);
 
         // Refresh cache
-        this._propertyValuesCache = results
-        this._propertyValuesCacheOld = results
-        
+        this._propertyValuesCache = results;
+        this._propertyValuesCacheOld = results;
+
         return results;
     }
 
-    get propertyValuesNet(){
+    get propertyValuesNet() {
+        this.compilePropertyValues();
 
-        
-        this.compilePropertyValues()
-
-        return this._propertyValuesNetCache
-        
-
+        return this._propertyValuesNetCache;
     }
 
+    compilePropertyValues(force = false) {
+        let pv = this._propertyValues;
 
-    compilePropertyValues(force=false){
-        
-        let pv = this._propertyValues
+        let cache = this._propertyValuesNetCache;
+        let cacheOld = this._propertyValuesNetCacheOld;
 
-        let cache = this._propertyValuesNetCache
-        let cacheOld = this._propertyValuesNetCacheOld
-
-        if(force == false){
-            if(cache && cache != null && cache.length > 0){
-                pv = cache
-                if(cache == cacheOld) { return cache } 
-            } 
+        if (force == false) {
+            if (cache && cache != null && cache.length > 0) {
+                pv = cache;
+                if (cache == cacheOld) {
+                    return cache;
+                }
+            }
         }
-        
+
         let results = [];
 
-        // Process additions        
-        results = results.concat(pv.filter((item) => item.record_type == 'addAction'));
-        results = results.concat(pv.filter((item) => item.record_type == 'replaceAction'));
+        // Process additions
+        results = results.concat(
+            pv.filter((item) => item.record_type == "addAction"),
+        );
+        results = results.concat(
+            pv.filter((item) => item.record_type == "replaceAction"),
+        );
 
         // Process deletions and replacements
-        pv.filter((item) => item.record_type == 'replaceAction').forEach((filteredItem) => {
-            results = results.filter((result) => !(result.lt(filteredItem) && (filteredItem.replacee == null || filteredItem.replacee === undefined ||  filteredItem.replacee == result.value )));
-        });
+        pv.filter((item) => item.record_type == "replaceAction").forEach(
+            (filteredItem) => {
+                results = results.filter(
+                    (result) =>
+                        !(
+                            result.lt(filteredItem) &&
+                            (filteredItem.replacee == null ||
+                                filteredItem.replacee === undefined ||
+                                filteredItem.replacee == result.value)
+                        ),
+                );
+            },
+        );
 
-        pv.filter((item) => item.record_type == 'deleteAction').forEach((filteredItem) => {
-            results = results.filter((result) => !(result.lt(filteredItem) && result.value == filteredItem.value));
-        });
+        pv.filter((item) => item.record_type == "deleteAction").forEach(
+            (filteredItem) => {
+                results = results.filter(
+                    (result) =>
+                        !(
+                            result.lt(filteredItem) &&
+                            result.value == filteredItem.value
+                        ),
+                );
+            },
+        );
 
         function compare(a, b) {
-            if(a.gt(b)){return -1};
-            if(a.lt(b)){return 1};
+            if (a.gt(b)) {
+                return -1;
+            }
+            if (a.lt(b)) {
+                return 1;
+            }
             return 0;
-        };
+        }
 
         results.sort(compare);
-        this._propertyValuesNetCache = []
-        this._propertyValuesNetCache = this._propertyValuesNetCache.concat(results)
-        this._propertyValuesNetCacheOld = []
-        this._propertyValuesNetCacheOld = this._propertyValuesNetCacheOld.concat(results)
-        this._propertyValuesCache = null
-
+        this._propertyValuesNetCache = [];
+        this._propertyValuesNetCache =
+            this._propertyValuesNetCache.concat(results);
+        this._propertyValuesNetCacheOld = [];
+        this._propertyValuesNetCacheOld =
+            this._propertyValuesNetCacheOld.concat(results);
+        this._propertyValuesCache = null;
 
         // Disable validity
-        for(let pv of this._propertyValues){
-            pv.valid = false
+        for (let pv of this._propertyValues) {
+            pv.valid = false;
         }
 
-        // Reenable validity 
-        for(let pv of this._propertyValuesNetCache){
-            pv.valid = true
+        // Reenable validity
+        for (let pv of this._propertyValuesNetCache) {
+            pv.valid = true;
         }
     }
-    
-    
+
     get propertyValuesAll() {
         // return in reverse order
-        
+
         return this.propertyValuesNet;
     }
 
     // ----------------------------------------------------
-    // Values 
+    // Values
     // ----------------------------------------------------
 
     get value() {
         // Return value element of best propertyValue object
-        if (this.propertyValue){
+        if (this.propertyValue) {
             return this.propertyValue.value;
         }
         return null;
@@ -373,10 +395,10 @@ export class KrProperty {
     set value(value) {
         return this.setValues(value);
     }
-    
+
     get values() {
         // Return value elements of all propertyValue object in order
-        return this.propertyValues.map((x) => x.value );
+        return this.propertyValues.map((x) => x.value);
     }
 
     setValues(value, metadataRecord, actionType) {
@@ -391,110 +413,121 @@ export class KrProperty {
     setValue(value, metadataRecord, actionType) {
         let newValueObject = value;
 
-
         // Check if date
-        let d = convertToDate(newValueObject)
-        if(d && d != null){
-            newValueObject = d
+        let d = convertToDate(newValueObject);
+        if (d && d != null) {
+            newValueObject = d;
         }
-        
+
         if (!(newValueObject instanceof KrPropertyValue)) {
-            newValueObject = new KrPropertyValue(this.propertyID, value, actionType);
+            newValueObject = new KrPropertyValue(
+                this.propertyID,
+                value,
+                actionType,
+            );
+        }
+
+        newValueObject.metadata.inheritMetadata(metadataRecord);
+
+        // Returns if already contains value
+        if (this.containsValue(newValueObject) == true) {
+            return this.getValue(newValueObject);
         }
         
-        newValueObject.metadata.inheritMetadata(metadataRecord);
         this._propertyValues.push(newValueObject);
         newValueObject.metadata.position = this._propertyValues.length;
 
 
-        if(this.contains(newValueObject) == true){ return }
-
-        
         // Add to cache
-        if(this._propertyValuesNetCache && this._propertyValuesNetCache != null){
-            this._propertyValuesNetCache.push(newValueObject)
+        if (
+            this._propertyValuesNetCache &&
+            this._propertyValuesNetCache != null
+        ) {
+            this._propertyValuesNetCache.push(newValueObject);
         }
 
         // Reset cache
-        this._propertyValuesCache = null
-        this._propertyValuesCacheOld = null
-        
+        this._propertyValuesCache = null;
+        this._propertyValuesCacheOld = null;
+
         return newValueObject;
     }
 
-    
-    printScreen(suffix=''){
-
+    printScreen(suffix = "") {
         var v = this.value;
         if (this.value && this.value.record_type) {
             v = this.value.record_type + "/" + this.value.record_id;
-        };
+        }
 
         console.log(suffix, " - ", this.propertyID, ": ", v);
 
-       
         this.propertyValuesNet.map((propertyValue) => {
-
-            propertyValue.printScreen(suffix + '    ');
-
+            propertyValue.printScreen(suffix + "    ");
         });
     }
-    printScreenAll(suffix=''){
-
+    printScreenAll(suffix = "") {
         var v = this.value;
         if (this.value && this.value.record_type) {
             v = this.value.record_type + "/" + this.value.record_id;
-        };
+        }
 
         console.log(suffix, " - ", this.propertyID, ": ", v);
 
         console.log(suffix, "       Net");
         this.propertyValuesNet.map((propertyValue) => {
-
-            propertyValue.printScreen(suffix + '        ');
-
+            propertyValue.printScreen(suffix + "        ");
         });
         console.log(suffix, "       Raw");
         this.propertyValuesAll.map((propertyValue) => {
-
-            propertyValue.printScreen(suffix + '        ');
-
+            propertyValue.printScreen(suffix + "        ");
         });
     }
 
     // -----------------------------------------------------
-    //  Query 
+    //  Query
     // -----------------------------------------------------
 
-    containsValue(value){
+    getValue(value) {
+        // Returns equivalent valueObject if present
+
+
+        if(!value || value == null){ return }
+        
+        if (value.record_type) {
+            value = value.ref;
+        }
+
+        if (value?.["@type"]) {
+            value = { "@type": value?.["@type"], "@id": value?.["@id"] };
+        }
+
+        for (let pv of this.propertyValues) {
+            let value0 = pv.value;
+            if (value0.record_type) {
+                value0 = value0.ref;
+            }
+
+            if (value0["@type"]) {
+                value0 = { "@type": value0?.["@type"], "@id": value0?.["@id"] };
+            }
+
+            if (JSON.stringify(value) == JSON.stringify(value0)) {
+                return pv;
+            }
+        }
+        return null;
+    }
+
+    containsValue(value) {
         // Return true if value is part of values
 
-        if(value.record_type){
-            value = value.ref
+        let v = this.getValue(value);
+        if (v && v != null) {
+            return true;
         }
-
-        if(value['@type']){
-            value = {"@type": value?.["@type"], "@id": value?.["@id"]}
-        }
-        
-        for(let pv of this.propertyValues){
-            let value0 = pv.value
-            if(value0.record_type){
-                value0 = value0.ref
-            }
-
-            if(value0['@type']){
-                value0 = {"@type": value0?.["@type"], "@id": value0?.["@id"]}
-            }
-
-            if(JSON.stringify(value)==JSON.stringify(value0)){ 
-                return true 
-            }
-        }
-        return false   
+        return false;
     }
 }
-
 
 function ensureNotArray(value) {
     let new_value = ensureArray(value);
@@ -512,11 +545,6 @@ function ensureArray(value) {
         return [value];
     }
 }
-
-
-
-
-
 
 function convertToDate(value) {
     if (value instanceof Date && !isNaN(value)) {

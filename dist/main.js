@@ -542,7 +542,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     }
     //
     // ----------------------------------------------------
-    // Records 
+    // Records
     // ----------------------------------------------------
     getFullRecord(maxDepth, currentDepth) {
         return this.propertyValuesNet.map((x)=>x.getFullRecord(maxDepth, currentDepth));
@@ -561,7 +561,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         return this.propertyValuesNet.map((x)=>x.getDetailRecord(maxDepth, currentDepth));
     }
     // ----------------------------------------------------
-    // Records 
+    // Records
     // ----------------------------------------------------
     getSystemRecord(maxDepth, currentDepth) {
         let results = this._propertyValues.map((x)=>x.getSystemRecord(maxDepth, currentDepth));
@@ -577,7 +577,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         }
     }
     // -----------------------------------------------------
-    //  System attributes 
+    //  System attributes
     // -----------------------------------------------------
     get systemCreatedDate() {
         let resultDate = null;
@@ -596,7 +596,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         return resultDate;
     }
     // ----------------------------------------------------
-    // PropertyValues 
+    // PropertyValues
     // ----------------------------------------------------
     get propertyValue() {
         // return best property value object
@@ -647,7 +647,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
             }
         }
         let results = [];
-        // Process additions        
+        // Process additions
         results = results.concat(pv.filter((item)=>item.record_type == "addAction"));
         results = results.concat(pv.filter((item)=>item.record_type == "replaceAction"));
         // Process deletions and replacements
@@ -670,7 +670,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         this._propertyValuesCache = null;
         // Disable validity
         for (let pv of this._propertyValues)pv.valid = false;
-        // Reenable validity 
+        // Reenable validity
         for (let pv of this._propertyValuesNetCache)pv.valid = true;
     }
     get propertyValuesAll() {
@@ -678,7 +678,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         return this.propertyValuesNet;
     }
     // ----------------------------------------------------
-    // Values 
+    // Values
     // ----------------------------------------------------
     get value() {
         // Return value element of best propertyValue object
@@ -705,9 +705,10 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         if (d && d != null) newValueObject = d;
         if (!(newValueObject instanceof (0, $9ef8378eb9810880$export$90601469cef9e14f))) newValueObject = new (0, $9ef8378eb9810880$export$90601469cef9e14f)(this.propertyID, value1, actionType);
         newValueObject.metadata.inheritMetadata(metadataRecord);
+        // Returns if already contains value
+        if (this.containsValue(newValueObject) == true) return this.getValue(newValueObject);
         this._propertyValues.push(newValueObject);
         newValueObject.metadata.position = this._propertyValues.length;
-        if (this.contains(newValueObject) == true) return;
         // Add to cache
         if (this._propertyValuesNetCache && this._propertyValuesNetCache != null) this._propertyValuesNetCache.push(newValueObject);
         // Reset cache
@@ -737,12 +738,13 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         });
     }
     // -----------------------------------------------------
-    //  Query 
+    //  Query
     // -----------------------------------------------------
-    containsValue(value1) {
-        // Return true if value is part of values
+    getValue(value1) {
+        // Returns equivalent valueObject if present
+        if (!value1 || value1 == null) return;
         if (value1.record_type) value1 = value1.ref;
-        if (value1["@type"]) value1 = {
+        if (value1?.["@type"]) value1 = {
             "@type": value1?.["@type"],
             "@id": value1?.["@id"]
         };
@@ -753,8 +755,14 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
                 "@type": value0?.["@type"],
                 "@id": value0?.["@id"]
             };
-            if (JSON.stringify(value1) == JSON.stringify(value0)) return true;
+            if (JSON.stringify(value1) == JSON.stringify(value0)) return pv;
         }
+        return null;
+    }
+    containsValue(value1) {
+        // Return true if value is part of values
+        let v = this.getValue(value1);
+        if (v && v != null) return true;
         return false;
     }
 }
@@ -1332,7 +1340,6 @@ function $986206abb55bdef7$var$setFullRecord(thisThing, value) {
 //  System record 
 // -----------------------------------------------------
 function $986206abb55bdef7$var$getSystemRecordFlat(thing) {
-    console.log("Get flat", thing.record_type, thing.record_id);
     let records = [];
     for (let t of thing.things)records.push($986206abb55bdef7$var$getSystemRecord(t, 1, 0));
     return records;
@@ -1365,22 +1372,25 @@ function $986206abb55bdef7$var$setSystemRecord(thing, value, cache) {
         return;
     }
     // Check if valid format
-    if (!value || !value.propertyValues && !value.properties) return;
+    if (!value || !value.propertyValues) return;
     // Reset current properties
     thing._properties = [];
-    // Convert from old format to new
-    if (value.properties && value.properties != null) {
-        value.propertyValues = [];
-        for (let k of Object.keys(value.properties)){
-            let pvs = value.properties[k];
-            pvs = $986206abb55bdef7$var$ensureArray(pvs);
-            value.propertyValues = value.propertyValues.concat(pvs);
-        }
-        value.propertyValues = value.propertyValues.filter((item)=>item && item != null);
-    }
     // Set pvRecords
     if (!value.propertyValues || value.propertyValues == null) return;
     let pvRecords = $986206abb55bdef7$var$ensureArray(value.propertyValues);
+    pvRecords = pvRecords.filter((x)=>x !== undefined && x != null);
+    {
+        let newPvRecords = [];
+        for (let p of pvRecords){
+            if (Array.isArray(p) && p.length == 1) {
+                p = p[0];
+                newPvRecords.push(p);
+            } else if (Array.isArray(p) && p.length == 0) ;
+            else newPvRecords.push(p);
+        }
+        pvRecords = newPvRecords;
+    }
+    //
     if (pvRecords.length == 0) return;
     // convert sub things to KrThing
     let counter = 0;
@@ -1393,7 +1403,7 @@ function $986206abb55bdef7$var$setSystemRecord(thing, value, cache) {
             $986206abb55bdef7$var$setSystemRecord(t, value, cache);
             // Store and retrieve to cache to avoid duplicate things
             cache.set(t);
-            t = cache.get(t.record_type, t.record_id);
+            t = cache.get(value?.["@type"], value?.["@id"]);
             pvRecord.object.value = t;
             counter += 1;
         }
@@ -1402,7 +1412,7 @@ function $986206abb55bdef7$var$setSystemRecord(thing, value, cache) {
     let propertyIDs = [
         ...new Set(pvRecords.map((x)=>x.object.propertyID))
     ];
-    for (let propertyID of propertyIDs){
+    for (let propertyID of propertyIDs)if (propertyID && propertyID != null) {
         let subPropertyValues = pvRecords.filter((item)=>item.object.propertyID == propertyID);
         var property = new (0, $0ff73647c93c411e$export$13f164945901aa88)(propertyID);
         property.setSystemRecord(subPropertyValues);

@@ -75,10 +75,10 @@ test('KrProperty Values', function () {
     var k = new KrProperty('name');
     
 
-    var v1=k.setValue('value1');
+    var v1 = k.setValue('value1');
     v1.c = 0.5;
 
-    var v2=k.setValue('value2');
+    var v2 = k.setValue('value2');
     v2.c = 0.3;
     
     // Test max

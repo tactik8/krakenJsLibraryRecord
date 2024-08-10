@@ -2,6 +2,37 @@ import { KrThing } from '../class_thing.js';
 
 
 
+
+
+test('API clear values', async () => {
+
+    // Get records
+    let t2 = new KrThing()
+    t2.api.query ={'@type':'Thing'}
+
+    let r2 = await t2.api.search()
+
+
+    for(let item of t2.list.items){
+
+        await item.api.delete()
+ 
+    }
+
+
+    let t3 = new KrThing()
+    t3.api.query ={'@type':'Thing'}
+
+    let r3 = await t3.api.search()
+
+    
+    expect(t3.list.length).toStrictEqual(0);
+
+    
+    
+})
+
+
 // Run the test
 test('API init get post delete', async () => {
 
@@ -27,16 +58,14 @@ test('API init get post delete', async () => {
     
     let r1 = await t1.api.post()
     let r2 = await t2.api.get()
-        
-    expect(t1.p.name).toStrictEqual(t2.p.name);
+    
+    expect(t2.p.name).toStrictEqual('thing1');
 
     let t3 = new KrThing("Thing", "thing1")
     t3.api.apiConfig = apiConfig
 
-
     let t4 = new KrThing("Thing", "thing1")
     t4.api.apiConfig = apiConfig
-
 
     let r3 = await t3.api.delete()
     let r4 = await t4.api.get()
@@ -84,6 +113,7 @@ test('API things', async () => {
 
     // Get records
     let t2 = new KrThing()
+    t2.api.apiConfig = apiConfig
     t2.api.query ={'@type':'Thing'}
     
     let r2 = await t2.api.search()

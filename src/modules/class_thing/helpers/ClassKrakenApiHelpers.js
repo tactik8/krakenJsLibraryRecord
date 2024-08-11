@@ -83,11 +83,8 @@ export class ClassKrakenApiHelpers{
                 throw new Error(String(response.status) + ' ' +response.statusText);
             }
             let results = await response.json()
-            console.log('results', results)
             this.thing.export.system = results
-            console.log('----------')
-            console.log(this.thing.record)
-            console.log('----------')
+
             action.a.setCompleted()
             action.a.result = this.thing
            

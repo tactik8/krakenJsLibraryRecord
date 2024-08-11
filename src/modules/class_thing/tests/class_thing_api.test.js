@@ -6,8 +6,16 @@ import { KrThing } from '../class_thing.js';
 
 test('API clear values', async () => {
 
+
+    let apiConfig = {
+        apiUrl: 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev',
+        apiCollection: 'unitTest1'
+    }
+
+    
     // Get records
     let t2 = new KrThing()
+    t2.api.apiConfig = apiConfig
     t2.api.query ={'@type':'Thing'}
 
     let r2 = await t2.api.search()
@@ -39,7 +47,7 @@ test('API init get post delete', async () => {
 
     let apiConfig = {
         apiUrl: 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev',
-        apiCollection: 'unitTest'
+        apiCollection: 'unitTest2'
     }
     
     var t1 = new KrThing()
@@ -94,7 +102,7 @@ test('API things', async () => {
 
     let apiConfig = {
         apiUrl: 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev',
-        apiCollection: 'unitTest'
+        apiCollection: 'unitTest3'
     }
 
     
@@ -103,21 +111,22 @@ test('API things', async () => {
     t1.api.apiConfig = apiConfig
 
     let records = []
-    for(let i =0; i< 10; i++){
+    for(let i=0; i< 10; i++){
         records.push(getRecord(i))
     }
     
-    
     let r1 = await t1.api.post()
+    expect(r1.a.actionStatus).toStrictEqual('CompletedActionStatus');
 
-
+    
     // Get records
     let t2 = new KrThing()
     t2.api.apiConfig = apiConfig
-    t2.api.query ={'@type':'Thing'}
+    t2.api.query = {'@type':'Thing'}
     
     let r2 = await t2.api.search()
 
+    expect(r2.a.actionStatus).toStrictEqual('CompletedActionStatus');
     expect(t2.list.length).toStrictEqual(10);
 
    

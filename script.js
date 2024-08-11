@@ -142,63 +142,40 @@ async function test2(){
 
 function test3(){
 
-    let record = {
-         "@type": "Person",
-         "@id": "person_1",
-         "givenName": "givenName_1",
-         "familyName": "familyName_1",
-         "email": "test@test.com",
-         "telephone": "1-514-111-2222",
-         "hasOccupation": {
-             "@type": "Occupation",
-             "@id": "occupation_1",
-             "name": "occupation_1"
-             },
-         "worksfor": {
-             "@type": "Organization",
-             "@id": "test_org_1",
-             "name": "test_org_1",
-             "url": "https://www.test.com",
-             "test": {
-                      "@type": "Person",
-                      "@id": "person_1",
-                      "givenName": "givenName_1",
-                      "familyName": "familyName_1",
-                      "email": "test@test.com",
-                      "telephone": "1-514-111-2222",
-                      "hasOccupation": {
-                          "@type": "Occupation",
-                          "@id": "occupation_1",
-                          "name": "occupation_1"
-                          },
-                      "worksfor": {
-                          "@type": "Organization",
-                          "@id": "organization_1",
-                          "name": "test_org_1",
-                          "url": "https://www.test.com"
-                          }
-             }
+    function getRecord(n){
 
-             }
-     }
+        let record = {
+            "@context": "https://schema.org/",
+            "@type": "Thing",
+            "@id": "thing" + String(n),
+            "name": "thing" + String(n)
+        }
+        return record
+    }
+
+    
 
 
-    let t1 = new KrThing()
-    t1.record = record
+    let t1 = new KrThing('ItemList')
+    t1.list.add(getRecord(1))
+    t1.list.add(getRecord(2))
+    t1.list.add(getRecord(3))
+    t1.list.add(getRecord(4))
+    t1.list.add(getRecord(5))
+
 
     let t2 = new KrThing()
 
-    console.log(t1.export.system)
-    
     t2.export.system = t1.export.system
+ 
 
-    console.log(t2.record)
+    console.log(t2.list.items.length)
     
 }
 
 
-//test3()
-test1()
+test3()
+//test1()
 
 
 //test2()

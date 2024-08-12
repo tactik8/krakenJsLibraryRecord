@@ -37,7 +37,7 @@ export class ClassKrakenApiHelpers{
 
         try {
             
-            let results = await k.api.get(this.apiUrl, null, this.thing.ref)
+            let results = await k.api.get(this.apiUrl, this.apiCollection, this.thing.ref)
             this.thing.export.system = results
             action.a.setCompleted()
             action.a.result = this.thing
@@ -64,7 +64,7 @@ export class ClassKrakenApiHelpers{
 
         try {
 
-            let results = await k.api.get(this.apiUrl, null, this.params)
+            let results = await k.api.get(this.apiUrl, this.apiCollection, this.params)
             this.thing.export.system = results
             action.a.setCompleted()
             action.a.result = this.thing
@@ -89,7 +89,7 @@ export class ClassKrakenApiHelpers{
 
             let things = this.thing.list.new()
 
-            let additionalPath = `/${thing.record_type}/${thing.record_id}/related`
+            let additionalPath = `/${this.apiCollection}/${thing.record_type}/${thing.record_id}/related`
 
             let results = await k.api.get(this.apiUrl, additionalPath)
             things.export.system = results
@@ -113,7 +113,7 @@ export class ClassKrakenApiHelpers{
         action.a.instrument = this.instrument
 
         try {
-            let results = await k.api.post(this.apiUrl, null, this.thing.export.system)
+            let results = await k.api.post(this.apiUrl, this.apiCollection, this.thing.export.system)
             action.a.setCompleted()
             action.a.result = this.thing
 
@@ -134,7 +134,7 @@ export class ClassKrakenApiHelpers{
         action.a.instrument = this.instrument
 
         try {
-            let results = await k.api.delete(this.apiUrl, null, this.thing.ref)
+            let results = await k.api.delete(this.apiUrl, this.apiCollection, this.thing.ref)
             action.a.setCompleted()
             action.a.result = this.thing
 

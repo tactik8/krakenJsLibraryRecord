@@ -60,24 +60,35 @@ async function test1(){
 
     let apiConfig = {
         apiUrl: 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev',
-        apiCollection: 'unitTest2'
+        apiCollection: 'api/ut21'
     }
 
 
     // Post records
-    var t1 = new KrThing('ItemList')
+    var t1 = new KrThing('ItemList', 'ItemList1')
     t1.api.apiConfig = apiConfig
 
     let records = []
     for(let i =0; i< 10; i++){
-        records.push(getRecord(i))
+
+        let li = new KrThing('ListItem', 'li' + String(i))
+        li.list.item = new KrThing(getRecord(i))
+        
+        records.push(li)
     }
     t1.list.add(records)
 
 
+    console.log(t1.things.length)
+
+    
+    
+    
     let r1 = await t1.api.post()
 
 
+    console.log(r1.a.actionStatus, r1.a.error)
+    
     // Get records
     let t2 = new KrThing()
     t2.api.apiConfig = apiConfig
@@ -85,7 +96,10 @@ async function test1(){
     t2.api.limit = 20
 
     let r2 = await t2.api.search()
+    console.log(r2.a.actionStatus, r1.a.error)
 
+    console.log(t2.list.items)
+    
     console.log(t1.list.length, t2.list.length)
     //expect(t2.list.length).toStrictEqual(10);
     console.log(t1.heading.textDetails)
@@ -160,8 +174,8 @@ async function test3(){
 }
 
 
-test3()
-//test1()
+//test3()
+test1()
 
 
 //test2()

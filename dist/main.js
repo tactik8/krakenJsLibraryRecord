@@ -1478,8 +1478,10 @@ class $681e59e95589c3c8$export$bcd69048a889a452 {
     setItems(value) {
         return $681e59e95589c3c8$var$pushItem(this.thing, value);
     }
-    // Item
-    set item(value) {
+    push(value) {
+        return $681e59e95589c3c8$var$pushItem(this.thing, value);
+    }
+    add(value) {
         return $681e59e95589c3c8$var$pushItem(this.thing, value);
     }
     getItem(ref) {
@@ -1488,15 +1490,19 @@ class $681e59e95589c3c8$export$bcd69048a889a452 {
     pushItem(value) {
         return $681e59e95589c3c8$var$pushItem(this.thing, value);
     }
+    // ListItem
+    get item() {
+        return this.thing.p.item;
+    }
+    set item(value) {
+        return this.thing.p.item = value;
+    }
     setItem(value) {
-        return $681e59e95589c3c8$var$pushItem(this.thing, value);
+        return this.thing.p.item = value;
     }
-    push(value) {
-        return $681e59e95589c3c8$var$pushItem(this.thing, value);
-    }
-    add(value) {
-        return $681e59e95589c3c8$var$pushItem(this.thing, value);
-    }
+    // -----------------------------------------------------
+    //  Comment 
+    // -----------------------------------------------------
     reCalculatePosition() {
         return $681e59e95589c3c8$var$reCalculatePosition(this.thing);
     }
@@ -1985,7 +1991,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
         try {
-            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, null, this.thing.ref);
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.apiCollection, this.thing.ref);
             this.thing.export.system = results;
             action.a.setCompleted();
             action.a.result = this.thing;
@@ -2002,7 +2008,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.name = `Get records `;
         action.a.instrument = this.instrument;
         try {
-            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, null, this.params);
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.apiCollection, this.params);
             this.thing.export.system = results;
             action.a.setCompleted();
             action.a.result = this.thing;
@@ -2018,7 +2024,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.instrument = this.instrument;
         try {
             let things = this.thing.list.new();
-            let additionalPath = `/${thing.record_type}/${thing.record_id}/related`;
+            let additionalPath = `/${this.apiCollection}/${thing.record_type}/${thing.record_id}/related`;
             let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, additionalPath);
             things.export.system = results;
             action.a.setCompleted();
@@ -2034,7 +2040,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
         try {
-            let results = await (0, $5OpyM$krakenHelpers).api.post(this.apiUrl, null, this.thing.export.system);
+            let results = await (0, $5OpyM$krakenHelpers).api.post(this.apiUrl, this.apiCollection, this.thing.export.system);
             action.a.setCompleted();
             action.a.result = this.thing;
         } catch (error) {
@@ -2048,7 +2054,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
         try {
-            let results = await (0, $5OpyM$krakenHelpers).api.delete(this.apiUrl, null, this.thing.ref);
+            let results = await (0, $5OpyM$krakenHelpers).api.delete(this.apiUrl, this.apiCollection, this.thing.ref);
             action.a.setCompleted();
             action.a.result = this.thing;
         } catch (error) {

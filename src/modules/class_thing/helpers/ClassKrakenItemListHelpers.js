@@ -66,29 +66,43 @@ export class ClassKrakenItemListHelpers {
     setItems(value){
         return pushItem(this.thing, value)
     } 
-   
 
-    // Item
-
-    set item(value){
-        return pushItem(this.thing, value)
-    }
-    
-    getItem(ref){
-        return getItem(this.thing)
-    } 
-    pushItem(value){
-        return pushItem(this.thing, value)
-    }
-    setItem(value){
-        return pushItem(this.thing, value)
-    } 
     push(value){
         return pushItem(this.thing, value)
     } 
     add(value){
         return pushItem(this.thing, value)
     } 
+
+    getItem(ref){
+        return getItem(this.thing)
+    } 
+    pushItem(value){
+        return pushItem(this.thing, value)
+    }
+
+
+    
+    // ListItem
+
+
+    get item(){
+        return this.thing.p.item
+    }
+    
+    set item(value){
+        return this.thing.p.item = value
+    }
+    
+    
+    setItem(value){
+        return this.thing.p.item = value
+    } 
+
+
+    // -----------------------------------------------------
+    //  Comment 
+    // -----------------------------------------------------
 
 
     reCalculatePosition(){
@@ -224,6 +238,7 @@ function pushItem(thisThing, listItems) {
 
         // Check if ListItem, else convert to one
         if (listItem.record_type != "ListItem") {
+            
             let newListItem = thisThing.new("ListItem");
             newListItem.p.item = listItem;
             listItem = newListItem;

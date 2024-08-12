@@ -140,42 +140,28 @@ async function test2(){
 
 }
 
-function test3(){
+async function test3(){
 
-    function getRecord(n){
+    let url = 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api'
 
-        let record = {
-            "@context": "https://schema.org/",
-            "@type": "Thing",
-            "@id": "thing" + String(n),
-            "name": "thing" + String(n)
-        }
-        return record
-    }
+    let things = new KrThing('ItemList')
+    things.api.apiUrl = url + '/' + 'test7'
+    console.log(things.api.apiUrl)
+    //things.api.req = req
 
-    
+    let r = await things.api.get()
+    console.log('p', things.api.params)
 
+    console.log('status', r.a.actionStatus, r.a.error)
 
-    let t1 = new KrThing('ItemList')
-    t1.list.add(getRecord(1))
-    t1.list.add(getRecord(2))
-    t1.list.add(getRecord(3))
-    t1.list.add(getRecord(4))
-    t1.list.add(getRecord(5))
+    console.log(JSON.stringify(things.export.record, null, 4))
 
-
-    let t2 = new KrThing()
-
-    t2.export.system = t1.export.system
- 
-
-    console.log(t2.list.items.length)
     
 }
 
 
-//test3()
-test1()
+test3()
+//test1()
 
 
 //test2()

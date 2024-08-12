@@ -1979,6 +1979,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     //  I/O 
     // -----------------------------------------------------
     async get() {
+        if (!this.record_id || this.record_id == null) return this.getThings();
         let action = this.thing.action.new();
         action.a.name = `Get record ${this.thing.refID}`;
         action.a.object = this.thing.ref;
@@ -1998,8 +1999,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     }
     async getThings() {
         let action = this.thing.action.new();
-        action.a.name = `Get record ${this.thing.refID}`;
-        action.a.object = this.thing.ref;
+        action.a.name = `Get records `;
         action.a.instrument = this.instrument;
         try {
             let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, null, this.params);

@@ -26,6 +26,10 @@ export class ClassKrakenApiHelpers{
 
     async get(){
 
+        if(!this.record_id || this.record_id == null){
+            return this.getThings()
+        }
+        
         let action = this.thing.action.new()
         action.a.name = `Get record ${this.thing.refID}`
         action.a.object = this.thing.ref
@@ -55,8 +59,7 @@ export class ClassKrakenApiHelpers{
     async getThings(){
 
         let action = this.thing.action.new()
-        action.a.name = `Get record ${this.thing.refID}`
-        action.a.object = this.thing.ref
+        action.a.name = `Get records `
         action.a.instrument = this.instrument
 
         try {

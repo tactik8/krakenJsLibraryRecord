@@ -64,6 +64,7 @@ export class ClassKrakenApiHelpers{
 
         try {
 
+            console.log(this.params)
             let results = await k.api.get(this.apiUrl, this.apiCollection, this.params)
             this.thing.export.system = results
             action.a.setCompleted()
@@ -163,6 +164,7 @@ export class ClassKrakenApiHelpers{
         return this._apiConfig.apiUrl
     }
     set apiUrl(value){
+        if(!value || value == null){ return }
         this.apiConfig.apiUrl = value
     }
 
@@ -170,6 +172,7 @@ export class ClassKrakenApiHelpers{
         return this._apiConfig.apiCollection
     }
     set apiCollection(value){
+        if(!value || value == null){ return }
         this.apiConfig.apiCollection = value
     }
     
@@ -182,11 +185,11 @@ export class ClassKrakenApiHelpers{
     }
 
     get record_id(){
-        return this._params.record_type 
+        return this._params.record_id
     }
     set record_id(value){
         if(!value || value == null){ return }
-        this._params.record_type = value
+        this._params.record_id = value
     }
 
     get query(){
@@ -247,6 +250,14 @@ export class ClassKrakenApiHelpers{
             params['orderDirection'] = this.orderDirection
         }
 
+        if(this.record_type && this.record_type != null){
+            params['record_type'] = this.record_type
+        }
+
+        if(this.record_id && this.record_id != null){
+            params['record_id'] = this.record_id
+        }
+
         return params
     }
 
@@ -271,6 +282,7 @@ export class ClassKrakenApiHelpers{
         this.record_id = value.query["@id"]  
         this.record_id = value.params["record_id"]  
         this.record_id = value.params["@id"]  
+        this.apiCollection = value.params["collection"]  
     }
 
 

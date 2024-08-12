@@ -2008,6 +2008,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.name = `Get records `;
         action.a.instrument = this.instrument;
         try {
+            console.log(this.params);
             let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.apiCollection, this.params);
             this.thing.export.system = results;
             action.a.setCompleted();
@@ -2075,12 +2076,14 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         return this._apiConfig.apiUrl;
     }
     set apiUrl(value) {
+        if (!value || value == null) return;
         this.apiConfig.apiUrl = value;
     }
     get apiCollection() {
         return this._apiConfig.apiCollection;
     }
     set apiCollection(value) {
+        if (!value || value == null) return;
         this.apiConfig.apiCollection = value;
     }
     get record_type() {
@@ -2091,11 +2094,11 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         this._params.record_type = value;
     }
     get record_id() {
-        return this._params.record_type;
+        return this._params.record_id;
     }
     set record_id(value) {
         if (!value || value == null) return;
-        this._params.record_type = value;
+        this._params.record_id = value;
     }
     get query() {
         let q = this._params.query || {};
@@ -2136,6 +2139,8 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         if (this.limit && this.limit != null) params["limit"] = this.limit;
         if (this.orderBy && this.orderBy != null) params["orderBy"] = this.orderBy;
         if (this.orderDirection && this.orderDirection != null) params["orderDirection"] = this.orderDirection;
+        if (this.record_type && this.record_type != null) params["record_type"] = this.record_type;
+        if (this.record_id && this.record_id != null) params["record_id"] = this.record_id;
         return params;
     }
     get req() {
@@ -2156,6 +2161,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         this.record_id = value.query["@id"];
         this.record_id = value.params["record_id"];
         this.record_id = value.params["@id"];
+        this.apiCollection = value.params["collection"];
     }
     // -----------------------------------------------------
     //  Comment 

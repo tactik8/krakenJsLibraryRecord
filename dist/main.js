@@ -1,4 +1,5 @@
 import {v4 as $5OpyM$v4} from "uuid";
+import {krakenHelpers as $5OpyM$krakenHelpers} from "krakenhelpers";
 
 
 
@@ -1960,12 +1961,14 @@ function $48f3d71cef923a10$var$convertToDate(value) {
 }
 
 
+
 let $a0c51871cc1d3395$var$API_ACTIONS_LOG = [];
 class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     constructor(thing1){
         this.thing = thing1;
         this._apiConfig = {};
         this._params = {};
+        this._req = null;
         this.instrument = {
             "@type": "WebAPI",
             "@id": "ClassKrakenApiHelpers",
@@ -1980,16 +1983,9 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.name = `Get record ${this.thing.refID}`;
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
-        const requestOptionsGet = {
-            method: "GET",
-            headers: this.headers
-        };
         try {
-            let url = this.url;
-            url.search = new URLSearchParams(this.thing.ref);
-            const response = await fetch(url, requestOptionsGet);
-            if (response.status != 200) throw new Error(String(response.status) + " " + response.statusText);
-            this.thing.export.system = await response.json();
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, null, this.thing.ref);
+            this.thing.export.system = results;
             action.a.setCompleted();
             action.a.result = this.thing;
         } catch (error) {
@@ -2002,18 +1998,11 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     }
     async getThings() {
         let action = this.thing.action.new();
-        action.name = `Get records `;
+        action.a.name = `Get record ${this.thing.refID}`;
+        action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
-        const requestOptionsGet = {
-            method: "GET",
-            headers: this.headers
-        };
         try {
-            let url = this.url;
-            url.search = new URLSearchParams(this.params);
-            const response = await fetch(url, requestOptionsGet);
-            if (response.status != 200) throw new Error(String(response.status) + " " + response.statusText);
-            let results = await response.json();
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, null, this.params);
             this.thing.export.system = results;
             action.a.setCompleted();
             action.a.result = this.thing;
@@ -2024,64 +2013,44 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     }
     async getThingRelated() {
         let action = this.thing.action.new();
-        action.name = `Get related records to ${this.thing.refID}`;
+        action.a.name = `Get record ${this.thing.refID}`;
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
-        const requestOptionsGet = {
-            method: "GET",
-            headers: this.headers
-        };
         try {
-            let additionalPath = `/api/${this.apiCollection}/${thing.record_type}/${thing.record_id}/related`;
-            let url = new URL(additionalPath, this.apiUrl);
-            url.search = new URLSearchParams();
-            const response = await fetch(url, requestOptionsGet);
-            if (response.status != 200) throw new Error(String(response.status) + " " + response.statusText);
-            let relatedThings = this.thing.list.new();
-            relatedThings.export.system = await response.json();
+            let things = this.thing.list.new();
+            let additionalPath = `/${thing.record_type}/${thing.record_id}/related`;
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, additionalPath);
+            things.export.system = results;
             action.a.setCompleted();
-            action.a.result = relatedThings;
+            action.a.result = things;
         } catch (error) {
-            action.setFailed(String(error));
+            action.a.setFailed(String(error));
         }
         return action;
     }
     async post() {
-        let action = this.thing.a.new();
-        action.a.name = `Post record (${this.thing.refID})`;
+        let action = this.thing.action.new();
+        action.a.name = `Get record ${this.thing.refID}`;
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
-        //Post 
         try {
-            let requestOptions = {
-                method: "POST",
-                headers: this.headers,
-                body: JSON.stringify(this.thing.export.system)
-            };
-            let url = String(this.url);
-            const response = await fetch(url, requestOptions);
-            if (response.status != 200) throw new Error(String(response.status) + " " + response.statusText);
+            let results = await (0, $5OpyM$krakenHelpers).api.post(this.apiUrl, null, this.thing.export.system);
             action.a.setCompleted();
+            action.a.result = this.thing;
         } catch (error) {
             action.a.setFailed(String(error));
         }
         return action;
     }
     async delete() {
-        let action = this.thing.a.new();
-        action.p.name = `Delete record (${this.thing.refID})`;
+        let action = this.thing.action.new();
+        action.a.name = `Delete record ${this.thing.refID}`;
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
-        const requestOptionsGet = {
-            method: "DELETE",
-            headers: this.headers
-        };
         try {
-            let url = this.url;
-            url.search = new URLSearchParams(this.thing.ref);
-            const response = await fetch(url, requestOptionsGet);
-            if (response.status != 200) throw new Error(String(response.status) + " " + response.statusText);
+            let results = await (0, $5OpyM$krakenHelpers).api.delete(this.apiUrl, null, this.thing.ref);
             action.a.setCompleted();
+            action.a.result = this.thing;
         } catch (error) {
             action.a.setFailed(String(error));
         }
@@ -2112,18 +2081,22 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         return this._params.record_type;
     }
     set record_type(value) {
+        if (!value || value == null) return;
         this._params.record_type = value;
     }
     get record_id() {
         return this._params.record_type;
     }
     set record_id(value) {
+        if (!value || value == null) return;
         this._params.record_type = value;
     }
     get query() {
-        return this._params.query;
+        let q = this._params.query || {};
+        return q;
     }
     set query(value) {
+        if (!value || value == null) return;
         this._params.query = value;
     }
     get limit() {
@@ -2150,17 +2123,6 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     set orderDirection(value) {
         this._params.orderDirection = value;
     }
-    get url() {
-        let additionalPath = "/api/" + this.apiCollection;
-        let new_url = new URL(additionalPath, this.apiUrl);
-        return new_url;
-    }
-    get headers() {
-        return {
-            "Content-Type": "application/json",
-            "Authorization": "bob"
-        };
-    }
     get params() {
         const params = {};
         if (this.query && this.query != null) params["query"] = JSON.stringify(this.query);
@@ -2169,6 +2131,25 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         if (this.orderBy && this.orderBy != null) params["orderBy"] = this.orderBy;
         if (this.orderDirection && this.orderDirection != null) params["orderDirection"] = this.orderDirection;
         return params;
+    }
+    get req() {
+        return this._req;
+    }
+    set req(value) {
+        this._req = value;
+        this.query = value.query["query"] || value.query["q"];
+        this.offset = value.query["offset"] || value.query["o"];
+        this.limit = value.query["limit"] || value.query["l"];
+        this.orderBy = value.query["orderBy"];
+        this.orderDirection = value.query["orderDirection"];
+        this.record_type = value.query["record_type"];
+        this.record_type = value.query["@type"];
+        this.record_type = value.params["record_type"];
+        this.record_type = value.params["@type"];
+        this.record_id = value.query["record_id"];
+        this.record_id = value.query["@id"];
+        this.record_id = value.params["record_id"];
+        this.record_id = value.params["@id"];
     }
     // -----------------------------------------------------
     //  Comment 

@@ -4,7 +4,7 @@
 import { KrThing } from "./src/index.js";
 //import { KrThing } from "./dist/main.js";
 
-import { krakenHelpers as k } from 'krakenhelper'
+import { krakenHelpers as k } from 'krakenhelpers'
 
 
 
@@ -174,8 +174,8 @@ function test3(){
 }
 
 
-test3()
-//test1()
+//test3()
+test1()
 
 
 //test2()

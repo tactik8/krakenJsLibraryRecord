@@ -72,7 +72,6 @@ test('API init get post delete', async () => {
     
     let r2 = await t2.api.get()
     expect(r2.a.actionStatus).toStrictEqual('CompletedActionStatus');
-    console.log(t2)
     expect(t2.p.name).toStrictEqual('thing1');
 
 
@@ -138,7 +137,8 @@ test('API things', async () => {
     
     // Get records
     let t2 = new KrThing()
-    t2.api.apiConfig = apiConfig
+    t2.api.apiUrl = apiUrl
+    t2.api.apiCollection = apiCollection
     t2.api.query = {'@type':'Thing'}
     
     let r2 = await t2.api.search()

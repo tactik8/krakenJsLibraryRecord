@@ -26,9 +26,6 @@ export class ClassKrakenApiHelpers{
 
     async get(){
 
-        if(!this.record_id || this.record_id == null){
-            return this.getThings()
-        }
         
         let action = this.thing.action.new()
         action.a.name = `Get record ${this.thing.refID}`
@@ -36,8 +33,7 @@ export class ClassKrakenApiHelpers{
         action.a.instrument = this.instrument
 
         try {
-            let params = {'@type': this.thing.record_type, '@id': this.thing.record_id}
-            let results = await k.api.get(this.apiUrl, this.path, params)
+            let results = await k.api.get(this.apiUrl, this.path, this.thing.ref)
             this.thing.export.system = results
             action.a.setCompleted()
             action.a.result = this.thing
@@ -63,8 +59,6 @@ export class ClassKrakenApiHelpers{
         action.a.instrument = this.instrument
 
         try {
-
-            console.log(this.params)
             let results = await k.api.get(this.apiUrl, this.path, this.params)
             this.thing.export.system = results
             action.a.setCompleted()
@@ -82,7 +76,7 @@ export class ClassKrakenApiHelpers{
     async getThingRelated(){
 
         let action = this.thing.action.new()
-        action.a.name = `Get record ${this.thing.refID}`
+        action.a.name = `Get thing related ${this.thing.refID}`
         action.a.object = this.thing.ref
         action.a.instrument = this.instrument
         
@@ -90,9 +84,8 @@ export class ClassKrakenApiHelpers{
 
             let things = this.thing.list.new()
 
-            let additionalPath = `/${this.path}/${this.thing.record_type}/${this.thing.record_id}/related`
-
-            let results = await k.api.get(this.apiUrl, additionalPath)
+            
+            let results = await k.api.get(this.apiUrl, this.path + '/related' , this.thing.ref)
             things.export.system = results
             action.a.setCompleted()
             action.a.result = things
@@ -215,8 +208,12 @@ export class ClassKrakenApiHelpers{
 
     get query(){
         let q = this._params.query 
-        return q
+        if(!q || q ==null){
+            this._params.query = {}
+        }
+        return this._params.query
     }
+    
     set query(value){
         if(!value || value == null){ return }
         this._params.query = value

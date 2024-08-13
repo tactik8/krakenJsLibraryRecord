@@ -217,8 +217,10 @@ function getListItems(thisThing) {
 function getItems(thing){
 
     let listItems = getListItems(thing)
+    listItems = ensureArray(listItems)
     let items = listItems.map(x => x?.p.get('item').value)
     items = items.filter( x => x !== undefined && x != null);
+    items = ensureArray(items)
     return items
 }
 

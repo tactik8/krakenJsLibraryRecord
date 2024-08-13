@@ -177,7 +177,28 @@ async function test3(){
 }
 
 
-test3()
+async function test4(){
+
+    let url = '2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api'
+
+
+    let t = new KrThing('Thing', 'thing1')
+    t.api.apiUrl = url 
+    t.api.apiCollection = 'ut21'
+    t.api.apiBasePath = 'api'
+
+
+    let r1 = await t.api.get()
+    let r = await t.api.getThingRelated()
+
+    let things = r.a.result
+    console.log(r.a.actionStatus)
+    console.log(things.l.length)
+
+    
+    
+}
+test4()
 //test1()
 
 

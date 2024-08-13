@@ -1566,8 +1566,10 @@ function $681e59e95589c3c8$var$getListItems(thisThing) {
 }
 function $681e59e95589c3c8$var$getItems(thing) {
     let listItems = $681e59e95589c3c8$var$getListItems(thing);
+    listItems = $681e59e95589c3c8$var$ensureArray(listItems);
     let items = listItems.map((x)=>x?.p.get("item").value);
     items = items.filter((x)=>x !== undefined && x != null);
+    items = $681e59e95589c3c8$var$ensureArray(items);
     return items;
 }
 function $681e59e95589c3c8$var$pushItem(thisThing, listItems) {
@@ -1986,17 +1988,12 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     //  I/O 
     // -----------------------------------------------------
     async get() {
-        if (!this.record_id || this.record_id == null) return this.getThings();
         let action = this.thing.action.new();
         action.a.name = `Get record ${this.thing.refID}`;
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
         try {
-            let params = {
-                "@type": this.thing.record_type,
-                "@id": this.thing.record_id
-            };
-            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path, params);
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path, this.thing.ref);
             this.thing.export.system = results;
             action.a.setCompleted();
             action.a.result = this.thing;
@@ -2013,7 +2010,6 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.name = `Get records `;
         action.a.instrument = this.instrument;
         try {
-            console.log(this.params);
             let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path, this.params);
             this.thing.export.system = results;
             action.a.setCompleted();
@@ -2025,13 +2021,12 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     }
     async getThingRelated() {
         let action = this.thing.action.new();
-        action.a.name = `Get record ${this.thing.refID}`;
+        action.a.name = `Get thing related ${this.thing.refID}`;
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
         try {
             let things = this.thing.list.new();
-            let additionalPath = `/${this.path}/${this.thing.record_type}/${this.thing.record_id}/related`;
-            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, additionalPath);
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path + "/related", this.thing.ref);
             things.export.system = results;
             action.a.setCompleted();
             action.a.result = things;
@@ -2123,7 +2118,8 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     }
     get query() {
         let q = this._params.query;
-        return q;
+        if (!q || q == null) this._params.query = {};
+        return this._params.query;
     }
     set query(value) {
         if (!value || value == null) return;

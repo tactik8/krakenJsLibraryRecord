@@ -160,7 +160,7 @@ async function test3(){
 
     let things = new KrThing('ItemList')
     things.api.apiUrl = url 
-    things.api.apiCollection = 'api/ut21'
+    things.api.apiCollection = 'ut21'
 
 
     //things.api.record_type = 'Thing'

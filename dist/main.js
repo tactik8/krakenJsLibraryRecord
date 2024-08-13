@@ -1991,7 +1991,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
         try {
-            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.apiCollection, this.thing.ref);
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path, this.thing.ref);
             this.thing.export.system = results;
             action.a.setCompleted();
             action.a.result = this.thing;
@@ -2009,7 +2009,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.instrument = this.instrument;
         try {
             console.log(this.params);
-            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.apiCollection, this.params);
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path, this.params);
             this.thing.export.system = results;
             action.a.setCompleted();
             action.a.result = this.thing;
@@ -2025,7 +2025,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.instrument = this.instrument;
         try {
             let things = this.thing.list.new();
-            let additionalPath = `/${this.apiCollection}/${thing.record_type}/${thing.record_id}/related`;
+            let additionalPath = `/${this.path}/${thing.record_type}/${thing.record_id}/related`;
             let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, additionalPath);
             things.export.system = results;
             action.a.setCompleted();
@@ -2041,7 +2041,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
         try {
-            let results = await (0, $5OpyM$krakenHelpers).api.post(this.apiUrl, this.apiCollection, this.thing.export.system);
+            let results = await (0, $5OpyM$krakenHelpers).api.post(this.apiUrl, this.path, this.thing.export.system);
             action.a.setCompleted();
             action.a.result = this.thing;
         } catch (error) {
@@ -2055,7 +2055,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
         try {
-            let results = await (0, $5OpyM$krakenHelpers).api.delete(this.apiUrl, this.apiCollection, this.thing.ref);
+            let results = await (0, $5OpyM$krakenHelpers).api.delete(this.apiUrl, this.path, this.thing.ref);
             action.a.setCompleted();
             action.a.result = this.thing;
         } catch (error) {
@@ -2066,6 +2066,12 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     // -----------------------------------------------------
     //  Custom attributes 
     // -----------------------------------------------------
+    get path() {
+        return [
+            this.apiBasePath,
+            this.apiCollection
+        ].join("/");
+    }
     get apiConfig() {
         return this._apiConfig;
     }
@@ -2073,18 +2079,27 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         this._apiConfig = value;
     }
     get apiUrl() {
-        return this._apiConfig.apiUrl;
+        return this.apiConfig.apiUrl;
     }
     set apiUrl(value) {
         if (!value || value == null) return;
-        this.apiConfig.apiUrl = value;
+        let url = new URL(value);
+        this.apiConfig.apiUrl = "https://" + url.hostname;
+        this.apiConfig.apiBasePath = url.pathname;
     }
     get apiCollection() {
-        return this._apiConfig.apiCollection;
+        return this.apiConfig.apiCollection;
     }
     set apiCollection(value) {
         if (!value || value == null) return;
         this.apiConfig.apiCollection = value;
+    }
+    get apiBasePath() {
+        return this.apiConfig.apiBasePath;
+    }
+    set apiBasePath(value) {
+        if (!value || value == null) return;
+        this.apiConfig.apiBasePath = value;
     }
     get record_type() {
         return this._params.record_type;
@@ -2148,6 +2163,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     }
     set req(value) {
         this._req = value;
+        this.apiCollection = value.params["collection"];
         this.query = value.query["query"] || value.query["q"];
         this.offset = value.query["offset"] || value.query["o"];
         this.limit = value.query["limit"] || value.query["l"];
@@ -2161,7 +2177,6 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         this.record_id = value.query["@id"];
         this.record_id = value.params["record_id"];
         this.record_id = value.params["@id"];
-        this.apiCollection = value.params["collection"];
     }
     // -----------------------------------------------------
     //  Comment 

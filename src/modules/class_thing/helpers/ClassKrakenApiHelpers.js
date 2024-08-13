@@ -193,7 +193,7 @@ export class ClassKrakenApiHelpers{
     }
 
     get query(){
-        let q = this._params.query || {}
+        let q = this._params.query 
         return q
     }
     set query(value){

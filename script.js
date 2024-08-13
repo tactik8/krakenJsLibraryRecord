@@ -163,15 +163,15 @@ async function test3(){
     things.api.apiCollection = 'api/ut21'
 
 
-    things.api.record_type = 'ItemList'
+    //things.api.record_type = 'Thing'
     
-    
+    console.log(things.api.params)
     let r = await things.api.getThings()
 
     console.log('status', r.a.actionStatus, r.a.error)
 
-    console.log(things.list.length)
-    //console.log(JSON.stringify(things.export.record, null, 4))
+    console.log('length', things.list.length)
+    console.log(JSON.stringify(things.list.items[0].export.record, null, 4))
 
     things.list.items.map(x => console.log(x.record_type))
     

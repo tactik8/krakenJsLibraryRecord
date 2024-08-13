@@ -2101,7 +2101,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         this._params.record_id = value;
     }
     get query() {
-        let q = this._params.query || {};
+        let q = this._params.query;
         return q;
     }
     set query(value) {

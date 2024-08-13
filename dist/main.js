@@ -2083,6 +2083,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     }
     set apiUrl(value) {
         if (!value || value == null) return;
+        if (!value.startsWith("http")) value = "https://" + value;
         let url = new URL(value);
         this.apiConfig.apiUrl = "https://" + url.hostname;
         this.apiConfig.apiBasePath = url.pathname;
@@ -2177,6 +2178,8 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         this.record_id = value.query["@id"];
         this.record_id = value.params["record_id"];
         this.record_id = value.params["@id"];
+        this.actionName = value.params["actionName"];
+        if (!this.apiUrl || this.apiUrl == null) this.apiUrl = value.hostname + "/api";
     }
     // -----------------------------------------------------
     //  Comment 

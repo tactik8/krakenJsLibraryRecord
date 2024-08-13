@@ -1,11 +1,13 @@
 
 
+// todo: add ability to change starting position from 0
 
 
 export class ClassKrakenItemListHelpers {
 
     constructor(thing){
         this.thing = thing
+
     }
 
 
@@ -14,7 +16,7 @@ export class ClassKrakenItemListHelpers {
         let newItemList = this.thing.new('ItemList')
         return newItemList
     }
-    
+
     getFirstItem(){ 
         return getFirstItem(this.thing) 
     } 
@@ -24,7 +26,7 @@ export class ClassKrakenItemListHelpers {
     get first(){
         return getFirstItem(this.thing)
     } 
-    
+
     getLastItem(){
         return getLastItem(this.thing)
     } 
@@ -46,9 +48,9 @@ export class ClassKrakenItemListHelpers {
     getItems(){
         return getItems(this.thing)
     } 
-    
+
     // ListItems
-    
+
     get getListItems(){
         return getListItems(this.thing)
     } 
@@ -82,19 +84,19 @@ export class ClassKrakenItemListHelpers {
     }
 
 
-    
+
     // ListItem
 
 
     get item(){
         return this.thing.p.item
     }
-    
+
     set item(value){
         return this.thing.p.item = value
     }
-    
-    
+
+
     setItem(value){
         return this.thing.p.item = value
     } 
@@ -108,28 +110,28 @@ export class ClassKrakenItemListHelpers {
     reCalculatePosition(){
         return reCalculatePosition(this.thing)
     } 
-   
+
     remove(value){
         return remove(this.thing, value)
     } 
-  
+
     insertBefore(refItem, itemToInsert){
         return insertBefore(this.thing, refItem, itemToInsert)
     } 
-  
+
     insertAfter(refItem, itemToInsert){
         return insertAfter(this.thing, refItem, itemToInsert)
     } 
-   
+
     getItem(ref){
         return getItem(this.thing, ref)
     } 
-    
-    
+
+
     getByListItem(listItem){
         return getByListItem(this.thing, listItem)
     } 
-    
+
     getByItem(item){
         return getByItem(this.thing, item)
     } 
@@ -145,15 +147,15 @@ export class ClassKrakenItemListHelpers {
     //  filters 
     // -----------------------------------------------------
 
-    
+
     filter(propertyID, value){
         // Basic filter, returns new ItemList
         return filter(this.thing, propertyID, value )
     }
-    
 
 
-    
+
+
 }
 
 
@@ -222,7 +224,7 @@ function getItems(thing){
 
 
 function pushItem(thisThing, listItems) {
-    
+
     listItems = ensureArray(listItems);
 
     // Prepare listItems
@@ -238,7 +240,7 @@ function pushItem(thisThing, listItems) {
 
         // Check if ListItem, else convert to one
         if (listItem.record_type != "ListItem") {
-            
+
             let newListItem = thisThing.new("ListItem");
             newListItem.p.item = listItem;
             listItem = newListItem;
@@ -247,15 +249,15 @@ function pushItem(thisThing, listItems) {
     }
 
 
-    
+
     // Set previous, next and position
     let lastListItem = getLastItem(thisThing);
     let newListItemsLength = newListItems.length
-    
+
     for(let i=0; i< newListItemsLength; i++){
-        
+
         let listItem = newListItems[i]
-        
+
         if (lastListItem && lastListItem != null) {
             listItem.p.position = lastListItem.p.position + 1;
             listItem.p.previousItem = lastListItem;
@@ -269,7 +271,7 @@ function pushItem(thisThing, listItems) {
 
     // Add to property
     thisThing.p.add("itemListElement", newListItems);
-    
+
     return; //listItem
 }
 

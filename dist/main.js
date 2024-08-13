@@ -1428,6 +1428,7 @@ function $986206abb55bdef7$var$ensureArray(value) {
 }
 
 
+// todo: add ability to change starting position from 0
 class $681e59e95589c3c8$export$bcd69048a889a452 {
     constructor(thing){
         this.thing = thing;
@@ -1970,8 +1971,8 @@ function $48f3d71cef923a10$var$convertToDate(value) {
 
 let $a0c51871cc1d3395$var$API_ACTIONS_LOG = [];
 class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
-    constructor(thing1){
-        this.thing = thing1;
+    constructor(thing){
+        this.thing = thing;
         this._apiConfig = {};
         this._params = {};
         this._req = null;
@@ -1991,7 +1992,11 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.object = this.thing.ref;
         action.a.instrument = this.instrument;
         try {
-            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path, this.thing.ref);
+            let params = {
+                "@type": this.thing.record_type,
+                "@id": this.thing.record_id
+            };
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path, params);
             this.thing.export.system = results;
             action.a.setCompleted();
             action.a.result = this.thing;
@@ -2025,7 +2030,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         action.a.instrument = this.instrument;
         try {
             let things = this.thing.list.new();
-            let additionalPath = `/${this.path}/${thing.record_type}/${thing.record_id}/related`;
+            let additionalPath = `/${this.path}/${this.thing.record_type}/${this.thing.record_id}/related`;
             let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, additionalPath);
             things.export.system = results;
             action.a.setCompleted();

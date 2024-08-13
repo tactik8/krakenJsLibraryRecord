@@ -158,7 +158,7 @@ async function test3(){
 
     let url = '2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev'
 
-    let things = new KrThing('ItemList')
+    let things = new KrThing('Thing', 'thing1')
     things.api.apiUrl = url 
     things.api.apiCollection = 'ut21'
     things.api.apiBasePath = 'api'
@@ -167,14 +167,12 @@ async function test3(){
     //things.api.record_type = 'Thing'
     
     console.log(things.api.params)
-    let r = await things.api.getThings()
+    let r = await things.api.get()
 
     console.log('status', r.a.actionStatus, r.a.error)
 
-    console.log('length', things.list.length)
-    console.log(JSON.stringify(things.list.items[0].export.record, null, 4))
-
-    things.list.items.map(x => console.log(x.record_type))
+    console.log(things.record)
+   
     
 }
 

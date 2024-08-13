@@ -36,8 +36,8 @@ export class ClassKrakenApiHelpers{
         action.a.instrument = this.instrument
 
         try {
-            
-            let results = await k.api.get(this.apiUrl, this.path, this.thing.ref)
+            let params = {'@type': this.thing.record_type, '@id': this.thing.record_id}
+            let results = await k.api.get(this.apiUrl, this.path, params)
             this.thing.export.system = results
             action.a.setCompleted()
             action.a.result = this.thing
@@ -85,12 +85,12 @@ export class ClassKrakenApiHelpers{
         action.a.name = `Get record ${this.thing.refID}`
         action.a.object = this.thing.ref
         action.a.instrument = this.instrument
-
+        
         try {
 
             let things = this.thing.list.new()
 
-            let additionalPath = `/${this.path}/${thing.record_type}/${thing.record_id}/related`
+            let additionalPath = `/${this.path}/${this.thing.record_type}/${this.thing.record_id}/related`
 
             let results = await k.api.get(this.apiUrl, additionalPath)
             things.export.system = results

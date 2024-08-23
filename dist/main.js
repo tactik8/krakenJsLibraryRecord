@@ -702,8 +702,10 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     setValue(value1, metadataRecord, actionType) {
         let newValueObject = value1;
         // Check if date
-        let d = $0ff73647c93c411e$var$convertToDate(newValueObject);
-        if (d && d != null) newValueObject = d;
+        if (newValueObject instanceof String) {
+            let d = $0ff73647c93c411e$var$convertToDate(newValueObject);
+            if (d && d != null) newValueObject = d;
+        }
         if (!(newValueObject instanceof (0, $9ef8378eb9810880$export$90601469cef9e14f))) newValueObject = new (0, $9ef8378eb9810880$export$90601469cef9e14f)(this.propertyID, value1, actionType);
         newValueObject.metadata.inheritMetadata(metadataRecord);
         // Returns if already contains value
@@ -1874,6 +1876,13 @@ class $48f3d71cef923a10$export$370403b83c36af9f {
         this.thing.p.set("result", value);
         this.setCompleted();
     }
+    get results() {
+        return this.thing.p.get("result").values;
+    }
+    set results(value) {
+        this.thing.p.set("result", value);
+        this.setCompleted();
+    }
     get startTime() {
         return this.thing.p.get("startTime").value;
     }
@@ -1973,7 +1982,12 @@ function $48f3d71cef923a10$var$convertToDate(value) {
 
 let $a0c51871cc1d3395$var$API_ACTIONS_LOG = [];
 class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
-    constructor(thing){
+    /**
+     * Attributes:
+     * - apiUrl: The base url to call the api
+     * - apiBasePath: The base path of the api (api)
+     * - apiCollection: The base collection to use (test1)
+     */ constructor(thing){
         this.thing = thing;
         this._apiConfig = {};
         this._params = {};
@@ -1983,6 +1997,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
             "@id": "ClassKrakenApiHelpers",
             "name": "ClassKrakenApiHelpers"
         };
+    // Load from system 
     }
     // -----------------------------------------------------
     //  I/O 
@@ -2059,6 +2074,30 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
             action.a.setCompleted();
             action.a.result = this.thing;
         } catch (error) {
+            action.a.setFailed(String(error));
+        }
+        return action;
+    }
+    async getCollections() {
+        console.log("Get collections1");
+        let action = this.thing.action.new();
+        action.a.name = `Get collections`;
+        action.a.instrument = this.instrument;
+        console.log("Get collections2");
+        console.log(this.apiUrl);
+        console.log(this.apiBasePath);
+        let path;
+        if (this.apiBasePath && this.apiBasePath != null) path = this.apiBasePath + "/collection";
+        else path = "collection";
+        try {
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, path);
+            console.log("ccc");
+            console.log("results", results);
+            this.thing.export.system = results;
+            action.a.setCompleted();
+            action.a.result = this.thing;
+        } catch (error) {
+            console.log("error", error);
             action.a.setFailed(String(error));
         }
         return action;
@@ -2314,7 +2353,9 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         return this.record;
     }
     toString() {
-        return JSON.stringify(this.record, null, 4);
+        let content = this.heading.getTextSummary;
+        return content;
+    //return JSON.stringify(this.record, null, 4);
     }
     // -----------------------------------------------------
     //  Libraries 

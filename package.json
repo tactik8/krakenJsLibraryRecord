@@ -15,7 +15,7 @@
   },
   "name": "krakenrecord",
   "description": "Record utilities",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "dependencies": {
     "krakenhelper": "^0.0.2",
     "krakenhelpers": "^0.0.3",

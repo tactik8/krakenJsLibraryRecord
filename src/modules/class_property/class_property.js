@@ -414,9 +414,11 @@ export class KrProperty {
         let newValueObject = value;
 
         // Check if date
-        let d = convertToDate(newValueObject);
-        if (d && d != null) {
-            newValueObject = d;
+        if(newValueObject instanceof String){
+            let d = convertToDate(newValueObject);
+            if (d && d != null) {
+                newValueObject = d;
+            }
         }
 
         if (!(newValueObject instanceof KrPropertyValue)) {

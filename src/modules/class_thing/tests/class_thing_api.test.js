@@ -1,13 +1,12 @@
 import { KrThing } from '../class_thing.js';
 
 
-
-
+//let  apiUrl = 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api'
+let  apiUrl = 'https://data.krknapi.com/api'
 
 test('API clear values', async () => {
 
 
-   let  apiUrl = 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api'
    let  apiCollection = 'unitTest1'
 
     
@@ -45,7 +44,6 @@ test('API clear values', async () => {
 // Run the test
 test('API init get post delete', async () => {
 
-   let  apiUrl = 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api'
    let  apiCollection = 'unitTest2'
 
 
@@ -116,7 +114,6 @@ test('API things', async () => {
 
     
 
-   let  apiUrl = 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api'
    let  apiCollection = 'unitTest3'
 
 

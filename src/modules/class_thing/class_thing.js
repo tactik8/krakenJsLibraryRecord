@@ -92,9 +92,9 @@ export class KrThing {
 
     toString() {
 
-        
-        
-        return JSON.stringify(this.record, null, 4);
+        let content = this.heading.getTextSummary
+        return content
+        //return JSON.stringify(this.record, null, 4);
     }
 
 

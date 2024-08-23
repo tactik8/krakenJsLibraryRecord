@@ -46,161 +46,21 @@ function getRecord(n){
 async function test1(){
 
 
-
-    function getRecord(n){
-
-        let record = {
-            "@context": "https://schema.org/",
-            "@type": "Thing",
-            "@id": "thing" + String(n),
-            "name": "thing" + String(n)
-        }
-        return record
-    }
-
-    let apiConfig = {
-        apiUrl: 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev',
-        apiCollection: 'api/ut21'
-    }
-
-
-    // Post records
-    var t1 = new KrThing('ItemList', 'ItemList1')
-    t1.api.apiConfig = apiConfig
-
-    let records = []
-    for(let i =0; i< 10; i++){
-
-        let li = new KrThing('ListItem', 'li' + String(i))
-        li.list.item = new KrThing(getRecord(i))
-        
-        records.push(li)
-    }
-    t1.list.add(records)
-
-
-    console.log(t1.things.length)
-
+    let url = 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api'
     
+    let t = new KrThing()
+
+    t.api.apiUrl = url
     
+
+    console.log('pp1')
     
-    let r1 = await t1.api.post()
+    let a = await t.api.getCollections()
 
+    console.log('pp2')
 
-    console.log(r1.a.actionStatus, r1.a.error)
-    
-    // Get records
-    let t2 = new KrThing()
-    t2.api.apiConfig = apiConfig
-    t2.api.record_type = 'Thing'
-    t2.api.limit = 20
-
-    let r2 = await t2.api.search()
-    console.log(r2.a.actionStatus, r1.a.error)
-
-    console.log(t2.list.items)
-    
-    console.log(t1.list.length, t2.list.length)
-    //expect(t2.list.length).toStrictEqual(10);
-    console.log(t1.heading.textDetails)
-    console.log(t2.heading.textDetails)
-
-
-
-    
-}
-
-
-async function test2(){
-
-
-
-    function getRecord(n){
-
-        let record = {
-            "@context": "https://schema.org/",
-            "@type": "Thing",
-            "@id": "thing" + String(n),
-            "name": "thing" + String(n)
-        }
-        return record
-    }
-
-    let apiConfig = {
-        apiUrl: 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev',
-        apiCollection: 'unitTest'
-    }
-
-    var t1 = new KrThing('ItemList')
-    t1.api.apiConfig = apiConfig
-
-    let records = []
-    for(let i =0; i< 10; i++){
-        records.push(getRecord(i))
-    }
-    t1.list.add(records)
-
-    console.log(JSON.stringify(t1.export.systemFlat, null, 4))
-    console.log(t1.things.length)
-
-    let p = []
-    for(let tx of t1.things){
-       // p.push(tx.export.getSystem(0))
-    }
-
-    console.log()
-
-
+    console.log(a.a.isSuccess(), a.a.error)
 
 }
 
-async function test3(){
-
-    let url = '2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev'
-
-    let things = new KrThing('Thing', 'thing1')
-    things.api.apiUrl = url 
-    things.api.apiCollection = 'ut21'
-    things.api.apiBasePath = 'api'
-
-
-    //things.api.record_type = 'Thing'
-    
-    console.log(things.api.params)
-    let r = await things.api.get()
-
-    console.log('status', r.a.actionStatus, r.a.error)
-
-    console.log(things.record)
-   
-    
-}
-
-
-async function test4(){
-
-    let url = '2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api'
-
-
-    let t = new KrThing('Thing', 'thing1')
-    t.api.apiUrl = url 
-    t.api.apiCollection = 'ut21'
-    t.api.apiBasePath = 'api'
-
-
-    let r1 = await t.api.get()
-    let r = await t.api.getThingRelated()
-
-    let things = r.a.result
-    console.log(r.a.actionStatus)
-    console.log(things.l.length)
-
-    
-    
-}
-test4()
-//test1()
-
-
-//test2()
-
+test1()

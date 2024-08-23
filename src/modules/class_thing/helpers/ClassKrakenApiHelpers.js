@@ -7,6 +7,12 @@ import { krakenHelpers as k } from 'krakenhelpers'
 
 
 export class ClassKrakenApiHelpers{
+    /**
+     * Attributes:
+     * - apiUrl: The base url to call the api
+     * - apiBasePath: The base path of the api (api)
+     * - apiCollection: The base collection to use (test1)
+     */
     constructor(thing){
         this.thing = thing
 
@@ -18,6 +24,9 @@ export class ClassKrakenApiHelpers{
             "@id": "ClassKrakenApiHelpers", 
             "name": "ClassKrakenApiHelpers"
         }
+
+        // Load from system 
+        
     }
     
     // -----------------------------------------------------
@@ -137,6 +146,46 @@ export class ClassKrakenApiHelpers{
         }
 
         return action
+    }
+
+
+    async getCollections(){
+
+        console.log('Get collections1')
+
+        let action = this.thing.action.new()
+        action.a.name = `Get collections`
+        action.a.instrument = this.instrument
+
+        console.log('Get collections2')
+
+        console.log(this.apiUrl)
+
+        console.log(this.apiBasePath)
+        let path
+        if(this.apiBasePath && this.apiBasePath != null){
+            path = this.apiBasePath + '/collection'
+        } else {
+            path = 'collection'
+        }
+        
+        
+        try {
+            let results = await k.api.get(this.apiUrl, path)
+
+            console.log('ccc')
+            console.log('results', results)
+            this.thing.export.system = results
+            action.a.setCompleted()
+            action.a.result = this.thing
+
+        } catch (error) {
+            console.log('error', error)
+            action.a.setFailed(String(error))
+        }
+
+        return action
+
     }
 
 

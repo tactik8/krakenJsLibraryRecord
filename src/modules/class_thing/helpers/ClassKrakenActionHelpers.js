@@ -81,6 +81,15 @@ export class ClassKrakenActionHelpers{
         this.setCompleted()
     }
 
+    get results(){
+        return this.thing.p.get('result').values
+    }
+
+    set results(value){
+            this.thing.p.set('result', value)
+        this.setCompleted()
+    }
+    
     get startTime(){
         return this.thing.p.get('startTime').value
     }

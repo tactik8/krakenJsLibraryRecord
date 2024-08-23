@@ -53,13 +53,12 @@ async function test1(){
     t.api.apiUrl = url
     
 
-    console.log('pp1')
+   console.log('aa')
     
     let a = await t.api.getCollections()
+    console.log('bb')
 
-    console.log('pp2')
-
-    console.log(a.a.isSuccess(), a.a.error)
+    console.log(a.a.isSuccess(), a.a.result.l.length)
 
 }
 

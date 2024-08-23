@@ -291,7 +291,8 @@ export class ClassKrakenPropertyHelpers{
 
 
 function isNull(value){
-    if(value === undefined || (value == null && value != 0) || value == [] || value == ""){
+    
+    if(value === undefined || (value === null && value != 0) || value == [] || value === ""){
         return true
     }
     return false

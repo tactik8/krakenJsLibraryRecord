@@ -5,7 +5,6 @@ import { krakenHelpers as k } from 'krakenhelpers'
 
 
 
-
 export class ClassKrakenApiHelpers{
     /**
      * Attributes:
@@ -151,36 +150,25 @@ export class ClassKrakenApiHelpers{
 
     async getCollections(){
 
-        console.log('Get collections1')
-
         let action = this.thing.action.new()
         action.a.name = `Get collections`
         action.a.instrument = this.instrument
-
-        console.log('Get collections2')
-
-        console.log(this.apiUrl)
-
-        console.log(this.apiBasePath)
-        let path
+        
+        let path = ''
         if(this.apiBasePath && this.apiBasePath != null){
             path = this.apiBasePath + '/collection'
         } else {
             path = 'collection'
         }
         
-        
         try {
             let results = await k.api.get(this.apiUrl, path)
 
-            console.log('ccc')
-            console.log('results', results)
             this.thing.export.system = results
             action.a.setCompleted()
             action.a.result = this.thing
 
         } catch (error) {
-            console.log('error', error)
             action.a.setFailed(String(error))
         }
 

@@ -1183,7 +1183,7 @@ class $669430fe45e0fd45$export$73a9d89cdfbecb0a {
     }
 }
 function $669430fe45e0fd45$var$isNull(value) {
-    if (value === undefined || value == null && value != 0 || value == [] || value == "") return true;
+    if (value === undefined || value === null && value != 0 || value == [] || value === "") return true;
     return false;
 }
 function $669430fe45e0fd45$var$getProperty(thisThing, propertyID) {
@@ -2079,25 +2079,18 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
         return action;
     }
     async getCollections() {
-        console.log("Get collections1");
         let action = this.thing.action.new();
         action.a.name = `Get collections`;
         action.a.instrument = this.instrument;
-        console.log("Get collections2");
-        console.log(this.apiUrl);
-        console.log(this.apiBasePath);
-        let path;
+        let path = "";
         if (this.apiBasePath && this.apiBasePath != null) path = this.apiBasePath + "/collection";
         else path = "collection";
         try {
             let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, path);
-            console.log("ccc");
-            console.log("results", results);
             this.thing.export.system = results;
             action.a.setCompleted();
             action.a.result = this.thing;
         } catch (error) {
-            console.log("error", error);
             action.a.setFailed(String(error));
         }
         return action;

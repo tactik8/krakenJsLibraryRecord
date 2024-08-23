@@ -77,7 +77,7 @@ export class ClassKrakenActionHelpers{
     }
 
     set result(value){
-            this.thing.p.set('result', value)
+        this.thing.p.set('result', value)
         this.setCompleted()
     }
 

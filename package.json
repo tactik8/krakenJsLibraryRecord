@@ -15,7 +15,7 @@
   },
   "name": "krakenrecord",
   "description": "Record utilities",
-  "version": "1.1.20",
+  "version": "1.1.21",
   "dependencies": {
     "krakenhelpers": "^0.0.8",
     "uuid": "^9.0.1"

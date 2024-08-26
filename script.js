@@ -15,7 +15,7 @@ async function test1(){
 
     let things1 = getThings(1, 'Thing')
 
-
+    console.log(things1[0].headings.getHeading1())
     console.log(things1[0].export.system)
 
 }

@@ -1409,8 +1409,8 @@ function $986206abb55bdef7$var$getSystemRecord(thing, maxDepth, currentDepth) {
     record["_dbId"] = thing._dbId;
     record["_record_type"] = thing.record_type;
     record["_record_id"] = thing.record_id;
-    record["_heading1"] = thing.headings.getHeading1();
-    record["_heading2"] = thing.headings.getHeading2();
+    record["_heading1"] = thing.headings.heading1;
+    record["_heading2"] = thing.headings.heading2;
     record["_refs"] = [];
     record["_propertyValues"] = [];
     record["@type"] = thing.record_type;

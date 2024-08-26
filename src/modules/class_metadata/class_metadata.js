@@ -165,6 +165,19 @@ export class KrMetadata {
         this._record.object = value;
     }
 
+    get instrument(){
+        return this._record.instrument;
+    }
+    set instrument(value){
+        this._record.instrument = value;
+    }
+
+    get agent(){
+        return this._record.agent;
+    }
+    set agent(value){
+        this._record.agent = value;
+    }
 
     eq(other){
         return this.equal(other)
@@ -175,16 +188,18 @@ export class KrMetadata {
 
         
         let c1 = this.object == other.object
-        let c2 = this.instrument == other.instrument
+        let c2a = this.instrument == other.instrument
+        let c2b = this.agent == other.agent
+        let c2c = this.result == other.result
         let c3 = this.credibility == other.credibility
         let c4 = this.observationDate == other.observationDate
+
+        let c = [c1, c2a, c2b, c2c, c3, c4]
+        if(!(c.every(x => x == true))){ return false }
+
+        return true
+
         
-        
-        if (this.object != other.object){ return false }
-        if (this.instrument != other.instrument){ return false }
-        if (this.credibility != other.credibility){ return false }
-        if ( this.observationDate != other.observationDate){ return false };
-        return true;
     }
 
 

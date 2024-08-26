@@ -6,10 +6,29 @@ let MAXLEVEL = 5
 export const valueManipulation = {
 
     getThings: getThings,
+    getChildThings: getChildThings,
     getSystemCreatedDate: getSystemCreatedDate,
     getSystemUpdatedDate:getSystemUpdatedDate
 }
 
+
+
+function getChildThings(thisThing) {
+    // Gets all things objects used as values of this 
+
+    let things =[]
+    for (let p of thisThing._properties) {
+        for (let v of p.values) {
+            if (v?.record_type) {
+                things.push(v)
+            }
+        }
+    }
+
+    let results = things
+
+    return results;
+}
 
 function getThings(thisThing, cache, maxLevel=MAXLEVEL, currentLevel=0) {
     // Gets all things objects used as values of this 

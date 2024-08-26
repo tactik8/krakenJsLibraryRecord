@@ -65,6 +65,12 @@ export class KrThing {
         this._action = new ClassKrakenActionHelpers(this)
         this._api = new ClassKrakenApiHelpers(this)
         this._headings = new ClassKrakenHeadingHelpers(this)
+
+
+        // db references
+        this._dbCollection = null   // The collection / table of database
+        this._dbId = null           // The _id from database
+        this._dbRecord = null       // The record as is from database
         
         // metadata
         this.metadata = new KrMetadata();
@@ -264,6 +270,31 @@ export class KrThing {
         return valueManipulation.getThings(this)
     }
 
+
+    get childThings() {
+        return this.getChildThings();
+    }
+
+    getChildThings() {
+        // Returns itself and all things references in values
+        return valueManipulation.getChildThings(this)
+    }
+
+    get pvs(){
+        return this.getPvs()
+    }
+
+    getPvs(){
+
+        let pvs = []
+        for(let p of this._properties){
+            for (let pv of p._propertyValues){
+                pvs.push(pv)
+            }
+        }
+        return pvs
+    }
+    
     // -----------------------------------------------------
     //  System attributes
     // -----------------------------------------------------

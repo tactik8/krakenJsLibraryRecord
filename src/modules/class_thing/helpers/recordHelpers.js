@@ -29,18 +29,35 @@ function simplify(data) {
 
     if (Array.isArray(data)) {
         // If the array has exactly one element, return that element
-        if (data.length === 1) {
-            return simplify(data[0]);
+        
+        if(data.length == 0){
+            return null
+        } else if (data.length === 1) {
+            if(data == [{}]){
+                return null
+            } else {
+                return simplify(data[0]);
+            }
         } else {
             // Otherwise, process each element in the array
-            return data.map(simplify);
+            let newData = []
+            for(let d of data){
+                let value = simplify(d);
+                if(d && d != null){
+                    newData.push(value)
+                }
+            }
+            return newData
         }
     } else if (data !== null && typeof data === "object") {
         // If the data is an object, process each key
         const newData = {};
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
-                newData[key] = simplify(data[key]);
+                let value = simplify(data[key]);
+                if(value){
+                    newData[key] = simplify(data[key]);
+                }
             }
         }
         return newData;

@@ -45,21 +45,54 @@ function getRecord(n){
 
 async function test1(){
 
+    let record = {
+         "@type": "Person",
+         "@id": "person_1",
+         "givenName": "givenName_1",
+         "familyName": "familyName_1",
+         "email": "test@test.com",
+         "telephone": "1-514-111-2222",
+         "hasOccupation": {
+             "@type": "Occupation",
+             "@id": "occupation_1",
+             "name": "occupation_1"
+             },
+         "worksfor": {
+             "@type": "Organization",
+             "@id": "test_org_1",
+             "name": "test_org_1",
+             "url": "https://www.test.com",
+             "test": {
+                      "@type": "Person",
+                      "@id": "person_1",
+                      "givenName": "givenName_1",
+                      "familyName": "familyName_1",
+                      "email": "test@test.com",
+                      "telephone": "1-514-111-2222",
+                      "hasOccupation": {
+                          "@type": "Occupation",
+                          "@id": "occupation_1",
+                          "name": "occupation_1"
+                          },
+                      "worksfor": {
+                          "@type": "Organization",
+                          "@id": "organization_1",
+                          "name": "test_org_1",
+                          "url": "https://www.test.com"
+                          }
+             }
 
-    let url = 'https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api'
+        }
+     }
+
+    //let record = getRecord(1)
+
+
+    let t = new KrThing(record)
+
+    console.log(JSON.stringify(t.export.system, null, 4))
+
     
-    let t = new KrThing()
-
-    t.api.apiUrl = url
-    
-
-   console.log('aa')
-    
-    let a = await t.api.getCollections()
-    console.log('bb')
-
-    console.log(a.a.isSuccess(), a.a.result.l.length)
-
 }
 
 test1()

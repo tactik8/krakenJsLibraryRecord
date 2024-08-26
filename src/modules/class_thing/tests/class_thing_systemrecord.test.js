@@ -59,7 +59,7 @@ test('KrThing init', function () {
 
 
     // Test properties
-    expect(t2.record).toStrictEqual(t1.record);
+    expect(JSON.stringify(t2.record)).toStrictEqual(JSON.stringify(t1.record));
 
 
     

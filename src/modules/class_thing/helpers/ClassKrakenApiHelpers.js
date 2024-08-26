@@ -32,6 +32,11 @@ export class ClassKrakenApiHelpers{
     //  I/O 
     // -----------------------------------------------------
 
+
+    async getThing(){
+        return await this.get()
+    }
+    
     async get(){
 
         
@@ -94,7 +99,9 @@ export class ClassKrakenApiHelpers{
 
             
             let results = await k.api.get(this.apiUrl, this.path + '/related' , this.thing.ref)
+            
             things.export.system = results
+            console.log(things.l.length)
             action.a.setCompleted()
             action.a.result = things
 

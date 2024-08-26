@@ -66,6 +66,18 @@ function merge(thisThing, otherThing){
         return
     }
 
+
+    // Merge db proeprties
+    if(!thisThing._dbCollection || thisThing._dbCollection == null){
+        thisThing._dbCollection = otherThing._dbCollection
+    }
+    if(!thisThing._dbId || thisThing._dbId == null){
+        thisThing._dbId = otherThing._dbId
+    }
+    if(!thisThing._dbRecord || thisThing._dbRecord == null){
+        thisThing._dbRecord = otherThing._dbRecord
+    }
+
     
     // Merge properties
     for(let otherThingP of otherThing._properties){

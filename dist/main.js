@@ -119,19 +119,38 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
     set object(value) {
         this._record.object = value;
     }
+    get instrument() {
+        return this._record.instrument;
+    }
+    set instrument(value) {
+        this._record.instrument = value;
+    }
+    get agent() {
+        return this._record.agent;
+    }
+    set agent(value) {
+        this._record.agent = value;
+    }
     eq(other) {
         return this.equal(other);
     }
     equal(other) {
         // returns true if data comes from same object
         let c1 = this.object == other.object;
-        let c2 = this.instrument == other.instrument;
+        let c2a = this.instrument == other.instrument;
+        let c2b = this.agent == other.agent;
+        let c2c = this.result == other.result;
         let c3 = this.credibility == other.credibility;
         let c4 = this.observationDate == other.observationDate;
-        if (this.object != other.object) return false;
-        if (this.instrument != other.instrument) return false;
-        if (this.credibility != other.credibility) return false;
-        if (this.observationDate != other.observationDate) return false;
+        let c = [
+            c1,
+            c2a,
+            c2b,
+            c2c,
+            c3,
+            c4
+        ];
+        if (!c.every((x)=>x == true)) return false;
         return true;
     }
     isValid(comparisonDate = null) {
@@ -818,6 +837,10 @@ function $68c2e8efd001e0e2$var$merge(thisThing, otherThing) {
     // Inserts otherThing in thisThing thing
     if (thisThing.eq(otherThing) == false) return;
     if (thisThing.id == otherThing.id) return;
+    // Merge db proeprties
+    if (!thisThing._dbCollection || thisThing._dbCollection == null) thisThing._dbCollection = otherThing._dbCollection;
+    if (!thisThing._dbId || thisThing._dbId == null) thisThing._dbId = otherThing._dbId;
+    if (!thisThing._dbRecord || thisThing._dbRecord == null) thisThing._dbRecord = otherThing._dbRecord;
     // Merge properties
     for (let otherThingP of otherThing._properties){
         let thisThingP = thisThing.getProperty(otherThingP.propertyID);
@@ -851,13 +874,28 @@ function $151dfb829471dec1$var$simplify(data) {
     //return data
     if (Array.isArray(data)) {
         // If the array has exactly one element, return that element
-        if (data.length === 1) return $151dfb829471dec1$var$simplify(data[0]);
-        else // Otherwise, process each element in the array
-        return data.map($151dfb829471dec1$var$simplify);
+        if (data.length == 0) return null;
+        else if (data.length === 1) {
+            if (data == [
+                {}
+            ]) return null;
+            else return $151dfb829471dec1$var$simplify(data[0]);
+        } else {
+            // Otherwise, process each element in the array
+            let newData = [];
+            for (let d of data){
+                let value = $151dfb829471dec1$var$simplify(d);
+                if (d && d != null) newData.push(value);
+            }
+            return newData;
+        }
     } else if (data !== null && typeof data === "object") {
         // If the data is an object, process each key
         const newData = {};
-        for(const key in data)if (data.hasOwnProperty(key)) newData[key] = $151dfb829471dec1$var$simplify(data[key]);
+        for(const key in data)if (data.hasOwnProperty(key)) {
+            let value = $151dfb829471dec1$var$simplify(data[key]);
+            if (value) newData[key] = $151dfb829471dec1$var$simplify(data[key]);
+        }
         return newData;
     } else // If the data is neither an array nor an object, return it as is
     return data;
@@ -944,9 +982,19 @@ class $b07a281446d81d05$export$320d46383f3d0ef0 {
 let $15777fe91204fd32$var$MAXLEVEL = 5;
 const $15777fe91204fd32$export$c35ca6a8a122f0b9 = {
     getThings: $15777fe91204fd32$var$getThings,
+    getChildThings: $15777fe91204fd32$var$getChildThings,
     getSystemCreatedDate: $15777fe91204fd32$var$getSystemCreatedDate,
     getSystemUpdatedDate: $15777fe91204fd32$var$getSystemUpdatedDate
 };
+function $15777fe91204fd32$var$getChildThings(thisThing) {
+    // Gets all things objects used as values of this 
+    let things = [];
+    for (let p of thisThing._properties){
+        for (let v of p.values)if (v?.record_type) things.push(v);
+    }
+    let results = things;
+    return results;
+}
 function $15777fe91204fd32$var$getThings(thisThing, cache, maxLevel = $15777fe91204fd32$var$MAXLEVEL, currentLevel = 0) {
     // Gets all things objects used as values of this 
     if (!cache || cache == null) {
@@ -1325,7 +1373,10 @@ function $986206abb55bdef7$var$getFullRecord(thisThing, maxDepth = $986206abb55b
     }
     let record = {};
     let properties = thisThing.properties;
-    for (let p of properties)record[p.propertyID] = p.getFullRecord(maxDepth, currentDepth + 1);
+    for (let p of properties){
+        let value = p.getFullRecord(maxDepth, currentDepth + 1);
+        if (value && value != null && value != []) record[p.propertyID] = value;
+    }
     record["@type"] = thisThing.record_type;
     record["@id"] = thisThing.record_id;
     record = JSON.parse(JSON.stringify(record));
@@ -1351,21 +1402,92 @@ function $986206abb55bdef7$var$getSystemRecord(thing, maxDepth, currentDepth) {
     if ((!maxDepth || maxDepth == null) && maxDepth != 0) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
     if ((!currentDepth || currentDepth == null) && currentDepth != 0) currentDepth = 0;
     if (currentDepth >= maxDepth) return thing.ref;
+    // Init record
     let record = {};
+    record["_version"] = "2.0";
+    record["_dbCollection"] = thing._dbCollection;
+    record["_dbId"] = thing._dbId;
+    record["_record_type"] = thing.record_type;
+    record["_record_id"] = thing.record_id;
+    record["_heading1"] = thing.headings.getHeading1();
+    record["_heading2"] = thing.headings.getHeading2();
+    record["_refs"] = [];
+    record["_propertyValues"] = [];
     record["@type"] = thing.record_type;
     record["@id"] = thing.record_id;
-    record.propertyValues = [];
-    record.summary = $986206abb55bdef7$var$getFullRecord(thing, maxDepth, currentDepth);
+    // Add refs
+    let childThings = thing.getChildThings();
+    for (let ct of childThings)if (!record["_refs"].includes(ct.ref)) record["_refs"].push(ct.ref);
+    // Add property Values
     let pvs = [];
-    let count = 0;
-    for (let p of thing.properties){
-        count += 1;
-        pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
-    }
-    record.propertyValues = pvs;
+    for (let p of thing.properties)pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
+    pvs = pvs.filter((x)=>x && x != null && x != []);
+    record["_propertyValues"] = pvs;
+    // Add values
+    record["@type"] = thing.record_type;
+    record["@id"] = thing.record_id;
+    let fullRecord = $986206abb55bdef7$var$getFullRecord(thing, maxDepth, currentDepth);
+    for (let k of Object.keys(fullRecord))record[k] = fullRecord[k];
     return record;
 }
 function $986206abb55bdef7$var$setSystemRecord(thing, value, cache) {
+    let version = value?.["_version"];
+    if (!version || version == null || version == "1.0") return $986206abb55bdef7$var$setSystemRecordV1_0(thing, value, cache);
+    if (version == "2.0") return $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, cache);
+    return;
+}
+function $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, cache) {
+    // Load data into object
+    // Init cache
+    if (!cache || cache == null) cache = new (0, $b07a281446d81d05$export$320d46383f3d0ef0)();
+    // Convert from string if one
+    if (typeof value === "string" || value instanceof String) try {
+        value = JSON.parse(value);
+    } catch  {
+        return;
+    }
+    // Check if valid format
+    if (!value || !value._propertyValues) return;
+    // Reset current properties
+    thing._properties = [];
+    // Set pvRecords
+    if (!value?._propertyValues || value?._propertyValues == null) return;
+    // Retrieve db info
+    thing._dbCollection = value?.["_dbCollection"];
+    thing._dbId = value?.["_dbId"];
+    thing._dbRecord = value;
+    //
+    let pvRecords = $986206abb55bdef7$var$ensureArray(value._propertyValues);
+    pvRecords = pvRecords.filter((x)=>x !== undefined && x != null);
+    if (pvRecords.length == 0) return;
+    // convert sub things to KrThing
+    let counter = 0;
+    for (let pvRecord of pvRecords){
+        if (!pvRecord || pvRecord == null) continue;
+        let value = pvRecord?.object?.value;
+        if (!value || value == null) continue;
+        if (value["@type"] && value["@type"] != null) {
+            var t = thing.new(value?.["@type"], value?.["@id"]);
+            $986206abb55bdef7$var$setSystemRecord(t, value, cache);
+            // Store and retrieve to cache to avoid duplicate things
+            cache.set(t);
+            t = cache.get(value?.["@type"], value?.["@id"]);
+            pvRecord.object.value = t;
+            counter += 1;
+        }
+    }
+    // Group pvRecords by propertyID
+    let propertyIDs = [
+        ...new Set(pvRecords.map((x)=>x.object.propertyID))
+    ];
+    for (let propertyID of propertyIDs)if (propertyID && propertyID != null) {
+        let subPropertyValues = pvRecords.filter((item)=>item.object.propertyID == propertyID);
+        var property = new (0, $0ff73647c93c411e$export$13f164945901aa88)(propertyID);
+        property.setSystemRecord(subPropertyValues);
+        thing._properties.push(property);
+    }
+}
+function $986206abb55bdef7$var$setSystemRecordV1_0(thing, value, cache) {
     // Load data into object
     if (!cache || cache == null) cache = new (0, $b07a281446d81d05$export$320d46383f3d0ef0)();
     // Convert from string if one
@@ -2002,6 +2124,9 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
     // -----------------------------------------------------
     //  I/O 
     // -----------------------------------------------------
+    async getThing() {
+        return await this.get();
+    }
     async get() {
         let action = this.thing.action.new();
         action.a.name = `Get record ${this.thing.refID}`;
@@ -2043,6 +2168,7 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
             let things = this.thing.list.new();
             let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path + "/related", this.thing.ref);
             things.export.system = results;
+            console.log(things.l.length);
             action.a.setCompleted();
             action.a.result = things;
         } catch (error) {
@@ -2333,6 +2459,13 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         this._action = new (0, $48f3d71cef923a10$export$370403b83c36af9f)(this);
         this._api = new (0, $a0c51871cc1d3395$export$dc35bac29e2a8cfc)(this);
         this._headings = new (0, $8c53f3ac7d8ee3d4$export$d62a579734015d66)(this);
+        // db references
+        this._dbCollection = null // The collection / table of database
+        ;
+        this._dbId = null // The _id from database
+        ;
+        this._dbRecord = null // The record as is from database
+        ;
         // metadata
         this.metadata = new (0, $5e45e66cef237559$export$4a4eb7d10588cc8d)();
         // if record_type is a dict, treat as record instead
@@ -2471,6 +2604,21 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     getThings() {
         // Returns itself and all things references in values
         return (0, $15777fe91204fd32$export$c35ca6a8a122f0b9).getThings(this);
+    }
+    get childThings() {
+        return this.getChildThings();
+    }
+    getChildThings() {
+        // Returns itself and all things references in values
+        return (0, $15777fe91204fd32$export$c35ca6a8a122f0b9).getChildThings(this);
+    }
+    get pvs() {
+        return this.getPvs();
+    }
+    getPvs() {
+        let pvs = [];
+        for (let p of this._properties)for (let pv of p._propertyValues)pvs.push(pv);
+        return pvs;
     }
     // -----------------------------------------------------
     //  System attributes

@@ -111,7 +111,10 @@ function getFullRecord(thisThing, maxDepth=MAX_DEPTH, currentDepth=0) {
     let record = {};
     let properties = thisThing.properties;
     for (let p of properties) {
-        record[p.propertyID] = p.getFullRecord(maxDepth, currentDepth + 1);
+        let value = p.getFullRecord(maxDepth, currentDepth + 1);
+        if(value && value != null && value != []){
+            record[p.propertyID] = value;
+        }
     }
     record["@type"] = thisThing.record_type;
     record["@id"] = thisThing.record_id;
@@ -160,26 +163,161 @@ function getSystemRecord(thing, maxDepth, currentDepth) {
         return thing.ref;
     }
 
+    // Init record
     let record = {};
+    record['_version'] = "2.0"
+    record['_dbCollection'] = thing._dbCollection 
+    record['_dbId'] = thing._dbId 
+    record['_record_type'] = thing.record_type;
+    record['_record_id'] = thing.record_id;
+    record['_heading1'] = thing.headings.getHeading1();
+    record['_heading2'] = thing.headings.getHeading2();
+    record['_refs'] = []
+    record['_propertyValues'] = []
     record["@type"] = thing.record_type;
     record["@id"] = thing.record_id;
-    record.propertyValues = []
-    record.summary = getFullRecord(thing, maxDepth, currentDepth)
 
+
+    // Add refs
+
+    let childThings = thing.getChildThings();
+    for(let ct of childThings){
+        if(!record['_refs'].includes(ct.ref)){
+            record['_refs'].push(ct.ref )
+        } 
+    }
+    
+    // Add property Values
     let pvs = []
-    let count = 0
     for (let p of thing.properties) {
-        
-        count += 1
         pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
     }
-    record.propertyValues = pvs
+    pvs = pvs.filter(x => x && x!= null && x != [])
+    record['_propertyValues'] = pvs
 
+    // Add values
+    record["@type"] = thing.record_type;
+    record["@id"] = thing.record_id;
+    let fullRecord = getFullRecord(thing, maxDepth, currentDepth)
+    for(let k of Object.keys(fullRecord)){
+        record[k] = fullRecord[k]
+    }
+   
     return record;
 }
 
 
-function setSystemRecord(thing, value, cache) {
+
+function setSystemRecord(thing, value, cache){
+
+    let version = value?.['_version'] 
+    if(!version || version == null || version == '1.0' ){
+        return setSystemRecordV1_0(thing, value, cache) 
+    } 
+
+    if(version == '2.0' ){
+        return setSystemRecordV2_0(thing, value, cache) 
+    }
+    return
+}
+
+function setSystemRecordV2_0(thing, value, cache) {
+
+    // Load data into object
+
+    // Init cache
+    if(!cache || cache == null){
+        cache = new ClassKrakenCache()
+    }
+
+    // Convert from string if one
+    if(typeof value === 'string' || value instanceof String){
+        try{
+            value = JSON.parse(value)
+        } catch {
+            return
+        }
+    } 
+
+    // Check if valid format
+    if (!value || !value._propertyValues  ) {
+        return;
+    }
+
+    // Reset current properties
+    thing._properties = [];
+
+    // Set pvRecords
+    
+    if(!value?._propertyValues || value?._propertyValues == null){ 
+        return 
+    }
+
+
+    // Retrieve db info
+    thing._dbCollection = value?.['_dbCollection'] 
+    thing._dbId = value?.['_dbId'] 
+    thing._dbRecord = value
+    
+    //
+
+    
+    let pvRecords = ensureArray(value._propertyValues)
+
+    pvRecords = pvRecords.filter( x => x !== undefined && x != null)
+
+    if(pvRecords.length == 0 ){ 
+        return 
+    }
+
+    
+    // convert sub things to KrThing
+    let counter = 0
+    for(let pvRecord of pvRecords){
+
+        if(!pvRecord || pvRecord == null) { 
+                continue 
+        }
+
+        let value = pvRecord?.object?.value
+
+        if(!value || value == null) { 
+            continue 
+        }
+
+        if (value["@type"] && value["@type"] != null) {
+            var t = thing.new(value?.["@type"], value?.["@id"]);
+            setSystemRecord(t, value, cache);
+
+            // Store and retrieve to cache to avoid duplicate things
+            cache.set(t)
+            t = cache.get(value?.["@type"], value?.["@id"])
+
+            pvRecord.object.value = t;
+            counter += 1
+        } 
+    }
+
+
+    // Group pvRecords by propertyID
+    let propertyIDs = [...new Set(pvRecords.map((x) => x.object.propertyID ))];
+
+    for(let propertyID of propertyIDs){
+
+        if(propertyID && propertyID != null){
+            let subPropertyValues = pvRecords.filter((item) => item.object.propertyID == propertyID);        
+            var property = new KrProperty(propertyID);
+            property.setSystemRecord(subPropertyValues);
+            thing._properties.push(property);
+        }
+
+    }
+
+    
+}
+
+
+function setSystemRecordV1_0(thing, value, cache) {
     // Load data into object
 
     if(!cache || cache == null){

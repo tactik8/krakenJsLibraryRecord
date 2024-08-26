@@ -9,90 +9,98 @@ import { krakenHelpers as k } from 'krakenhelpers'
 
 
 
-function getRecord(n){
-
-    n = String(n)
-    
-    let record = {
-        "@context": "https://schema.org/",
-        "@type": "Thing",
-        "@id": "thing" + n,
-        "name": "thing" + n,
-        "other": {
-                "@context": "https://schema.org/",
-                "@type": "Thing",
-                "@id": "thing" + n + '-' + n,
-                "name": "thing" + n + '-' + n,
-                "other": {
-                    "@context": "https://schema.org/",
-                    "@type": "Thing",
-                    "@id": "thing" +n + '-' + n + '-' +n,
-                    "name": "thing" + n + '-' + n + '-' +n,
-                    "other": {
-                        "@context": "https://schema.org/",
-                        "@type": "Thing",
-                        "@id": "thing" + n ,
-                        "name": "thing" + n 
-                    }
-                }
-            }
-    }
-
-    return record
-    
-}
 
 
 async function test1(){
 
-    let record = {
-         "@type": "Person",
-         "@id": "person_1",
-         "givenName": "givenName_1",
-         "familyName": "familyName_1",
-         "email": "test@test.com",
-         "telephone": "1-514-111-2222",
-         "hasOccupation": {
-             "@type": "Occupation",
-             "@id": "occupation_1",
-             "name": "occupation_1"
-             },
-         "worksfor": {
-             "@type": "Organization",
-             "@id": "test_org_1",
-             "name": "test_org_1",
-             "url": "https://www.test.com",
-             "test": {
-                      "@type": "Person",
-                      "@id": "person_1",
-                      "givenName": "givenName_1",
-                      "familyName": "familyName_1",
-                      "email": "test@test.com",
-                      "telephone": "1-514-111-2222",
-                      "hasOccupation": {
-                          "@type": "Occupation",
-                          "@id": "occupation_1",
-                          "name": "occupation_1"
-                          },
-                      "worksfor": {
-                          "@type": "Organization",
-                          "@id": "organization_1",
-                          "name": "test_org_1",
-                          "url": "https://www.test.com"
-                          }
-             }
-
-        }
-     }
-
-    //let record = getRecord(1)
+    let things1 = getThings(1, 'Thing')
 
 
-    let t = new KrThing(record)
+    console.log(things1[0].export.system)
 
-    console.log(JSON.stringify(t.export.system, null, 4))
-
-    
 }
 
 test1()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function getThings(n, t="Thing"){
+
+    let things = []
+    for(let i=0; i< n; i++){
+        things.push(getThing(i, t))
+    }
+
+    return things
+
+}
+
+function getThing(n=0, t="Thing"){
+
+    let r = getRecord(n, t)
+    let thing = new KrThing()
+
+    thing.metadata.credibility = 0.2
+    thing.metadata._record.instrument = {
+        "@type": "Thing", "@id": "Instrument1"
+    }
+
+    thing.record = r
+    return thing
+
+}
+
+function getRef(record){
+
+
+    return {"@type": record['@type'], '@id': record['@id']}
+
+}
+
+
+function getRecords(n, t="Thing"){
+
+    let records = []
+    for(let i=0; i< n; i++){
+        records.push(getRecord(i, t))
+    }
+    return records
+}
+
+function getRecord(n, t="Thing"){
+
+    let record = {
+        "@type": t,
+        "@id": t + String(n),
+        "name": t + String(n),
+        "value": n,
+        "child": {
+                "@context": "https://schema.org/",
+                "@type": "Thing",
+                "@id": 'child_' + t + String(n),
+                "name": 'child_' + t + String(n),
+                "child":{
+                        "@context": "https://schema.org/",
+                        "@type": "Thing",
+                        "@id": 'child_child_' + t + String(n),
+                        "name": 'child_child_' + t + String(n)
+                }
+
+            }
+
+
+    }
+    return record
+}

@@ -341,10 +341,13 @@ function getProperties(thisThing) {
      */
 
     let properties = thisThing._properties;
-    properties = properties.filter((x) => x && x != null);
+    properties = properties.filter((x) => x !== undefined && x != null);
+
     properties = properties.toSorted((a, b) => {
         return a.lt(b);
     });
+
+    return properties
 }
 
 function setProperty(

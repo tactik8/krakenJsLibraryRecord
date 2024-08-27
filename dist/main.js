@@ -1297,10 +1297,11 @@ function $669430fe45e0fd45$var$getProperties(thisThing) {
     /**
      * Returns list of KrProperty object in alphabetical order
      */ let properties = thisThing._properties;
-    properties = properties.filter((x)=>x && x != null);
+    properties = properties.filter((x)=>x !== undefined && x != null);
     properties = properties.toSorted((a, b)=>{
         return a.lt(b);
     });
+    return properties;
 }
 function $669430fe45e0fd45$var$setProperty(thisThing, propertyID, value, credibility, observationDate, actionType, previousValue) {
     // Handle dot notation

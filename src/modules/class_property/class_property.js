@@ -196,13 +196,20 @@ export class KrProperty {
         return results;
     }
 
-    setSystemRecord(value) {
-        this._propertyValues = [];
+    setSystemRecord(value, wipeBefore=true) {
+        
+        if(wipeBefore == true){
+            this._propertyValues = [];
+        }
+        
         var values = ensureArray(value);
         for (let value of values) {
+
             var propertyValue = new KrPropertyValue();
             propertyValue.setSystemRecord(value);
-            this._propertyValues.push(propertyValue);
+            
+            this.addPropertyValue(value)
+            
         }
     }
 
@@ -236,6 +243,17 @@ export class KrProperty {
     // PropertyValues
     // ----------------------------------------------------
 
+    getPropertyValueById(pvId) {
+        // return best property value object
+        for(let pv of this._propertyValues){
+            if(pv.record_type == pvId){
+                return pv
+            }
+        }
+        return null;
+    }
+
+    
     get propertyValue() {
         // return best property value object
         if (this.propertyValues && this.propertyValues.length > 0) {
@@ -380,6 +398,16 @@ export class KrProperty {
         return this.propertyValuesNet;
     }
 
+
+    set propertyValue(value){
+        return this.addPropertyValue(value)
+    }
+    
+    set propertyValues(value){
+        return this.addPropertyValue(value)
+    }
+
+    
     // ----------------------------------------------------
     // Values
     // ----------------------------------------------------
@@ -485,6 +513,49 @@ export class KrProperty {
         });
     }
 
+
+
+    // -----------------------------------------------------
+    //  Comment 
+    // -----------------------------------------------------
+
+
+    addPropertyValue(propertyValue){
+
+        //
+        if((propertyValue instanceof KrPropertyValue) == false){
+            let temp = new KrPropertyValue()
+            temp.setSystemRecord(propertyValue)
+            propertyValue = temp
+        }
+
+        // 
+        for(let pv of this._propertyValues){
+            if ( propertyValue.eq(pv) == true ){
+                // Value already exists
+                return false
+            }
+        }
+        this._propertyValues.push(propertyValue)
+        return true
+    }
+    
+    deDupe(){
+
+        // Dedupe propertyValues
+        let propertyValues = this._propertyValues
+        
+        for(let pv of propertyValues){
+
+            this.addPropertyValue(pv)
+            
+        }
+        return
+
+        
+    }
+
+    
     // -----------------------------------------------------
     //  Query
     // -----------------------------------------------------

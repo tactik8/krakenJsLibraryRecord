@@ -13,23 +13,45 @@ import { krakenHelpers as k } from 'krakenhelpers'
 
 async function test1(){
 
-    let things1 = getThings(1, 'Thing')
 
-    console.log(things1[0].headings.getHeading1())
-    console.log(things1[0].export.system)
+    let t1 = new KrThing({
+                            "@context": "https://schema.org/",
+                            "@type": "Thing",
+                            "@id": "thing1",
+                            "name": "thing1"
+                        })
+
+
+
+    let t2 = new KrThing({
+                            "@context": "https://schema.org/",
+                            "@type": "Thing",
+                            "@id": "thing2",
+                            "name": "thing2",
+                            "other": t1
+                        }
+
+)
+
+    console.log('ooo')
+    t1.p.set('other', t2)
+    console.log('ppp')
+    
+
+    let t3 = new KrThing()
+    t3.export.system = t1.export.system
+
+
+    //console.log(JSON.stringify(t3.record, null, 4))
+    console.log(JSON.stringify(t3.export.system, null, 4))
+    
+    for (let t11 of t1.things){
+        //console.log(t11.record)
+    }
 
 }
 
 test1()
-
-
-
-
-
-
-
-
-
 
 
 

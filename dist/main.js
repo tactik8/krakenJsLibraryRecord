@@ -351,7 +351,7 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
                 "previousItem",
                 "nextItem"
             ].includes(this.propertyID)) return this?.value?.ref;
-            else return this.value.getFullRecord(maxDepth, currentDepth);
+            else return this.value.export.getRecord(maxDepth, currentDepth);
         }
         return this.value;
     }
@@ -429,6 +429,7 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     }
     eq(other) {
         // returns true if equal
+        if (this.record_id == other.record_id) return true;
         if (this.value != other.value) return false;
         if (this.metadata.eq(other.metadata) == false) return false;
         return true;
@@ -587,13 +588,13 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         let results = this._propertyValues.map((x)=>x.getSystemRecord(maxDepth, currentDepth));
         return results;
     }
-    setSystemRecord(value1) {
-        this._propertyValues = [];
+    setSystemRecord(value1, wipeBefore = true) {
+        if (wipeBefore == true) this._propertyValues = [];
         var values = $0ff73647c93c411e$var$ensureArray(value1);
         for (let value1 of values){
             var propertyValue = new (0, $9ef8378eb9810880$export$90601469cef9e14f)();
             propertyValue.setSystemRecord(value1);
-            this._propertyValues.push(propertyValue);
+            this.addPropertyValue(value1);
         }
     }
     // -----------------------------------------------------
@@ -618,6 +619,13 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     // ----------------------------------------------------
     // PropertyValues
     // ----------------------------------------------------
+    getPropertyValueById(pvId) {
+        // return best property value object
+        for (let pv of this._propertyValues){
+            if (pv.record_type == pvId) return pv;
+        }
+        return null;
+    }
     get propertyValue() {
         // return best property value object
         if (this.propertyValues && this.propertyValues.length > 0) return this.propertyValues[0];
@@ -697,6 +705,12 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         // return in reverse order
         return this.propertyValuesNet;
     }
+    set propertyValue(value1) {
+        return this.addPropertyValue(value1);
+    }
+    set propertyValues(value1) {
+        return this.addPropertyValue(value1);
+    }
     // ----------------------------------------------------
     // Values
     // ----------------------------------------------------
@@ -758,6 +772,30 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         this.propertyValuesAll.map((propertyValue)=>{
             propertyValue.printScreen(suffix + "        ");
         });
+    }
+    // -----------------------------------------------------
+    //  Comment 
+    // -----------------------------------------------------
+    addPropertyValue(propertyValue) {
+        //
+        if (propertyValue instanceof (0, $9ef8378eb9810880$export$90601469cef9e14f) == false) {
+            let temp = new (0, $9ef8378eb9810880$export$90601469cef9e14f)();
+            temp.setSystemRecord(propertyValue);
+            propertyValue = temp;
+        }
+        // 
+        for (let pv of this._propertyValues){
+            if (propertyValue.eq(pv) == true) // Value already exists
+            return false;
+        }
+        this._propertyValues.push(propertyValue);
+        return true;
+    }
+    deDupe() {
+        // Dedupe propertyValues
+        let propertyValues = this._propertyValues;
+        for (let pv of propertyValues)this.addPropertyValue(pv);
+        return;
     }
     // -----------------------------------------------------
     //  Query
@@ -1314,6 +1352,7 @@ function $669430fe45e0fd45$var$ensureArray(value) {
 
 
 
+
 let $986206abb55bdef7$var$MAX_DEPTH = 10;
 class $986206abb55bdef7$export$89929189f1e51a0b {
     constructor(thing){
@@ -1345,7 +1384,7 @@ class $986206abb55bdef7$export$89929189f1e51a0b {
     }
 }
 // -----------------------------------------------------
-//  Best record 
+//  Best record
 // -----------------------------------------------------
 function $986206abb55bdef7$var$getBestRecord(thisThing, maxDepth = $986206abb55bdef7$var$MAX_DEPTH, currentDepth = 0) {
     if (!maxDepth || maxDepth == null) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
@@ -1363,12 +1402,12 @@ function $986206abb55bdef7$var$getBestRecord(thisThing, maxDepth = $986206abb55b
     return record;
 }
 // -----------------------------------------------------
-//  Full record 
+//  Full record
 // -----------------------------------------------------
 function $986206abb55bdef7$var$getFullRecord(thisThing, maxDepth = $986206abb55bdef7$var$MAX_DEPTH, currentDepth = 0) {
     if (!maxDepth || maxDepth == null) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
     if (currentDepth >= maxDepth) {
-        if (this.record_type == "QuantitativeValue") ;
+        if (thisThing.record_type == "QuantitativeValue") ;
         else return thisThing.ref;
     }
     let record = {};
@@ -1391,7 +1430,7 @@ function $986206abb55bdef7$var$setFullRecord(thisThing, value) {
     });
 }
 // -----------------------------------------------------
-//  System record 
+//  System record
 // -----------------------------------------------------
 function $986206abb55bdef7$var$getSystemRecordFlat(thing) {
     let records = [];
@@ -1436,10 +1475,8 @@ function $986206abb55bdef7$var$setSystemRecord(thing, value, cache) {
     if (version == "2.0") return $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, cache);
     return;
 }
-function $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, cache) {
+function $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, wipeBefore = true) {
     // Load data into object
-    // Init cache
-    if (!cache || cache == null) cache = new (0, $b07a281446d81d05$export$320d46383f3d0ef0)();
     // Convert from string if one
     if (typeof value === "string" || value instanceof String) try {
         value = JSON.parse(value);
@@ -1449,9 +1486,7 @@ function $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, cache) {
     // Check if valid format
     if (!value || !value._propertyValues) return;
     // Reset current properties
-    thing._properties = [];
-    // Set pvRecords
-    if (!value?._propertyValues || value?._propertyValues == null) return;
+    if (wipeBefore == true) thing._properties = [];
     // Retrieve db info
     thing._dbCollection = value?.["_dbCollection"];
     thing._dbId = value?.["_dbId"];
@@ -1460,32 +1495,40 @@ function $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, cache) {
     let pvRecords = $986206abb55bdef7$var$ensureArray(value._propertyValues);
     pvRecords = pvRecords.filter((x)=>x !== undefined && x != null);
     if (pvRecords.length == 0) return;
-    // convert sub things to KrThing
-    let counter = 0;
-    for (let pvRecord of pvRecords){
-        if (!pvRecord || pvRecord == null) continue;
-        let value = pvRecord?.object?.value;
-        if (!value || value == null) continue;
-        if (value["@type"] && value["@type"] != null) {
-            var t = thing.new(value?.["@type"], value?.["@id"]);
-            $986206abb55bdef7$var$setSystemRecord(t, value, cache);
-            // Store and retrieve to cache to avoid duplicate things
-            cache.set(t);
-            t = cache.get(value?.["@type"], value?.["@id"]);
-            pvRecord.object.value = t;
-            counter += 1;
-        }
-    }
     // Group pvRecords by propertyID
     let propertyIDs = [
         ...new Set(pvRecords.map((x)=>x.object.propertyID))
     ];
-    for (let propertyID of propertyIDs)if (propertyID && propertyID != null) {
+    propertyIDs = propertyIDs.filter((x)=>x && x != null);
+    for (let propertyID of propertyIDs){
         let subPropertyValues = pvRecords.filter((item)=>item.object.propertyID == propertyID);
-        var property = new (0, $0ff73647c93c411e$export$13f164945901aa88)(propertyID);
-        property.setSystemRecord(subPropertyValues);
-        thing._properties.push(property);
+        var property = thing.getProperty(propertyID);
+        for (let pv of subPropertyValues){
+            pv = $986206abb55bdef7$var$convertPV(thing, pv);
+            property.setSystemRecord(pv, false);
+        }
     }
+}
+function $986206abb55bdef7$var$convertPV(thing, pvRecord) {
+    // Convert propertyValue value to thing if @type present
+    console.log("step");
+    if (!pvRecord || pvRecord == null) return pvRecord;
+    let value = pvRecord?.object?.value;
+    if (!value || value == null) return pvRecord;
+    if (value["@type"] && value["@type"] != null) {
+        // Get from cache
+        let t = thing._things.get(value?.["@type"], value?.["@id"]);
+        if (!t || t == null) {
+            t = thing.new(value?.["@type"], value?.["@id"]);
+            t._things = thing._things;
+            thing._things.set(t);
+            t = thing._things.get(value?.["@type"], value?.["@id"]);
+        }
+        $986206abb55bdef7$var$setSystemRecordV2_0(t, value, false);
+        // Store and retrieve to cache to avoid duplicate things
+        pvRecord.object.value = t;
+    }
+    return pvRecord;
 }
 function $986206abb55bdef7$var$setSystemRecordV1_0(thing, value, cache) {
     // Load data into object
@@ -2422,6 +2465,7 @@ class $8c53f3ac7d8ee3d4$export$d62a579734015d66 {
 }
 
 
+
 let $8b9cc78875f648b9$var$MAX_DEPTH = 10;
 class $8b9cc78875f648b9$export$3138a16edeb45799 {
     /*
@@ -2468,6 +2512,8 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         ;
         // metadata
         this.metadata = new (0, $5e45e66cef237559$export$4a4eb7d10588cc8d)();
+        // Local cache of things
+        this._things = new (0, $b07a281446d81d05$export$320d46383f3d0ef0)();
         // if record_type is a dict, treat as record instead
         if (record_type && record_type["@type"]) this.setFullRecord(record_type);
         //

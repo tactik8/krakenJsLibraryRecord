@@ -188,7 +188,7 @@ export class KrPropertyValue {
             if(['previousItem', 'nextItem'].includes(this.propertyID) ){
                 return this?.value?.ref
             } else {
-                return this.value.getFullRecord(maxDepth, currentDepth)  
+                return this.value.export.getRecord(maxDepth, currentDepth)  
             }
         }
         return this.value;
@@ -301,7 +301,7 @@ export class KrPropertyValue {
     eq(other){
         // returns true if equal
 
-        
+        if(this.record_id == other.record_id){ return true }
         if (this.value != other.value){ return false }
         if (this.metadata.eq(other.metadata) == false ){ return false }
         

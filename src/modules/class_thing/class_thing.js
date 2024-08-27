@@ -15,6 +15,7 @@ import { ClassKrakenActionHelpers } from './helpers/ClassKrakenActionHelpers.js'
 import { ClassKrakenApiHelpers } from './helpers/ClassKrakenApiHelpers.js'
 
 import { ClassKrakenHeadingHelpers } from './helpers/ClassKrakenHeadingHelpers.js'
+import { ClassKrakenCache } from './helpers/ClassKrakenCache.js'
 
 
 
@@ -74,6 +75,11 @@ export class KrThing {
         
         // metadata
         this.metadata = new KrMetadata();
+
+
+        // Local cache of things
+        this._things = new ClassKrakenCache()
+        
         
         // if record_type is a dict, treat as record instead
         if (record_type && record_type["@type"])

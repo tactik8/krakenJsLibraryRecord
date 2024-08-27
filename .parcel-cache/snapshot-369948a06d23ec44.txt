@@ -1,5 +1,5 @@
 8628
-40/home/runner/krakenrecordjs/package.json1724771349622704991 0
+40/home/runner/krakenrecordjs/package.json1724774656215921577 0
 37/home/runner/krakenrecordjs/README.md1724417028088183380 0
 38/home/runner/krakenrecordjs/index.html1723483430591027886 0
 35/home/runner/krakenrecordjs/.replit1716405558982762857 0
@@ -8,14 +8,14 @@
 72/home/runner/krakenrecordjs/src/modules/class_metadata/class_metadata.js1724672274444890190 0
 83/home/runner/krakenrecordjs/src/modules/class_metadata/tests/class_metadata.test.js1716401155429570436 0
 54/home/runner/krakenrecordjs/src/modules/class_metadata1724672274460890187 1
-82/home/runner/krakenrecordjs/src/modules/class_propertyValue/class_propertyValue.js1724770806715820994 0
+82/home/runner/krakenrecordjs/src/modules/class_propertyValue/class_propertyValue.js1724774162624927351 0
 93/home/runner/krakenrecordjs/src/modules/class_propertyValue/tests/class_propertyValue.test.js1716401155429570436 0
 66/home/runner/krakenrecordjs/src/modules/class_thing/class_thing.js1724769347394822990 0
-87/home/runner/krakenrecordjs/src/modules/class_thing/helpers/ClassKrakenExportHelpers.js1724771292254822914 0
+89/home/runner/krakenrecordjs/src/modules/class_thing/helpers/ClassKrakenPropertyHelpers.js1724774633331968100 0
+87/home/runner/krakenrecordjs/src/modules/class_thing/helpers/ClassKrakenExportHelpers.js1724774261536724284 0
 78/home/runner/krakenrecordjs/src/modules/class_thing/helpers/thingComparison.js1724676352271923199 0
 80/home/runner/krakenrecordjs/src/modules/class_thing/helpers/valueManipulation.js1724675350340165450 0
 87/home/runner/krakenrecordjs/src/modules/class_thing/helpers/ClassKrakenActionHelpers.js1724418424302118207 0
-89/home/runner/krakenrecordjs/src/modules/class_thing/helpers/ClassKrakenPropertyHelpers.js1724418343866237209 0
 89/home/runner/krakenrecordjs/src/modules/class_thing/helpers/ClassKrakenItemListHelpers.js1723568203467941654 0
 79/home/runner/krakenrecordjs/src/modules/class_thing/helpers/ClassKrakenCache.js1723226312375923295 0
 88/home/runner/krakenrecordjs/src/modules/class_thing/helpers/ClassKrakenHeadingHelpers.js1723218108361055377 0
@@ -52,9 +52,9 @@
 39/home/runner/krakenrecordjs/.config/npm1716399516542189931 1
 50/home/runner/krakenrecordjs/dist/index.8cfc62b9.js1716406599932793784 0
 43/home/runner/krakenrecordjs/dist/index.html1716406417689138530 0
-32/home/runner/krakenrecordjs/dist1724771376498649734 1
+32/home/runner/krakenrecordjs/dist1724774664719904289 1
 56/home/runner/krakenrecordjs/.github/workflows/static.yml1714318261916249353 0
-43/home/runner/krakenrecordjs/.upm/store.json1724771145635124303 0
+43/home/runner/krakenrecordjs/.upm/store.json1724774266296714512 0
 62/home/runner/krakenrecordjs/node_modules/krakenhelpers/.github1724685424039535746 1
 70/home/runner/krakenrecordjs/node_modules/krakenhelpers/.upm/store.json1724685423699535968 0
 59/home/runner/krakenrecordjs/node_modules/krakenhelpers/.upm1724685423699535968 1
@@ -134,7 +134,7 @@
 75/home/runner/krakenrecordjs/node_modules/regjsparser/node_modules/jsesc/man1712321680650980877 1
 75/home/runner/krakenrecordjs/node_modules/regjsparser/node_modules/jsesc/bin1712321680362960113 1
 87/home/runner/krakenrecordjs/node_modules/regjsparser/node_modules/jsesc/LICENSE-MIT.txt1712321680290954922 0
-37/home/runner/krakenrecordjs/script.js1724771145399124790 0
+37/home/runner/krakenrecordjs/script.js1724773823465623643 0
 80/home/runner/krakenrecordjs/node_modules/regjsparser/node_modules/jsesc/jsesc.js1712321680234950885 0
 65/home/runner/krakenrecordjs/node_modules/regjsparser/node_modules1712321682331101994 1
 52/home/runner/krakenrecordjs/node_modules/regjsparser1712321681343030765 1
@@ -427,7 +427,7 @@
 109/home/runner/krakenrecordjs/node_modules/babel-plugin-polyfill-corejs2/lib/add-platform-specific-polyfills.js1712321681283026440 0
 78/home/runner/krakenrecordjs/node_modules/babel-plugin-polyfill-corejs2/LICENSE1712321680214949443 0
 70/home/runner/krakenrecordjs/node_modules/babel-plugin-polyfill-corejs21712321681363032207 1
-59/home/runner/krakenrecordjs/node_modules/.package-lock.json1724685468051506894 0
+59/home/runner/krakenrecordjs/node_modules/.package-lock.json1724774265956715210 0
 50/home/runner/krakenrecordjs/node_modules/.bin/uuid1716465249836559322 0
 51/home/runner/krakenrecordjs/node_modules/.bin/json51712321438853550012 0
 66/home/runner/krakenrecordjs/node_modules/.bin/import-local-fixture1712321438853550012 0
@@ -2624,7 +2624,7 @@
 93/home/runner/krakenrecordjs/.cache/typescript/5.4/node_modules/@types/lodash/fp/toLength.d.ts1716382602326168509 0
 60/home/runner/krakenrecordjs/node_modules/@types/yargs-parser1712321436325367758 1
 96/home/runner/krakenrecordjs/node_modules/@jridgewell/trace-mapping/dist/types/trace-mapping.d.ts1712321437537455136 0
-45/home/runner/krakenrecordjs/package-lock.json1724685467967506948 0
+45/home/runner/krakenrecordjs/package-lock.json1724774265868715391 0
 119/home/runner/krakenrecordjs/node_modules/babel-plugin-istanbul/node_modules/istanbul-lib-instrument/src/instrumenter.js1712321436589386791 0
 83/home/runner/krakenrecordjs/node_modules/caniuse-lite/data/features/cryptography.js1712321438153499546 0
 78/home/runner/krakenrecordjs/node_modules/@babel/compat-data/plugin-bugfixes.js1712321437413446196 0
@@ -4429,7 +4429,7 @@
 72/home/runner/krakenrecordjs/node_modules/@types/babel__generator/LICENSE1712321436197358530 0
 97/home/runner/krakenrecordjs/node_modules/@babel/types/lib/retrievers/getBindingIdentifiers.js.map1712321438297509928 0
 119/home/runner/krakenrecordjs/.cache/typescript/5.3/node_modules/@babel/types/lib/comments/inheritTrailingComments.js.map1712321491809367529 0
-27/home/runner/krakenrecordjs1724771349682704868 1
+27/home/runner/krakenrecordjs1724774656263921479 1
 64/home/runner/krakenrecordjs/node_modules/strip-ansi/package.json1712321436433375544 0
 77/home/runner/krakenrecordjs/node_modules/@babel/plugin-syntax-top-level-await1712321436433375544 1
 63/home/runner/krakenrecordjs/node_modules/@babel/core/lib/config1712321437961485704 1
@@ -4830,7 +4830,7 @@
 92/home/runner/krakenrecordjs/.cache/typescript/5.4/node_modules/@types/lodash/fp/whereEq.d.ts1716382602330168503 0
 67/home/runner/krakenrecordjs/node_modules/@jest/schemas/package.json1712321436409373814 0
 93/home/runner/krakenrecordjs/.cache/typescript/5.4/node_modules/@types/lodash/fp/toFinite.d.ts1716382602326168509 0
-59/home/runner/krakenrecordjs/src/modules/class_propertyValue1724770806751820921 1
+59/home/runner/krakenrecordjs/src/modules/class_propertyValue1724774162628927342 1
 69/home/runner/krakenrecordjs/node_modules/get-caller-file/package.json1712321435165284129 0
 69/home/runner/krakenrecordjs/node_modules/@jridgewell/resolve-uri/dist1712321436817403229 1
 87/home/runner/krakenrecordjs/.cache/typescript/5.4/node_modules/@types/yallist/README.md1716382602046168919 0
@@ -6054,7 +6054,7 @@
 86/home/runner/krakenrecordjs/node_modules/@babel/highlight/node_modules/chalk/readme.md1712321436345369200 0
 89/home/runner/krakenrecordjs/node_modules/@babel/highlight/node_modules/chalk/templates.js1712321436457377275 0
 67/home/runner/krakenrecordjs/node_modules/@babel/highlight/README.md1712321436313366893 0
-59/home/runner/krakenrecordjs/src/modules/class_thing/helpers1724771292258822904 1
+59/home/runner/krakenrecordjs/src/modules/class_thing/helpers1724774633335968091 1
 58/home/runner/krakenrecordjs/node_modules/y18n/CHANGELOG.md1712321436589386791 0
 86/home/runner/krakenrecordjs/node_modules/@babel/core/lib/config/resolve-targets.js.map1712321437945484550 0
 93/home/runner/krakenrecordjs/.cache/typescript/5.4/node_modules/@types/sprintf-js/package.json1716382602178168725 0
@@ -6115,7 +6115,7 @@
 88/home/runner/krakenrecordjs/node_modules/@babel/helper-compilation-targets/lib/pretty.js1712321437293437545 0
 86/home/runner/krakenrecordjs/node_modules/@babel/traverse/lib/path/lib/virtual-types.js1712321437905481667 0
 77/home/runner/krakenrecordjs/node_modules/@babel/traverse/lib/scope/binding.js1712321437961485704 0
-44/home/runner/krakenrecordjs/dist/main.js.map1724771376498649734 0
+44/home/runner/krakenrecordjs/dist/main.js.map1724774664715904297 0
 84/home/runner/krakenrecordjs/node_modules/@babel/helper-compilation-targets/README.md1712321436093351033 0
 54/home/runner/krakenrecordjs/node_modules/slash/license1712321436109352186 0
 87/home/runner/krakenrecordjs/node_modules/@babel/helper-compilation-targets/lib/debug.js1712321436293365451 0
@@ -6326,7 +6326,7 @@
 96/home/runner/krakenrecordjs/node_modules/@babel/plugin-transform-nullish-coalescing-operator/lib1712321680474968188 1
 69/home/runner/krakenrecordjs/node_modules/@babel/template/lib/parse.js1712321437421446773 0
 73/home/runner/krakenrecordjs/node_modules/@babel/template/lib/parse.js.map1712321437453449080 0
-32/home/runner/krakenrecordjs/.upm1724771145635124303 1
+32/home/runner/krakenrecordjs/.upm1724774266296714512 1
 93/home/runner/krakenrecordjs/.cache/typescript/5.4/node_modules/@types/color-name/package.json1716382602170168737 0
 72/home/runner/krakenrecordjs/node_modules/@babel/template/lib/populate.js1712321437489451676 0
 70/home/runner/krakenrecordjs/node_modules/@babel/template/lib/string.js1712321437537455136 0
@@ -6612,7 +6612,7 @@
 89/home/runner/krakenrecordjs/node_modules/@babel/types/lib/utils/deprecationWarning.js.map1712321438309510793 0
 92/home/runner/krakenrecordjs/.cache/typescript/5.4/node_modules/@types/lodash/fp/unapply.d.ts1716382602326168509 0
 85/home/runner/krakenrecordjs/node_modules/@ampproject/remapping/dist/remapping.mjs.map1712321436825403805 0
-40/home/runner/krakenrecordjs/dist/main.js1724771376490649750 0
+40/home/runner/krakenrecordjs/dist/main.js1724774664711904306 0
 65/home/runner/krakenrecordjs/node_modules/v8-to-istanbul/README.md1712321437273436103 0
 74/home/runner/krakenrecordjs/node_modules/@babel/types/lib/utils/inherit.js1712321438309510793 0
 78/home/runner/krakenrecordjs/node_modules/@babel/types/lib/utils/inherit.js.map1712321438309510793 0
@@ -8545,7 +8545,7 @@
 53/home/runner/krakenrecordjs/node_modules/glob/sync.js1712321436781400633 0
 78/home/runner/krakenrecordjs/node_modules/prompts/lib/dateparts/milliseconds.js1712321437785473015 0
 62/home/runner/krakenrecordjs/node_modules/istanbul-lib-coverage1712321437325439852 1
-40/home/runner/krakenrecordjs/node_modules1724685467851507025 1
+40/home/runner/krakenrecordjs/node_modules1724774265744715645 1
 71/home/runner/krakenrecordjs/node_modules/@types/node/child_process.d.ts1712321437489451676 0
 66/home/runner/krakenrecordjs/node_modules/istanbul-lib-coverage/lib1712321437001416494 1
 75/home/runner/krakenrecordjs/node_modules/istanbul-lib-coverage/CHANGELOG.md1712321437297437834 0

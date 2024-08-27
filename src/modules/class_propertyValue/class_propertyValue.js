@@ -209,7 +209,7 @@ export class KrPropertyValue {
 
         let value = this.value;
         if (this.value && this.value.record_type){
-            value = this.value.getBestRecord(maxDepth, currentDepth);
+            value = this.value.export.getBest(maxDepth, currentDepth);
         };
         return value;        
     }

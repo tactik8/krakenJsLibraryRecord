@@ -25,8 +25,16 @@ export class ClassKrakenExportHelpers {
         return setFullRecord(this.thing, value);
     }
 
+    setRecord(value) {
+        return setFullRecord(this.thing, value);
+    }
+
     get best() {
         return getBestRecord(this.thing);
+    }
+
+    getBest(maxDepth, currentDepth) {
+        return getBestRecord(maxDepth, currentDepth)
     }
 
     get system() {
@@ -64,7 +72,7 @@ function getBestRecord(thisThing, maxDepth = MAX_DEPTH, currentDepth = 0) {
     }
 
     let record = {};
-    let properties = thisThing.properties;
+    let properties = ensureArray(thisThing.properties);
     for (let p of properties) {
         record[p.propertyID] = p.getBestRecord(maxDepth, currentDepth + 1);
     }
@@ -254,7 +262,6 @@ function setSystemRecordV2_0(thing, value, wipeBefore = true) {
 function convertPV(thing, pvRecord) {
     // Convert propertyValue value to thing if @type present
 
-    console.log("step");
     if (!pvRecord || pvRecord == null) {
         return pvRecord;
     }

@@ -363,7 +363,7 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     }
     getBestRecord(maxDepth, currentDepth) {
         let value = this.value;
-        if (this.value && this.value.record_type) value = this.value.getBestRecord(maxDepth, currentDepth);
+        if (this.value && this.value.record_type) value = this.value.export.getBest(maxDepth, currentDepth);
         return value;
     }
     getDetailRecord(maxDepth, currentDepth) {
@@ -1072,7 +1072,7 @@ class $669430fe45e0fd45$export$73a9d89cdfbecb0a {
         this.thing = thing;
     }
     // -----------------------------------------------------
-    //  Methods 
+    //  Methods
     // -----------------------------------------------------
     get(propertyID) {
         return $669430fe45e0fd45$var$getProperty(this.thing, propertyID);
@@ -1104,7 +1104,7 @@ class $669430fe45e0fd45$export$73a9d89cdfbecb0a {
         return $669430fe45e0fd45$var$setProperty(this.thing, propertyID, value, credibility, observationDate, "deleteAction", null);
     }
     // -----------------------------------------------------
-    //  Attributes 
+    //  Attributes
     // -----------------------------------------------------
     get actionStatus() {
         return this.thing.getProperty("actionStatus")?.value || null;
@@ -1296,7 +1296,9 @@ function $669430fe45e0fd45$var$getProperty(thisThing, propertyID) {
 function $669430fe45e0fd45$var$getProperties(thisThing) {
     /**
      * Returns list of KrProperty object in alphabetical order
-     */ return thisThing._properties.toSorted((a, b)=>{
+     */ let properties = thisThing._properties;
+    properties = properties.filter((x)=>x && x != null);
+    properties = properties.toSorted((a, b)=>{
         return a.lt(b);
     });
 }
@@ -1367,8 +1369,14 @@ class $986206abb55bdef7$export$89929189f1e51a0b {
     set record(value) {
         return $986206abb55bdef7$var$setFullRecord(this.thing, value);
     }
+    setRecord(value) {
+        return $986206abb55bdef7$var$setFullRecord(this.thing, value);
+    }
     get best() {
         return $986206abb55bdef7$var$getBestRecord(this.thing);
+    }
+    getBest(maxDepth, currentDepth) {
+        return $986206abb55bdef7$var$getBestRecord(maxDepth, currentDepth);
     }
     get system() {
         return $986206abb55bdef7$var$getSystemRecord(this.thing);
@@ -1393,7 +1401,7 @@ function $986206abb55bdef7$var$getBestRecord(thisThing, maxDepth = $986206abb55b
         else return thisThing.ref;
     }
     let record = {};
-    let properties = thisThing.properties;
+    let properties = $986206abb55bdef7$var$ensureArray(thisThing.properties);
     for (let p of properties)record[p.propertyID] = p.getBestRecord(maxDepth, currentDepth + 1);
     record["@type"] = thisThing.record_type;
     record["@id"] = thisThing.record_id;
@@ -1511,7 +1519,6 @@ function $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, wipeBefore = tr
 }
 function $986206abb55bdef7$var$convertPV(thing, pvRecord) {
     // Convert propertyValue value to thing if @type present
-    console.log("step");
     if (!pvRecord || pvRecord == null) return pvRecord;
     let value = pvRecord?.object?.value;
     if (!value || value == null) return pvRecord;

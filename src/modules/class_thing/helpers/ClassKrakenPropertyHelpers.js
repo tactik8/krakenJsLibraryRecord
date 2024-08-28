@@ -340,13 +340,14 @@ function getProperties(thisThing) {
      * Returns list of KrProperty object in alphabetical order
      */
 
-    let properties = thisThing._properties;
+    let properties = ensureArray(thisThing._properties);
     properties = properties.filter((x) => x !== undefined && x != null);
-
+    
     properties = properties.toSorted((a, b) => {
         return a.lt(b);
     });
 
+    properties = ensureArray(properties)
     return properties
 }
 

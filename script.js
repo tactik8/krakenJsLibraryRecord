@@ -8,30 +8,23 @@ import { krakenHelpers as k } from 'krakenhelpers'
 
 
 
-
-
+//process.env.apiUrl = "https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev/api"
+//process.env.apiCollection = '_testRecords'
 
 async function test1(){
 
 
-    
-    let things = new KrThing('ItemList')
+    let t = new KrThing()
+    t.api.apiUrl = "https://2d432316-7c15-4f0f-9214-d4f6fba60627-00-1b1hmvrd8c12s.spock.replit.dev"
+    t.api.apiCollection = '_testRecords'
+    t.api.apiBasePath = '/api'
 
-    let tt = getThing(1)
+    let action = await t.api.autoComplete('Thin')
 
-    let tt2 = getThing(2)
+    console.log(action.a.actionStatus, action.a.error)
 
-
-    tt.p.set('other', tt2)
-
-
-    console.log(tt.export.system)
-
-    
-    things.l.add(tt)
-    things.l.add(tt2)
-    
-    console.log(things.export.system)
+    let things = action.a.result
+    console.log(things.l.length)
 
 }
 

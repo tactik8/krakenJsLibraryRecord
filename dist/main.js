@@ -1296,11 +1296,12 @@ function $669430fe45e0fd45$var$getProperty(thisThing, propertyID) {
 function $669430fe45e0fd45$var$getProperties(thisThing) {
     /**
      * Returns list of KrProperty object in alphabetical order
-     */ let properties = thisThing._properties;
+     */ let properties = $669430fe45e0fd45$var$ensureArray(thisThing._properties);
     properties = properties.filter((x)=>x !== undefined && x != null);
     properties = properties.toSorted((a, b)=>{
         return a.lt(b);
     });
+    properties = $669430fe45e0fd45$var$ensureArray(properties);
     return properties;
 }
 function $669430fe45e0fd45$var$setProperty(thisThing, propertyID, value, credibility, observationDate, actionType, previousValue) {
@@ -1403,6 +1404,7 @@ function $986206abb55bdef7$var$getBestRecord(thisThing, maxDepth = $986206abb55b
     }
     let record = {};
     let properties = $986206abb55bdef7$var$ensureArray(thisThing.properties);
+    properties = properties.filter((x)=>x !== undefined && x !== null);
     for (let p of properties)record[p.propertyID] = p.getBestRecord(maxDepth, currentDepth + 1);
     record["@type"] = thisThing.record_type;
     record["@id"] = thisThing.record_id;
@@ -2171,6 +2173,9 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
             "name": "ClassKrakenApiHelpers"
         };
     // Load from system 
+    //this.apiUrl = process.env.apiUrl || null
+    //this.apiBasePath = process.env.apiBasePath || null
+    //this.apiCollection = process.env.apiCollection || null
     }
     // -----------------------------------------------------
     //  I/O 
@@ -2219,7 +2224,25 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
             let things = this.thing.list.new();
             let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path + "/related", this.thing.ref);
             things.export.system = results;
-            console.log(things.l.length);
+            action.a.setCompleted();
+            action.a.result = things;
+        } catch (error) {
+            action.a.setFailed(String(error));
+        }
+        return action;
+    }
+    async autoComplete(textQuery) {
+        let action = this.thing.action.new();
+        action.a.name = `Get thing related ${this.thing.refID}`;
+        action.a.object = this.thing.ref;
+        action.a.instrument = this.instrument;
+        try {
+            let things = this.thing.list.new();
+            let q = this.params;
+            q.propertyID = "_heading1";
+            q.textQuery = textQuery;
+            let results = await (0, $5OpyM$krakenHelpers).api.get(this.apiUrl, this.path + "/autoComplete", q);
+            things.export.system = results;
             action.a.setCompleted();
             action.a.result = things;
         } catch (error) {

@@ -25,6 +25,11 @@ export class ClassKrakenApiHelpers{
         }
 
         // Load from system 
+
+        //this.apiUrl = process.env.apiUrl || null
+        //this.apiBasePath = process.env.apiBasePath || null
+        //this.apiCollection = process.env.apiCollection || null
+
         
     }
     
@@ -101,7 +106,6 @@ export class ClassKrakenApiHelpers{
             let results = await k.api.get(this.apiUrl, this.path + '/related' , this.thing.ref)
             
             things.export.system = results
-            console.log(things.l.length)
             action.a.setCompleted()
             action.a.result = things
 
@@ -113,6 +117,35 @@ export class ClassKrakenApiHelpers{
         
     }
 
+    async autoComplete(textQuery){
+
+        let action = this.thing.action.new()
+        action.a.name = `Get thing related ${this.thing.refID}`
+        action.a.object = this.thing.ref
+        action.a.instrument = this.instrument
+
+        try {
+
+            let things = this.thing.list.new()
+
+            let q = this.params
+            q.propertyID = "_heading1"
+            q.textQuery = textQuery
+           
+            let results = await k.api.get(this.apiUrl, this.path + '/autoComplete' , q)
+
+            things.export.system = results
+            action.a.setCompleted()
+            action.a.result = things
+
+        } catch (error) {
+            action.a.setFailed(String(error))
+        }
+
+        return action
+
+        
+    }
 
     async post(){
 

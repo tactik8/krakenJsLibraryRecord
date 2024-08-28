@@ -73,6 +73,7 @@ function getBestRecord(thisThing, maxDepth = MAX_DEPTH, currentDepth = 0) {
 
     let record = {};
     let properties = ensureArray(thisThing.properties);
+    properties = properties.filter(x => x !== undefined && x !== null)
     for (let p of properties) {
         record[p.propertyID] = p.getBestRecord(maxDepth, currentDepth + 1);
     }

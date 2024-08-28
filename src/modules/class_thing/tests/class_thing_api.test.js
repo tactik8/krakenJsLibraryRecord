@@ -12,8 +12,8 @@ test('API clear values', async () => {
     
     // Get records
     let t2 = new KrThing()
-    t2.api.apiUrl = apiUrl
-    t2.api.apiCollection = apiCollection
+    t2.api.apiUrl = apiUrl || process.env.apiUrl
+    t2.api.apiCollection = apiCollection || process.env.apiCollection
 
     
     t2.api.query ={'@type':'Thing'}

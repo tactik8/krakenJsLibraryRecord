@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { krakenHelpers as h } from 'krakenhelpers'
 
 import { KrProperty } from "../class_property/class_property.js";
 import { KrMetadata } from "../class_metadata/class_metadata.js";
@@ -13,10 +14,11 @@ import { ClassKrakenExportHelpers } from './helpers/ClassKrakenExportHelpers.js'
 import { ClassKrakenItemListHelpers } from './helpers/ClassKrakenItemListHelpers.js'
 import { ClassKrakenActionHelpers } from './helpers/ClassKrakenActionHelpers.js'
 import { ClassKrakenApiHelpers } from './helpers/ClassKrakenApiHelpers.js'
+import { ClassKrakenTestHelpers } from './helpers/ClassKrakenTestHelpers.js'
 
 import { ClassKrakenHeadingHelpers } from './helpers/ClassKrakenHeadingHelpers.js'
 import { ClassKrakenCache } from './helpers/ClassKrakenCache.js'
-
+import { ClassKrakenElement } from '../class_element/class_element.js'
 
 
 let MAX_DEPTH = 10;
@@ -66,6 +68,8 @@ export class KrThing {
         this._action = new ClassKrakenActionHelpers(this)
         this._api = new ClassKrakenApiHelpers(this)
         this._headings = new ClassKrakenHeadingHelpers(this)
+        this._element = new ClassKrakenElement(this)
+        this._test = new ClassKrakenTestHelpers(this)
 
 
         // db references
@@ -93,13 +97,18 @@ export class KrThing {
             this.p.set("@id", record_id);
         }
 
-        if (!this.record_id || this.record_id == null) {
+        if (h.isNull(this.record_id) ) {
             record_id = String(uuidv4());
         }
     }
 
     toJSON() {
         return this.record;
+    }
+
+    get json(){
+        return JSON.stringify(this.record, null, 4) 
+        
     }
 
     toString() {
@@ -162,6 +171,17 @@ export class KrThing {
     get h(){
         return this._headings
     }
+
+
+    // HTML elements
+    get element(){
+        return this._element
+    }
+
+    // Tests
+    get test(){
+        return this._test
+    }
     
     // -----------------------------------------------------
     //  events
@@ -170,7 +190,7 @@ export class KrThing {
     addEventListener(eventType, callback) {
         if (typeof callback !== "function") return;
 
-        if (!eventType || eventType == null) {
+        if (h.isNull(eventType)) {
             eventType == "all";
         }
         if (this._callbacks[eventType] === undefined) {
@@ -233,7 +253,7 @@ export class KrThing {
     }
     get record_id() {
         let record_id = this.getProperty("@id").value;
-        if (!record_id || record_id == null) {
+        if (h.isNull(record_id) ) {
             this.record_id = String(uuidv4());
         }
         return this.p.get("@id").value;

@@ -1,3 +1,5 @@
+import { krakenHelpers as h } from 'krakenhelpers'
+
 
 import { ClassKrakenCache } from './ClassKrakenCache.js'
 
@@ -33,7 +35,7 @@ function getChildThings(thisThing) {
 function getThings(thisThing, cache, maxLevel=MAXLEVEL, currentLevel=0) {
     // Gets all things objects used as values of this 
 
-    if(!cache || cache == null){
+    if(h.isNull(cache)){
         cache = new ClassKrakenCache()
         cache.add(thisThing)
     }
@@ -62,7 +64,7 @@ function  getSystemCreatedDate(thisThing) {
     let resultDate = null;
     for (let pv of thisThing.properties) {
         let itemDate = pv.systemCreatedDate;
-        if (itemDate && (resultDate == null || itemDate < resultDate)) {
+        if (itemDate && (h.isNull(resultDate) || itemDate < resultDate)) {
             resultDate = itemDate;
         }
     }
@@ -73,7 +75,7 @@ function getSystemUpdatedDate(thisThing) {
     let resultDate = null;
     for (let pv of thisThing.properties) {
         let itemDate = pv.systemCreatedDate;
-        if (itemDate && (resultDate == null || itemDate > resultDate)) {
+        if (itemDate && (h.isNull(resultDate) || itemDate > resultDate)) {
             resultDate = itemDate;
         }
     }

@@ -1,5 +1,9 @@
 import {v4 as $5OpyM$v4} from "uuid";
 import {krakenHelpers as $5OpyM$krakenHelpers} from "krakenhelpers";
+import {krakenHtml as $5OpyM$krakenHtml} from "krakenhtml";
+import {KrakenSchemas as $5OpyM$KrakenSchemas} from "krakenschema";
+
+
 
 
 
@@ -25,7 +29,7 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
 
     */ constructor(record){
         this._record = {};
-        if (!this._record.createdDate || this._record.createdDate == null) this._record.createdDate = new Date();
+        if ((0, $5OpyM$krakenHelpers).isNull(this?._record.createdDate)) this._record.createdDate = new Date();
     }
     get record() {
         return this._record;
@@ -43,7 +47,7 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
         return JSON.parse(JSON.stringify(this._record));
     }
     setSystemRecord(value) {
-        if (!value || value == null) return;
+        if ((0, $5OpyM$krakenHelpers).isNull(value)) return;
         this._record = JSON.parse(JSON.stringify(value));
     }
     inheritMetadata(metadataRecord) {
@@ -55,7 +59,7 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
         if (!value) return;
         let tempCreatedDate = this.createdDate;
         this._record = JSON.parse(JSON.stringify(value));
-        if (!this.createdDate || this.createdDate == null) this.createdDate = tempCreatedDate;
+        if ((0, $5OpyM$krakenHelpers).isNull(this.createdDate)) this.createdDate = tempCreatedDate;
     }
     get credibility() {
         return this._record.credibility;
@@ -89,7 +93,7 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
         this._record.position = value;
     }
     get observationDate() {
-        if (!this._record.observationDate || this._record.observationDate == null) return null;
+        if ((0, $5OpyM$krakenHelpers).isNull(this._record.observationDate)) return null;
         return new Date(JSON.parse(this._record.observationDate || null));
     }
     set observationDate(value) {
@@ -155,7 +159,7 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
     }
     isValid(comparisonDate = null) {
         // Returns true if value is within velidFrom, validThrough. Uses today's date if not provided
-        if (comparisonDate == null) comparisonDate = new Date();
+        if ((0, $5OpyM$krakenHelpers).isNull(comparisonDate)) comparisonDate = new Date();
         if (this.validFrom && comparisonDate < this.validFrom) return False;
         if (this.validThrough && comparisonDate >= this.validThrough) return False;
         return True;
@@ -199,6 +203,7 @@ class $5e45e66cef237559$export$4a4eb7d10588cc8d {
         return false;
     }
 }
+
 
 
 class $9ef8378eb9810880$export$90601469cef9e14f {
@@ -270,6 +275,10 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     }
     get record() {
         let record = this._record;
+        return record;
+    }
+    get json() {
+        return JSON.stringify(this.record, null, 4);
     }
     // ----------------------------------------------------
     // Attributes - object
@@ -279,13 +288,6 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     }
     set propertyID(value) {
         this._record.object.object.propertyID = value;
-    }
-    get value() {
-        return this._record.object.value;
-    }
-    set value(value) {
-        this._record.object.value = $9ef8378eb9810880$var$ensureNotArray(value);
-        this._record.replacer = $9ef8378eb9810880$var$ensureNotArray(value);
     }
     // ----------------------------------------------------
     // Attributes - metadata
@@ -388,7 +390,6 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     // Raw records 
     // ----------------------------------------------------
     getSystemRecord(maxDepth, currentDepth) {
-        //console.log('Get system value', this.propertyID)
         let record = {};
         record["@type"] = this.record_type;
         record["@id"] = this.record_id;
@@ -402,16 +403,13 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         if ([
             "previousItem",
             "nextItem"
-        ].includes(this.propertyID)) //console.log('x')
-        record.object["value"] = this?.value?.ref;
-        else if (this.value && this.value.record_type) //console.log('s')
-        record.object["value"] = this.value.export.getSystem(maxDepth, currentDepth);
-        else //console.log('v')
-        record.object["value"] = this.value;
+        ].includes(this.propertyID)) record.object["value"] = this?.value?.ref;
+        else if ((0, $5OpyM$krakenHelpers).isNotNull(this?.value?.record_type)) record.object["value"] = this.value.export.getSystem(maxDepth, currentDepth);
+        else record.object["value"] = this.value;
         return record;
     }
     setSystemRecord(value) {
-        if (!value || value == null) return;
+        if ((0, $5OpyM$krakenHelpers).isNull(value)) return;
         this.metadata.setSystemRecord(value?.metadata);
         delete value.metadata;
         this._record = JSON.parse(JSON.stringify(value));
@@ -435,9 +433,33 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
         return true;
     }
     gt(other) {
+        if (this.value?.record_type == "ListItem") {
+            let thisPosition = this.value?.p?.position || null;
+            if ((0, $5OpyM$krakenHelpers).isNull(thisPosition)) thisPosition = 0;
+            let otherPosition = other.value?.p?.position || null;
+            if ((0, $5OpyM$krakenHelpers).isNull(otherPosition)) thisPosition = 0;
+            if ((0, $5OpyM$krakenHelpers).isNotNull(thisPosition) && (0, $5OpyM$krakenHelpers).isNull(otherPosition)) return false;
+            if ((0, $5OpyM$krakenHelpers).isNull(thisPosition) && (0, $5OpyM$krakenHelpers).isNotNull(otherPosition)) return true;
+            if ((0, $5OpyM$krakenHelpers).isNotNull(thisPosition) && (0, $5OpyM$krakenHelpers).isNotNull(otherPosition)) try {
+                if (thisPosition < otherPosition) return true;
+                else if (thisPosition > otherPosition) return false;
+            } catch  {}
+        }
         return this.metadata.gt(other.metadata);
     }
     lt(other) {
+        if (this.value?.record_type == "ListItem") {
+            let thisPosition = this.value?.p?.position || null;
+            //if(h.isNull(thisPosition)){ thisPosition = 0 }
+            let otherPosition = other.value?.p?.position || null;
+            //if(h.isNull(otherPosition)){ thisPosition = 0 }
+            if ((0, $5OpyM$krakenHelpers).isNotNull(thisPosition) && (0, $5OpyM$krakenHelpers).isNull(otherPosition)) return true;
+            if ((0, $5OpyM$krakenHelpers).isNull(thisPosition) && (0, $5OpyM$krakenHelpers).isNotNull(otherPosition)) return false;
+            try {
+                if (thisPosition > otherPosition) return true;
+                else if (thisPosition < otherPosition) return false;
+            } catch (error) {}
+        }
         return this.metadata.lt(other.metadata);
     }
     printScreen(suffix = "") {
@@ -457,9 +479,10 @@ class $9ef8378eb9810880$export$90601469cef9e14f {
     }
 }
 function $9ef8378eb9810880$var$ensureNotArray(value) {
-    let new_value = $9ef8378eb9810880$var$ensureArray(value);
-    if (new_value.length > 0) return new_value[0];
-    else return null;
+    if (Array.isArray(value)) {
+        if ((0, $5OpyM$krakenHelpers).isNotNull(value)) return value[0];
+        return null;
+    } else return value;
 }
 function $9ef8378eb9810880$var$ensureArray(value) {
     if (Array.isArray(value)) return value;
@@ -467,6 +490,7 @@ function $9ef8378eb9810880$var$ensureArray(value) {
         value
     ];
 }
+
 
 
 
@@ -507,6 +531,12 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         record[this._propertyID] = this.propertyValues.map((x)=>x.toJSON());
         return record;
     }
+    get record() {
+        return this.toJSON();
+    }
+    get json() {
+        return JSON.stringify(this.record, null, 4);
+    }
     // Base
     get propertyID() {
         return this._propertyID;
@@ -533,11 +563,11 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         return false;
     }
     eq(other) {
-        if (this.propertyID && this.propertyID == other.propertyID) return true;
+        if ((0, $5OpyM$krakenHelpers).isNotNull(this.propertyID) && this.propertyID == other.propertyID) return true;
         return false;
     }
     getPropertyValueById(propertyValueID) {
-        if (!propertyValueID || propertyValueID == null) return;
+        if ((0, $5OpyM$krakenHelpers).isNull(propertyValueID)) return;
         for (let pv of this._propertyValues){
             if (pv.record_id == propertyValueID) return pv;
         }
@@ -545,7 +575,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     }
     contains(newPV) {
         // Return true if already contains same propertyValue
-        if (!newPV || newPV == null) return;
+        if ((0, $5OpyM$krakenHelpers).isNull(newPV)) return;
         for (let pv of this._propertyValues){
             if (pv.eq(newPV)) return true;
         }
@@ -554,7 +584,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     merge(other) {
         // merge other property with this property
         let needCompileFlag = false;
-        if (!other || other == null) return;
+        if ((0, $5OpyM$krakenHelpers).isNull(other)) return;
         for (let pv of other._propertyValues)if (this.contains(pv) == false) {
             this._propertyValues.push(pv);
             needCompileFlag = true;
@@ -573,7 +603,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     }
     getBestRecord(maxDepth, currentDepth) {
         let p = this.propertyValue;
-        if (p && p != null) return [
+        if ((0, $5OpyM$krakenHelpers).isNotNull(p)) return [
             p.getBestRecord(maxDepth, currentDepth)
         ];
         return [];
@@ -604,7 +634,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         let resultDate = null;
         for (let pv of this._propertyValues){
             let itemDate = pv.systemCreatedDate;
-            if (itemDate && (resultDate == null || itemDate < resultDate)) resultDate = itemDate;
+            if (itemDate && ((0, $5OpyM$krakenHelpers).isNull(resultDate) || itemDate < resultDate)) resultDate = itemDate;
         }
         return resultDate;
     }
@@ -612,7 +642,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         let resultDate = null;
         for (let pv of this._propertyValues){
             let itemDate = pv.systemCreatedDate;
-            if (itemDate && (resultDate == null || itemDate > resultDate)) resultDate = itemDate;
+            if (itemDate && ((0, $5OpyM$krakenHelpers).isNull(resultDate) || itemDate > resultDate)) resultDate = itemDate;
         }
         return resultDate;
     }
@@ -636,7 +666,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         // Serve from cache
         let cache = this._propertyValuesCache;
         let cacheOld = this._propertyValuesCacheOld;
-        if (cache && cache != null && cache.length > 0) {
+        if ((0, $5OpyM$krakenHelpers).isNotNull(cache) && cache.length > 0) {
             if (cache == cacheOld) return cache;
         }
         var results = [];
@@ -669,7 +699,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         let cache = this._propertyValuesNetCache;
         let cacheOld = this._propertyValuesNetCacheOld;
         if (force == false) {
-            if (cache && cache != null && cache.length > 0) {
+            if ((0, $5OpyM$krakenHelpers).isNotNull(cache) && cache.length > 0) {
                 pv = cache;
                 if (cache == cacheOld) return cache;
             }
@@ -680,10 +710,10 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         results = results.concat(pv.filter((item)=>item.record_type == "replaceAction"));
         // Process deletions and replacements
         pv.filter((item)=>item.record_type == "replaceAction").forEach((filteredItem)=>{
-            results = results.filter((result)=>!(result.lt(filteredItem) && (filteredItem.replacee == null || filteredItem.replacee === undefined || filteredItem.replacee == result.value)));
+            results = results.filter((result)=>!(result.metadata.lt(filteredItem) && ((0, $5OpyM$krakenHelpers).isNull(filteredItem.replacee) || filteredItem.replacee == result.value)));
         });
         pv.filter((item)=>item.record_type == "deleteAction").forEach((filteredItem)=>{
-            results = results.filter((result)=>!(result.lt(filteredItem) && result.value == filteredItem.value));
+            results = results.filter((result)=>!(result.metadata.lt(filteredItem) && result.value == filteredItem.value));
         });
         function compare(a, b) {
             if (a.gt(b)) return -1;
@@ -716,7 +746,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     // ----------------------------------------------------
     get value() {
         // Return value element of best propertyValue object
-        if (this.propertyValue) return this.propertyValue.value;
+        if ((0, $5OpyM$krakenHelpers).isNotNull(this?.propertyValue)) return this.propertyValue.value;
         return null;
     }
     set value(value1) {
@@ -729,7 +759,10 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     setValues(value1, metadataRecord, actionType) {
         let results = [];
         let values = $0ff73647c93c411e$var$ensureArray(value1);
-        for(let i = 0; i < values.length; i++)results.push(this.setValue(values[i], metadataRecord, actionType));
+        // First value
+        results.push(this.setValue(values[0], metadataRecord, actionType));
+        // Next values as add
+        for(let i = 1; i < values.length; i++)results.push(this.setValue(values[i], metadataRecord, "addAction"));
         return results;
     }
     setValue(value1, metadataRecord, actionType) {
@@ -737,7 +770,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         // Check if date
         if (newValueObject instanceof String) {
             let d = $0ff73647c93c411e$var$convertToDate(newValueObject);
-            if (d && d != null) newValueObject = d;
+            if ((0, $5OpyM$krakenHelpers).isNotNull(d)) newValueObject = d;
         }
         if (!(newValueObject instanceof (0, $9ef8378eb9810880$export$90601469cef9e14f))) newValueObject = new (0, $9ef8378eb9810880$export$90601469cef9e14f)(this.propertyID, value1, actionType);
         newValueObject.metadata.inheritMetadata(metadataRecord);
@@ -746,7 +779,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         this._propertyValues.push(newValueObject);
         newValueObject.metadata.position = this._propertyValues.length;
         // Add to cache
-        if (this._propertyValuesNetCache && this._propertyValuesNetCache != null) this._propertyValuesNetCache.push(newValueObject);
+        if ((0, $5OpyM$krakenHelpers).isNotNull(this._propertyValuesNetCache)) this._propertyValuesNetCache.push(newValueObject);
         // Reset cache
         this._propertyValuesCache = null;
         this._propertyValuesCacheOld = null;
@@ -754,7 +787,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     }
     printScreen(suffix = "") {
         var v = this.value;
-        if (this.value && this.value.record_type) v = this.value.record_type + "/" + this.value.record_id;
+        if (isNotNull(this.value) && this.value.record_type) v = this.value.record_type + "/" + this.value.record_id;
         console.log(suffix, " - ", this.propertyID, ": ", v);
         this.propertyValuesNet.map((propertyValue)=>{
             propertyValue.printScreen(suffix + "    ");
@@ -802,19 +835,20 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     // -----------------------------------------------------
     getValue(value1) {
         // Returns equivalent valueObject if present
-        if (!value1 || value1 == null) return;
-        if (value1.record_type) value1 = value1.ref;
-        if (value1?.["@type"]) value1 = {
+        if ((0, $5OpyM$krakenHelpers).isNull(value1)) return null;
+        if ((0, $5OpyM$krakenHelpers).isNotNull(value1?.record_type)) value1 = value1.ref;
+        if ((0, $5OpyM$krakenHelpers).isNotNull(value1?.["@type"])) value1 = {
             "@type": value1?.["@type"],
             "@id": value1?.["@id"]
         };
         for (let pv of this.propertyValues){
             let value0 = pv.value;
-            if (value0.record_type) value0 = value0.ref;
-            if (value0["@type"]) value0 = {
+            if ((0, $5OpyM$krakenHelpers).isNotNull(value0?.record_type)) value0 = value0.ref;
+            if ((0, $5OpyM$krakenHelpers).isNotNull(value0?.["@type"])) value0 = {
                 "@type": value0?.["@type"],
                 "@id": value0?.["@id"]
             };
+            // ??
             if (JSON.stringify(value1) == JSON.stringify(value0)) return pv;
         }
         return null;
@@ -822,7 +856,7 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
     containsValue(value1) {
         // Return true if value is part of values
         let v = this.getValue(value1);
-        if (v && v != null) return true;
+        if ((0, $5OpyM$krakenHelpers).isNotNull(v)) return true;
         return false;
     }
 }
@@ -843,6 +877,7 @@ function $0ff73647c93c411e$var$convertToDate(value1) {
     if (!isNaN(date.getTime())) return date;
     return null;
 }
+
 
 
 
@@ -891,6 +926,7 @@ function $68c2e8efd001e0e2$var$merge(thisThing, otherThing) {
 }
 
 
+
 const $151dfb829471dec1$export$e91e7af1be86f42e = {
     ensureNotArray: $151dfb829471dec1$var$ensureNotArray,
     ensureArray: $151dfb829471dec1$var$ensureArray,
@@ -923,21 +959,22 @@ function $151dfb829471dec1$var$simplify(data) {
             let newData = [];
             for (let d of data){
                 let value = $151dfb829471dec1$var$simplify(d);
-                if (d && d != null) newData.push(value);
+                if ((0, $5OpyM$krakenHelpers).isNotNull(d)) newData.push(value);
             }
             return newData;
         }
-    } else if (data !== null && typeof data === "object") {
+    } else if ((0, $5OpyM$krakenHelpers).isNotNull(data) && typeof data === "object") {
         // If the data is an object, process each key
         const newData = {};
         for(const key in data)if (data.hasOwnProperty(key)) {
             let value = $151dfb829471dec1$var$simplify(data[key]);
-            if (value) newData[key] = $151dfb829471dec1$var$simplify(data[key]);
+            if ((0, $5OpyM$krakenHelpers).isNotNull(value)) newData[key] = $151dfb829471dec1$var$simplify(data[key]);
         }
         return newData;
     } else // If the data is neither an array nor an object, return it as is
     return data;
 }
+
 
 
 const $34a656a0ca5890da$export$bea52687f148661d = {
@@ -964,6 +1001,8 @@ function $34a656a0ca5890da$var$printScreenAll() {
         property.printScreenAll("    ");
     });
 }
+
+
 
 
 class $b07a281446d81d05$export$320d46383f3d0ef0 {
@@ -1035,7 +1074,7 @@ function $15777fe91204fd32$var$getChildThings(thisThing) {
 }
 function $15777fe91204fd32$var$getThings(thisThing, cache, maxLevel = $15777fe91204fd32$var$MAXLEVEL, currentLevel = 0) {
     // Gets all things objects used as values of this 
-    if (!cache || cache == null) {
+    if ((0, $5OpyM$krakenHelpers).isNull(cache)) {
         cache = new (0, $b07a281446d81d05$export$320d46383f3d0ef0)();
         cache.add(thisThing);
     }
@@ -1052,7 +1091,7 @@ function $15777fe91204fd32$var$getSystemCreatedDate(thisThing) {
     let resultDate = null;
     for (let pv of thisThing.properties){
         let itemDate = pv.systemCreatedDate;
-        if (itemDate && (resultDate == null || itemDate < resultDate)) resultDate = itemDate;
+        if (itemDate && ((0, $5OpyM$krakenHelpers).isNull(resultDate) || itemDate < resultDate)) resultDate = itemDate;
     }
     return resultDate;
 }
@@ -1060,10 +1099,11 @@ function $15777fe91204fd32$var$getSystemUpdatedDate(thisThing) {
     let resultDate = null;
     for (let pv of thisThing.properties){
         let itemDate = pv.systemCreatedDate;
-        if (itemDate && (resultDate == null || itemDate > resultDate)) resultDate = itemDate;
+        if (itemDate && ((0, $5OpyM$krakenHelpers).isNull(resultDate) || itemDate > resultDate)) resultDate = itemDate;
     }
     return resultDate;
 }
+
 
 
 
@@ -1081,7 +1121,7 @@ class $669430fe45e0fd45$export$73a9d89cdfbecb0a {
         return $669430fe45e0fd45$var$getProperties(this.thing);
     }
     set(propertyID, value, credibility, observationDate) {
-        if ($669430fe45e0fd45$var$isNull(value)) return;
+        if ((0, $5OpyM$krakenHelpers).isNull(value)) return;
         value = $669430fe45e0fd45$var$ensureArray(value);
         if (value.length == 0) return;
         $669430fe45e0fd45$var$setProperty(this.thing, propertyID, value[0], credibility, observationDate, "replaceAction", null);
@@ -1107,170 +1147,166 @@ class $669430fe45e0fd45$export$73a9d89cdfbecb0a {
     //  Attributes
     // -----------------------------------------------------
     get actionStatus() {
-        return this.thing.getProperty("actionStatus")?.value || null;
+        return this.thing.getProperty("actionStatus")?.value;
     }
     set actionStatus(value) {
-        let oldValue = this.thing.getProperty("actionStatus")?.value || null;
+        let oldValue = this.thing.getProperty("actionStatus")?.value;
         return this.thing.replaceProperty("actionStatus", oldValue, value);
     }
     get endTime() {
-        return this.thing.getProperty("endTime")?.value || null;
+        return this.thing.getProperty("endTime")?.value;
     }
     set endTime(value) {
-        let oldValue = this.thing.getProperty("endTime")?.value || null;
+        let oldValue = this.thing.getProperty("endTime")?.value;
         return this.thing.replaceProperty("endTime", oldValue, value);
     }
     get error() {
-        return this.thing.getProperty("error")?.value || null;
+        return this.thing.getProperty("error")?.value;
     }
     set error(value) {
-        let oldValue = this.thing.getProperty("error")?.value || null;
+        let oldValue = this.thing.getProperty("error")?.value;
         return this.thing.replaceProperty("error", oldValue, value);
     }
     get familyName() {
-        return this.thing.getProperty("familyName")?.value || null;
+        return this.thing.getProperty("familyName")?.value;
     }
     set familyName(value) {
-        let oldValue = this.thing.getProperty("familyName")?.value || null;
+        let oldValue = this.thing.getProperty("familyName")?.value;
         return this.thing.replaceProperty("familyName", oldValue, value);
     }
     get givenName() {
-        return this.thing.getProperty("givenName")?.value || null;
+        return this.thing.getProperty("givenName")?.value;
     }
     set givenName(value) {
-        let oldValue = this.thing.getProperty("givenName")?.value || null;
+        let oldValue = this.thing.getProperty("givenName")?.value;
         return this.thing.replaceProperty("givenName", oldValue, value);
     }
     get name() {
-        return this.thing.getProperty("name")?.value || null;
+        return this.thing.getProperty("name")?.value;
     }
     set name(value) {
-        let oldValue = this.thing.getProperty("name")?.value || null;
+        let oldValue = this.thing.getProperty("name")?.value;
         return this.thing.replaceProperty("name", oldValue, value);
     }
     get startTime() {
-        return this.thing.getProperty("startTime")?.value || null;
+        return this.thing.getProperty("startTime")?.value;
     }
     set startTime(value) {
-        let oldValue = this.thing.getProperty("startTime")?.value || null;
+        let oldValue = this.thing.getProperty("startTime")?.value;
         return this.thing.replaceProperty("startTime", oldValue, value);
     }
     get position() {
-        return this.thing.getProperty("position")?.value || null;
+        return this.thing.getProperty("position")?.value;
     }
     set position(value) {
-        let oldValue = this.thing.getProperty("position")?.value || null;
+        let oldValue = this.thing.getProperty("position")?.value;
         return this.thing.replaceProperty("position", oldValue, value);
     }
     get url() {
-        return this.thing.getProperty("url")?.value || null;
+        return this.thing.getProperty("url")?.value;
     }
     set url(value) {
-        let oldValue = this.thing.getProperty("url")?.value || null;
+        let oldValue = this.thing.getProperty("url")?.value;
         return this.thing.replaceProperty("url", oldValue, value);
     }
     get contentUrl() {
-        return this.thing.getProperty("contentUrl")?.value || null;
+        return this.thing.getProperty("contentUrl")?.value;
     }
     set contentUrl(value) {
-        let oldValue = this.thing.getProperty("contentUrl")?.value || null;
+        let oldValue = this.thing.getProperty("contentUrl")?.value;
         return this.thing.replaceProperty("contentUrl", oldValue, value);
     }
     get agent() {
-        return this.thing.getProperty("agent")?.value || null;
+        return this.thing.getProperty("agent")?.value;
     }
     set agent(value) {
-        let oldValue = this.thing.getProperty("agent")?.value || null;
+        let oldValue = this.thing.getProperty("agent")?.value;
         return this.thing.replaceProperty("agent", oldValue, value);
     }
     get instrument() {
-        return this.thing.getProperty("instrument")?.value || null;
+        return this.thing.getProperty("instrument")?.value;
     }
     set instrument(value) {
-        let oldValue = this.thing.getProperty("instrument")?.value || null;
+        let oldValue = this.thing.getProperty("instrument")?.value;
         return this.thing.replaceProperty("instrument", oldValue, value);
     }
     get object() {
-        return this.thing.getProperty("object")?.value || null;
+        return this.thing.getProperty("object")?.value;
     }
     set object(value) {
-        let oldValue = this.thing.getProperty("object")?.value || null;
+        let oldValue = this.thing.getProperty("object")?.value;
         return this.thing.replaceProperty("object", oldValue, value);
     }
     get result() {
-        return this.thing.getProperty("result")?.value || null;
+        return this.thing.getProperty("result")?.value;
     }
     set result(value) {
-        let oldValue = this.thing.getProperty("result")?.value || null;
+        let oldValue = this.thing.getProperty("result")?.value;
         return this.thing.replaceProperty("result", oldValue, value);
     }
     get startTime() {
-        return this.thing.getProperty("startTime")?.value || null;
+        return this.thing.getProperty("startTime")?.value;
     }
     set startTime(value) {
-        let oldValue = this.thing.getProperty("startTime")?.value || null;
+        let oldValue = this.thing.getProperty("startTime")?.value;
         return this.thing.replaceProperty("startTime", oldValue, value);
     }
     get endTime() {
-        return this.thing.getProperty("endTime")?.value || null;
+        return this.thing.getProperty("endTime")?.value;
     }
     set endTime(value) {
-        let oldValue = this.thing.getProperty("endTime")?.value || null;
+        let oldValue = this.thing.getProperty("endTime")?.value;
         return this.thing.replaceProperty("endTime", oldValue, value);
     }
     get actionStatus() {
-        return this.thing.getProperty("actionStatus")?.value || null;
+        return this.thing.getProperty("actionStatus")?.value;
     }
     set actionStatus(value) {
-        let oldValue = this.thing.getProperty("actionStatus")?.value || null;
+        let oldValue = this.thing.getProperty("actionStatus")?.value;
         return this.thing.replaceProperty("actionStatus", oldValue, value);
     }
     get instrument() {
-        return this.thing.getProperty("instrument")?.value || null;
+        return this.thing.getProperty("instrument")?.value;
     }
     set instrument(value) {
-        let oldValue = this.thing.getProperty("instrument")?.value || null;
+        let oldValue = this.thing.getProperty("instrument")?.value;
         return this.thing.replaceProperty("instrument", oldValue, value);
     }
     get error() {
-        return this.thing.getProperty("error")?.value || null;
+        return this.thing.getProperty("error")?.value;
     }
     set error(value) {
-        let oldValue = this.thing.getProperty("error")?.value || null;
+        let oldValue = this.thing.getProperty("error")?.value;
         return this.thing.replaceProperty("error", oldValue, value);
     }
     get item() {
-        return this.thing.getProperty("item")?.value || null;
+        return this.thing.getProperty("item")?.value;
     }
     set item(value) {
-        let oldValue = this.thing.getProperty("item")?.value || null;
+        let oldValue = this.thing.getProperty("item")?.value;
         return this.thing.replaceProperty("item", oldValue, value);
     }
     get previousItem() {
-        return this.thing.getProperty("previousItem")?.value || null;
+        return this.thing.getProperty("previousItem")?.value;
     }
     set previousItem(value) {
-        let oldValue = this.thing.getProperty("previousItem")?.value || null;
+        let oldValue = this.thing.getProperty("previousItem")?.value;
         return this.thing.replaceProperty("previousItem", oldValue, value);
     }
     get nextItem() {
-        return this.thing.getProperty("nextItem")?.value || null;
+        return this.thing.getProperty("nextItem")?.value;
     }
     set nextItem(value) {
-        let oldValue = this.thing.getProperty("nextItem")?.value || null;
+        let oldValue = this.thing.getProperty("nextItem")?.value;
         return this.thing.replaceProperty("nextItem", oldValue, value);
     }
     get position() {
-        return this.thing.getProperty("position")?.value || null;
+        return this.thing.getProperty("position")?.value;
     }
     set position(value) {
-        let oldValue = this.thing.getProperty("position")?.value || null;
+        let oldValue = this.thing.getProperty("position")?.value;
         return this.thing.replaceProperty("position", oldValue, value);
     }
-}
-function $669430fe45e0fd45$var$isNull(value) {
-    if (value === undefined || value === null && value != 0 || value == [] || value === "") return true;
-    return false;
 }
 function $669430fe45e0fd45$var$getProperty(thisThing, propertyID) {
     /**
@@ -1287,7 +1323,7 @@ function $669430fe45e0fd45$var$getProperty(thisThing, propertyID) {
         property = new (0, $0ff73647c93c411e$export$13f164945901aa88)(propertyID);
         thisThing._properties.push(property);
     }
-    // Recurse
+    // Recurse when dot notation
     if (otherIDS.length > 0) {
         if (!property.value?.record_type) return null;
         else return property.value.getProperty(otherIDS.join("."));
@@ -1297,7 +1333,7 @@ function $669430fe45e0fd45$var$getProperties(thisThing) {
     /**
      * Returns list of KrProperty object in alphabetical order
      */ let properties = $669430fe45e0fd45$var$ensureArray(thisThing._properties);
-    properties = properties.filter((x)=>x !== undefined && x != null);
+    properties = properties.filter((x)=>(0, $5OpyM$krakenHelpers).isNotNull(x));
     properties = properties.toSorted((a, b)=>{
         return a.lt(b);
     });
@@ -1311,7 +1347,7 @@ function $669430fe45e0fd45$var$setProperty(thisThing, propertyID, value, credibi
         let otherIDS = propertyID.split(".").slice(1);
         let p = thisThing.getProperty(pID);
         // If not value, create new KrThing
-        if (!p.value?.record_type) p.setValues(thisThing.new("Thing"), metadataRecord, actionType, null);
+        if ((0, $5OpyM$krakenHelpers).isNull(p.value?.record_type)) p.setValues(thisThing.new("Thing"), metadataRecord, actionType, null);
         // Set value
         p.value.setProperty(otherIDS.join("."), value);
         return p;
@@ -1320,17 +1356,17 @@ function $669430fe45e0fd45$var$setProperty(thisThing, propertyID, value, credibi
     let oldValue = thisThing.getProperty(propertyID)?.values;
     // get or create property object
     let property = thisThing.getProperty(propertyID);
-    if (!property) {
+    if ((0, $5OpyM$krakenHelpers).isNull(property)) {
         property = new (0, $0ff73647c93c411e$export$13f164945901aa88)(propertyID);
         thisThing._properties.push(property);
     }
     // Iterate through values and convert to KrThing if required
     let values = $669430fe45e0fd45$var$ensureArray(value);
-    for(let i = 0; i < values.length; i++)if (values[i] && values[i]["@type"]) values[i] = thisThing.new(values[i]);
+    for(let i = 0; i < values.length; i++)if ((0, $5OpyM$krakenHelpers).isNotNull(values?.[i]?.["@type"])) values[i] = thisThing.new(values[i]);
     // Set metadata
     var metadataRecord = thisThing.metadata.record;
-    if (credibility) metadataRecord.credibility = credibility;
-    if (observationDate) metadataRecord.observationDate = observationDate;
+    if ((0, $5OpyM$krakenHelpers).isNotNull(credibility)) metadataRecord.credibility = credibility;
+    if ((0, $5OpyM$krakenHelpers).isNotNull(observationDate)) metadataRecord.observationDate = observationDate;
     // set property value
     var newValues = property.setValues(values, metadataRecord, actionType, previousValue);
     // dispatch event
@@ -1397,14 +1433,14 @@ class $986206abb55bdef7$export$89929189f1e51a0b {
 //  Best record
 // -----------------------------------------------------
 function $986206abb55bdef7$var$getBestRecord(thisThing, maxDepth = $986206abb55bdef7$var$MAX_DEPTH, currentDepth = 0) {
-    if (!maxDepth || maxDepth == null) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
+    if ((0, $5OpyM$krakenHelpers).isNull(maxDepth)) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
     if (currentDepth >= maxDepth) {
         if (this.record_type == "QuantitativeValue") ;
         else return thisThing.ref;
     }
     let record = {};
     let properties = $986206abb55bdef7$var$ensureArray(thisThing.properties);
-    properties = properties.filter((x)=>x !== undefined && x !== null);
+    properties = properties.filter((x)=>!(0, $5OpyM$krakenHelpers).isNull(x));
     for (let p of properties)record[p.propertyID] = p.getBestRecord(maxDepth, currentDepth + 1);
     record["@type"] = thisThing.record_type;
     record["@id"] = thisThing.record_id;
@@ -1416,7 +1452,7 @@ function $986206abb55bdef7$var$getBestRecord(thisThing, maxDepth = $986206abb55b
 //  Full record
 // -----------------------------------------------------
 function $986206abb55bdef7$var$getFullRecord(thisThing, maxDepth = $986206abb55bdef7$var$MAX_DEPTH, currentDepth = 0) {
-    if (!maxDepth || maxDepth == null) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
+    if ((0, $5OpyM$krakenHelpers).isNull(maxDepth)) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
     if (currentDepth >= maxDepth) {
         if (thisThing.record_type == "QuantitativeValue") ;
         else return thisThing.ref;
@@ -1425,7 +1461,7 @@ function $986206abb55bdef7$var$getFullRecord(thisThing, maxDepth = $986206abb55b
     let properties = thisThing.properties;
     for (let p of properties){
         let value = p.getFullRecord(maxDepth, currentDepth + 1);
-        if (value && value != null && value != []) record[p.propertyID] = value;
+        if (!(0, $5OpyM$krakenHelpers).isNull(value)) record[p.propertyID] = value;
     }
     record["@type"] = thisThing.record_type;
     record["@id"] = thisThing.record_id;
@@ -1434,7 +1470,7 @@ function $986206abb55bdef7$var$getFullRecord(thisThing, maxDepth = $986206abb55b
     return record;
 }
 function $986206abb55bdef7$var$setFullRecord(thisThing, value) {
-    if (!value || value == null) return;
+    if ((0, $5OpyM$krakenHelpers).isNull(value)) return;
     thisThing._properties = [];
     Object.keys(value).forEach((key)=>{
         thisThing.p.replace(key, null, value[key]);
@@ -1449,8 +1485,8 @@ function $986206abb55bdef7$var$getSystemRecordFlat(thing) {
     return records;
 }
 function $986206abb55bdef7$var$getSystemRecord(thing, maxDepth, currentDepth) {
-    if ((!maxDepth || maxDepth == null) && maxDepth != 0) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
-    if ((!currentDepth || currentDepth == null) && currentDepth != 0) currentDepth = 0;
+    if ((0, $5OpyM$krakenHelpers).isNull(maxDepth) && maxDepth != 0) maxDepth = $986206abb55bdef7$var$MAX_DEPTH;
+    if ((0, $5OpyM$krakenHelpers).isNull(currentDepth) && currentDepth != 0) currentDepth = 0;
     if (currentDepth >= maxDepth) return thing.ref;
     // Init record
     let record = {};
@@ -1471,7 +1507,7 @@ function $986206abb55bdef7$var$getSystemRecord(thing, maxDepth, currentDepth) {
     // Add property Values
     let pvs = [];
     for (let p of thing.properties)pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
-    pvs = pvs.filter((x)=>x && x != null && x != []);
+    pvs = pvs.filter((x)=>!(0, $5OpyM$krakenHelpers).isNull(x));
     record["_propertyValues"] = pvs;
     // Add values
     record["@type"] = thing.record_type;
@@ -1495,7 +1531,7 @@ function $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, wipeBefore = tr
         return;
     }
     // Check if valid format
-    if (!value || !value._propertyValues) return;
+    if ((0, $5OpyM$krakenHelpers).isNull(value) || (0, $5OpyM$krakenHelpers).isNull(value?._propertyValues)) return;
     // Reset current properties
     if (wipeBefore == true) thing._properties = [];
     // Retrieve db info
@@ -1504,13 +1540,13 @@ function $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, wipeBefore = tr
     thing._dbRecord = value;
     //
     let pvRecords = $986206abb55bdef7$var$ensureArray(value._propertyValues);
-    pvRecords = pvRecords.filter((x)=>x !== undefined && x != null);
+    pvRecords = pvRecords.filter((x)=>!(0, $5OpyM$krakenHelpers).isNull(x));
     if (pvRecords.length == 0) return;
     // Group pvRecords by propertyID
     let propertyIDs = [
         ...new Set(pvRecords.map((x)=>x.object.propertyID))
     ];
-    propertyIDs = propertyIDs.filter((x)=>x && x != null);
+    propertyIDs = propertyIDs.filter((x)=>!(0, $5OpyM$krakenHelpers).isNull(x));
     for (let propertyID of propertyIDs){
         let subPropertyValues = pvRecords.filter((item)=>item.object.propertyID == propertyID);
         var property = thing.getProperty(propertyID);
@@ -1522,13 +1558,13 @@ function $986206abb55bdef7$var$setSystemRecordV2_0(thing, value, wipeBefore = tr
 }
 function $986206abb55bdef7$var$convertPV(thing, pvRecord) {
     // Convert propertyValue value to thing if @type present
-    if (!pvRecord || pvRecord == null) return pvRecord;
+    if ((0, $5OpyM$krakenHelpers).isNull(pvRecord)) return pvRecord;
     let value = pvRecord?.object?.value;
-    if (!value || value == null) return pvRecord;
-    if (value["@type"] && value["@type"] != null) {
+    if ((0, $5OpyM$krakenHelpers).isNull(value)) return pvRecord;
+    if (!(0, $5OpyM$krakenHelpers).isNull(value?.["@type"])) {
         // Get from cache
         let t = thing._things.get(value?.["@type"], value?.["@id"]);
-        if (!t || t == null) {
+        if ((0, $5OpyM$krakenHelpers).isNull(t)) {
             t = thing.new(value?.["@type"], value?.["@id"]);
             t._things = thing._things;
             thing._things.set(t);
@@ -1542,7 +1578,7 @@ function $986206abb55bdef7$var$convertPV(thing, pvRecord) {
 }
 function $986206abb55bdef7$var$setSystemRecordV1_0(thing, value, cache) {
     // Load data into object
-    if (!cache || cache == null) cache = new (0, $b07a281446d81d05$export$320d46383f3d0ef0)();
+    if ((0, $5OpyM$krakenHelpers).isNull(cache)) cache = new (0, $b07a281446d81d05$export$320d46383f3d0ef0)();
     // Convert from string if one
     if (typeof value === "string" || value instanceof String) try {
         value = JSON.parse(value);
@@ -1554,9 +1590,9 @@ function $986206abb55bdef7$var$setSystemRecordV1_0(thing, value, cache) {
     // Reset current properties
     thing._properties = [];
     // Set pvRecords
-    if (!value.propertyValues || value.propertyValues == null) return;
+    if ((0, $5OpyM$krakenHelpers).isNull(value.propertyValues)) return;
     let pvRecords = $986206abb55bdef7$var$ensureArray(value.propertyValues);
-    pvRecords = pvRecords.filter((x)=>x !== undefined && x != null);
+    pvRecords = pvRecords.filter((x)=>!(0, $5OpyM$krakenHelpers).isNull(x));
     {
         let newPvRecords = [];
         for (let p of pvRecords){
@@ -1573,10 +1609,10 @@ function $986206abb55bdef7$var$setSystemRecordV1_0(thing, value, cache) {
     // convert sub things to KrThing
     let counter = 0;
     for (let pvRecord of pvRecords){
-        if (!pvRecord || pvRecord == null) continue;
+        if ((0, $5OpyM$krakenHelpers).isNull(pvRecord)) continue;
         let value = pvRecord?.object?.value;
-        if (!value || value == null) continue;
-        if (value["@type"] && value["@type"] != null) {
+        if ((0, $5OpyM$krakenHelpers).isNull(value)) continue;
+        if (!(0, $5OpyM$krakenHelpers).isNull(value?.["@type"])) {
             var t = thing.new(value?.["@type"], value?.["@id"]);
             $986206abb55bdef7$var$setSystemRecord(t, value, cache);
             // Store and retrieve to cache to avoid duplicate things
@@ -1590,7 +1626,7 @@ function $986206abb55bdef7$var$setSystemRecordV1_0(thing, value, cache) {
     let propertyIDs = [
         ...new Set(pvRecords.map((x)=>x.object.propertyID))
     ];
-    for (let propertyID of propertyIDs)if (propertyID && propertyID != null) {
+    for (let propertyID of propertyIDs)if (!(0, $5OpyM$krakenHelpers).isNull(propertyID)) {
         let subPropertyValues = pvRecords.filter((item)=>item.object.propertyID == propertyID);
         var property = new (0, $0ff73647c93c411e$export$13f164945901aa88)(propertyID);
         property.setSystemRecord(subPropertyValues);
@@ -1605,7 +1641,7 @@ function $986206abb55bdef7$var$ensureArray(value) {
 }
 
 
-// todo: add ability to change starting position from 0
+
 class $681e59e95589c3c8$export$bcd69048a889a452 {
     constructor(thing){
         this.thing = thing;
@@ -1641,7 +1677,7 @@ class $681e59e95589c3c8$export$bcd69048a889a452 {
         return $681e59e95589c3c8$var$getItems(this.thing);
     }
     // ListItems
-    get getListItems() {
+    get listItems() {
         return $681e59e95589c3c8$var$getListItems(this.thing);
     }
     set items(value) {
@@ -1682,7 +1718,7 @@ class $681e59e95589c3c8$export$bcd69048a889a452 {
     //  Comment 
     // -----------------------------------------------------
     reCalculatePosition() {
-        return $681e59e95589c3c8$var$reCalculatePosition(this.thing);
+        return reCalculatePosition(this.thing);
     }
     remove(value) {
         return $681e59e95589c3c8$var$remove(this.thing, value);
@@ -1697,10 +1733,10 @@ class $681e59e95589c3c8$export$bcd69048a889a452 {
         return $681e59e95589c3c8$var$getItem(this.thing, ref);
     }
     getByListItem(listItem) {
-        return $681e59e95589c3c8$var$getByListItem(this.thing, listItem);
+        return getByListItem(this.thing, listItem);
     }
     getByItem(item) {
-        return $681e59e95589c3c8$var$getByItem(this.thing, item);
+        return getByItem(this.thing, item);
     }
     get length() {
         return $681e59e95589c3c8$var$getListItems(this.thing).length;
@@ -1713,39 +1749,51 @@ class $681e59e95589c3c8$export$bcd69048a889a452 {
         return $681e59e95589c3c8$var$filter(this.thing, propertyID, value);
     }
 }
-function $681e59e95589c3c8$var$getFirstItem(thisThing) {
-    let items = thisThing.p.get("itemListElement").values;
-    if (items.length == 0) return null;
-    for (let item of items){
-        if (!item.p.previousItem || item.p.previousItem == null) return item;
-    }
-    for (let item of items){
-        if (item.p.position == 0) return item;
-    }
-    return null;
-}
-function $681e59e95589c3c8$var$getLastItem(thisThing) {
-    let items = thisThing.p.get("itemListElement").values;
-    if (items.length == 0) return null;
-    for (let item of items){
-        if (item.p.nextItem === undefined || item.p.nextItem == null) return item;
+function $681e59e95589c3c8$var$getListItem(thisThing, record_type, record_id) {
+    // Retrieve list item by giving either, record, thing or record or thing of its item
+    record_id = record_id || record_type?.record_id || record_type?.["@id"];
+    record_type = record_type?.record_type || record_type?.["@type"] || record_type;
+    if ((0, $5OpyM$krakenHelpers).isNull(record_type)) return null;
+    for (let l of thisThing.p.get("itemListElement")?.values || []){
+        if (l?.record_type == record_type && l?.record_id == record_id) return l;
+        let item = l.p.get("item")?.value || null;
+        if (item?.record_type == record_type && item?.record_id == record_id) return l;
     }
     return null;
 }
 function $681e59e95589c3c8$var$getListItems(thisThing) {
-    let results = [];
-    let t = thisThing.list.first;
-    while(t && t != null){
-        results.push(t);
-        t = t.p.nextItem;
+    let listItems = thisThing.p.get("itemListElement").values;
+    function sortListItems(item1, item2) {
+        let item1Position = item1.p.position || null;
+        let item2Position = item2.p.position || null;
+        if ((0, $5OpyM$krakenHelpers).isNull(item1Position) && (0, $5OpyM$krakenHelpers).isNull(item2Position)) return 0;
+        if ((0, $5OpyM$krakenHelpers).isNull(item1Position) && (0, $5OpyM$krakenHelpers).isNotNull(item2Position)) return -1;
+        if ((0, $5OpyM$krakenHelpers).isNotNull(item1Position) && (0, $5OpyM$krakenHelpers).isNull(item2Position)) return 1;
+        if (item1.p.position < item2.p.position) return -1;
+        if (item1.p.position > item2.p.position) return 1;
+        return 0;
     }
-    return results;
+    // sort by position
+    //listItems.sort(getListItems)
+    return listItems;
+}
+function $681e59e95589c3c8$var$getFirstItem(thisThing) {
+    let listItems = $681e59e95589c3c8$var$getListItems(thisThing);
+    if ((0, $5OpyM$krakenHelpers).isNull(listItems)) return null;
+    let firstItem = listItems[listItems.length - 1];
+    return firstItem;
+}
+function $681e59e95589c3c8$var$getLastItem(thisThing) {
+    let listItems = $681e59e95589c3c8$var$getListItems(thisThing);
+    if ((0, $5OpyM$krakenHelpers).isNull(listItems)) return null;
+    let lastItem = listItems[listItems.length - 1];
+    return lastItem;
 }
 function $681e59e95589c3c8$var$getItems(thing) {
     let listItems = $681e59e95589c3c8$var$getListItems(thing);
     listItems = $681e59e95589c3c8$var$ensureArray(listItems);
     let items = listItems.map((x)=>x?.p.get("item").value);
-    items = items.filter((x)=>x !== undefined && x != null);
+    items = items.filter((x)=>!(0, $5OpyM$krakenHelpers).isNull(x));
     items = $681e59e95589c3c8$var$ensureArray(items);
     return items;
 }
@@ -1753,178 +1801,144 @@ function $681e59e95589c3c8$var$pushItem(thisThing, listItems) {
     listItems = $681e59e95589c3c8$var$ensureArray(listItems);
     // Prepare listItems
     let newListItems = [];
+    let lastItem = $681e59e95589c3c8$var$getLastItem(thisThing);
     for (let listItem of listItems){
-        // Check if thing, else convert to one
-        if (!listItem.record_type) {
-            let newListItem = thisThing.new();
-            newListItem.export.record = listItem;
-            listItem = newListItem;
-        }
-        // Check if ListItem, else convert to one
-        if (listItem.record_type != "ListItem") {
-            let newListItem = thisThing.new("ListItem");
-            newListItem.p.item = listItem;
-            listItem = newListItem;
-        }
-        newListItems.push(listItem);
+        if ((0, $5OpyM$krakenHelpers).isNull(lastItem)) {
+            listItem = $681e59e95589c3c8$var$createListItem(thisThing, listItem);
+            listItem.p.position = 0;
+            thisThing.p.add("itemListElement", listItem);
+        } else $681e59e95589c3c8$var$insertAfter(thisThing, lastItem, listItem);
+        lastItem = listItem;
     }
-    // Set previous, next and position
-    let lastListItem = $681e59e95589c3c8$var$getLastItem(thisThing);
-    let newListItemsLength = newListItems.length;
-    for(let i = 0; i < newListItemsLength; i++){
-        let listItem = newListItems[i];
-        if (lastListItem && lastListItem != null) {
-            listItem.p.position = lastListItem.p.position + 1;
-            listItem.p.previousItem = lastListItem;
-            lastListItem.p.nextItem = listItem;
-        } else listItem.p.position = 0;
-        lastListItem = listItem;
-    }
-    // Add to property
-    thisThing.p.add("itemListElement", newListItems);
-    return; //listItem
+    return;
 }
-function $681e59e95589c3c8$var$reCalculatePosition(thisThing) {
-    var position;
+function $681e59e95589c3c8$var$recalculatePosition(thisThing) {
+    let position = 0;
+    let item = $681e59e95589c3c8$var$getFirstItem(thisThing);
+    while((0, $5OpyM$krakenHelpers).isNotNull(item)){
+        if (item.p.get("position")?.value != position) item.p.set("position", position);
+        let nextItem = item.p.get("nextItem")?.value;
+        item = $681e59e95589c3c8$var$getListItem(thisThing, nextItem);
+        position += 1;
+    }
     return;
 }
 // -----------------------------------------------------
 //  CRUD for items
 // -----------------------------------------------------
 function $681e59e95589c3c8$var$remove(thisThing, itemRef) {
-    var item = thisThing.getItem(itemRef);
+    var item = $681e59e95589c3c8$var$getListItem(thisThing, itemRef);
     if (!item) return null;
     var p = item.p.previousItem;
     var n = item.p.nextItem;
     // Ressign before and after links to one another
-    if (p) p.p.nextItem = n;
-    if (n) n.p.previousItem = p;
+    if ((0, $5OpyM$krakenHelpers).isNotNull(p)) {
+        console.log("no p");
+        p.p.nextItem = n;
+    }
+    if ((0, $5OpyM$krakenHelpers).isNotNull(n)) {
+        console.log("no n");
+        n.p.previousItem = p;
+    }
     // Remove from list
-    thisThing.deleteProperty("itemListElement", item);
+    thisThing.p.delete("itemListElement", item);
     // Sets position
-    item.p.position = null;
-    // Sets position
-    let position = 0;
-    if (n) {
-        position = n.p.position - 1;
-        n.p.position = position;
-    }
-    let nextItem = n?.nextItem;
-    while(nextItem){
-        nextItem.p.position = position + 1;
-        position = position + 1;
-        nextItem = nextItem.p.nextItem;
-    }
-    //thisThing.reCalculatePosition()
+    $681e59e95589c3c8$var$recalculatePosition(thisThing);
     // Remove links
     item.p.previousItem = null;
     item.p.nextItem = null;
     return;
 }
-function $681e59e95589c3c8$var$insertBefore(thisThing, referenceItem, refItemtoInsert) {
-    let item;
-    // Convert to ListItem if not one already
-    if (!(refItemtoInsert instanceof KrListItem)) {
-        refItemtoInsert = new KrListItem(refItemtoInsert);
-        item = refItemtoInsert;
-    } else item = thisThing.list.getItem(refItemtoInsert.ref);
-    // Retrieve latest ListItem record
-    var n = thisThing.list.getItem(referenceItem);
-    var p = p.p.previousItem;
+function $681e59e95589c3c8$var$createListItem(thisThing, listItem) {
+    // Create a list item given a listitem, thing, record or item
+    // Convert to thing
+    if (!listItem?.record_type) listItem = thisThing.new(listItem);
+    // Add lsitItem if not one
+    if (listItem.record_type != "ListItem") {
+        let newListItem = thisThing.new();
+        newListItem.record_type = "ListItem";
+        newListItem.p.add("item", listItem);
+        listItem = newListItem;
+    }
+    return listItem;
+}
+function $681e59e95589c3c8$var$insertBefore(thisThing, referenceItem, itemToInsert) {
+    // Get inputItem (create if not in listitemelement)
+    let item = $681e59e95589c3c8$var$getListItem(thisThing, itemToInsert);
+    if ((0, $5OpyM$krakenHelpers).isNull(item)) item = $681e59e95589c3c8$var$createListItem(thisThing, itemToInsert);
+    // Get referenceItem
+    let n = $681e59e95589c3c8$var$getListItem(thisThing, referenceItem);
+    if ((0, $5OpyM$krakenHelpers).isNull(n)) throw "Error, invalid reference item";
+    // Get referenceitem previous item
+    let p = n.p.get("previousItem")?.value || null;
+    p = $681e59e95589c3c8$var$getListItem(thisThing, p);
     // Stop events
     thisThing.blockEvents();
     if (item) item.blockEvents();
     if (p) p.blockEvents();
     if (n) n.blockEvents();
     // Remove previous links of items
-    if (item.p.previousItem && item.p.previousItem != null || item.p.nextItem && item.p.nextItem != null) thisThing.remove(item.ref);
+    $681e59e95589c3c8$var$remove(thisThing, item);
     // Change allocation
-    item.p.previousItem = p;
-    item.p.nextItem = n;
-    if (p) p.p.nextItem = item;
-    else p.p.nextItem = null;
-    if (n) n.p.previousItem = item;
-    else n.p.previousItem = null;
+    item.p.set("previousItem", p);
+    item.p.set("nextItem", n);
+    if (p) p.p.set("nextItem", item);
+    if (n) n.p.set("previousItem", item);
     // Start events
     thisThing.allowEvents();
     if (item) item.allowEvents();
     if (p) p.allowEvents();
     if (n) n.allowEvents();
-    // Sets position
-    let position = 0;
-    if (p) position = p.p.position + 1;
-    item.position = position;
-    let nextItem = item.p.nextItem;
-    while(nextItem){
-        nextItem.p.position = position + 1;
-        position = position + 1;
-        nextItem = nextItem.p.nextItem;
-    }
-    //  Add to list
-    let t = thisThing.getItem(refItemtoInsert.ref);
-    if (!t || t == null) thisThing.p.add("itemListElement", refItemtoInsert);
+    // Add item
+    thisThing.p.add("itemListElement", item);
+    $681e59e95589c3c8$var$recalculatePosition(thisThing);
     return item;
 }
-function $681e59e95589c3c8$var$insertAfter(thisThing, referenceItem, refItemtoInsert) {
+function $681e59e95589c3c8$var$insertAfter(thisThing, referenceItem, itemToInsert) {
     /**
      *
-     */ let item;
-    // Convert to ListItem if not one already
-    if (!(refItemtoInsert instanceof KrListItem)) {
-        refItemtoInsert = new KrListItem(refItemtoInsert);
-        item = refItemtoInsert;
-    } else item = thisThing.getItem(refItemtoInsert.ref);
+     */ // Get inputItem (create if not in listitemelement)
+    let item = $681e59e95589c3c8$var$getListItem(thisThing, itemToInsert);
+    if ((0, $5OpyM$krakenHelpers).isNull(item)) item = $681e59e95589c3c8$var$createListItem(thisThing, itemToInsert);
+    // Get referenceItem
+    let p = $681e59e95589c3c8$var$getListItem(thisThing, referenceItem);
+    if ((0, $5OpyM$krakenHelpers).isNull(p)) throw "Error, invalid reference item";
+    // Get referenceitem previous item
+    let n = p.p.nextItem || null;
+    n = $681e59e95589c3c8$var$getListItem(thisThing, n);
     // Stop events
     thisThing.blockEvents();
     if (item) item.blockEvents();
     if (p) p.blockEvents();
     if (n) n.blockEvents();
     // Remove previous links of items
-    if (item.p.previousItem && item.p.previousItem != null || item.p.nextItem && item.p.nextItem != null) thisThing.remove(item.ref);
-    var p = thisThing.list.getItem(referenceItem);
-    var n = p.p.nextItem;
+    $681e59e95589c3c8$var$remove(thisThing, item);
     // Change allocation
     item.p.previousItem = p;
     item.p.nextItem = n;
     if (p) p.p.nextItem = item;
-    else p.p.nextItem = null;
     if (n) n.p.previousItem = item;
-    else n.p.previousItem = null;
     // Start events
     thisThing.allowEvents();
     if (item) item.allowEvents();
     if (p) p.allowEvents();
     if (n) n.allowEvents();
-    // Change position
-    let position = 0;
-    if (p) position = p.p.position + 1;
-    item.p.position = position;
-    let nextItem = item.p.nextItem;
-    while(nextItem){
-        nextItem.p.position = position + 1;
-        position = position + 1;
-        nextItem = nextItem.p.nextItem;
-    }
-    //  Add to list
-    let t = thisThing.getItem(refItemtoInsert.ref);
-    if (!t || t == null) thisThing.p.add("itemListElement", refItemtoInsert);
+    // Add item
+    thisThing.p.add("itemListElement", item);
+    $681e59e95589c3c8$var$recalculatePosition(thisThing);
     return item;
 }
 function $681e59e95589c3c8$var$getItem(thisThing, ref) {
-    if (!ref) return null;
-    if (ref && ref.ref) ref = ref.ref;
-    if (!ref || !ref["@type"] || ref["@type"] == null) return null;
-    if (ref["@type"] == "ListItem") return $681e59e95589c3c8$var$getByListItem(thisThing, ref);
-    else return $681e59e95589c3c8$var$getByItem(thisThing, ref);
+    return $681e59e95589c3c8$var$getListItem(thisThing, ref);
 }
-function $681e59e95589c3c8$var$getByListItem(thisThing, ref) {
+function $681e59e95589c3c8$var$getByListItemOLD(thisThing, ref) {
     let items = thisThing.p.get("itemListElement").values;
     for (let item of items){
         if (item.record_type == ref["@type"] && item.record_id == ref["@id"]) return item;
     }
     return null;
 }
-function $681e59e95589c3c8$var$getByItem(thisThing, ref) {
+function $681e59e95589c3c8$var$getByItemOLD(thisThing, ref) {
     let items = thisThing.p.get("itemListElement").values;
     for (let item of items){
         if (item.item.record_type == ref["@type"] && item.item.record_id == ref["@id"]) return item;
@@ -1936,7 +1950,7 @@ function $681e59e95589c3c8$var$getByItem(thisThing, ref) {
 // -----------------------------------------------------
 function $681e59e95589c3c8$var$getParams(thisThing) {
     let params = {};
-    if (!thisThing._params || thisThing._params == null) return {};
+    if ((0, $5OpyM$krakenHelpers).isNull(thisThing._params)) return {};
     else params = thisThing._params;
     let keys = [
         "limit",
@@ -1946,7 +1960,7 @@ function $681e59e95589c3c8$var$getParams(thisThing) {
     ];
     for (let k of keys){
         let v = this[k];
-        if (v && v != null) params[k] = v;
+        if (!(0, $5OpyM$krakenHelpers).isNull(v)) params[k] = v;
     }
     return params;
 }
@@ -1995,6 +2009,7 @@ function $681e59e95589c3c8$var$ensureArray(value) {
         value
     ];
 }
+
 
 
 let $48f3d71cef923a10$var$ACTIONS_LOG = [];
@@ -2424,6 +2439,162 @@ class $a0c51871cc1d3395$export$dc35bac29e2a8cfc {
 }
 
 
+
+class $af443bc86ad85e59$export$2ce0982a5613aa77 {
+    constructor(thing){
+        this.thing = thing;
+    }
+    fill() {
+        let record_type = this.thing.record_type || "Thing";
+        this.thing.record = $af443bc86ad85e59$var$getTestRecord(record_type);
+    }
+}
+function $af443bc86ad85e59$var$getTestRecord(record_type) {
+    if (!record_type || record_type == null || record_type == "Thing") return {
+        "@context": "https://schema.org/",
+        "@type": "Thing",
+        "@id": "thing1",
+        "name": "thing1"
+    };
+    if (record_type == "ItemList") return {
+        "@type": "ItemList",
+        "@id": "ItemList0",
+        "name": "ItemList0",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "@id": "ListItem0",
+                "name": "ListItem0",
+                "position": 0,
+                "previousItem": null,
+                "nextItem": {
+                    "@type": "ListItem",
+                    "@id": "ListItem1"
+                },
+                "item": {
+                    "@type": "Thing",
+                    "@id": "Thing0",
+                    "name": "Thing0",
+                    "url": "https://www.test.com/thing0"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "@id": "ListItem1",
+                "name": "ListItem1",
+                "position": 1,
+                "previousItem": {
+                    "@type": "ListItem",
+                    "@id": "ListItem0"
+                },
+                "nextItem": {
+                    "@type": "ListItem",
+                    "@id": "ListItem2"
+                },
+                "item": {
+                    "@type": "Thing",
+                    "@id": "Thing1",
+                    "name": "Thing1",
+                    "url": "https://www.test.com/thing1"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "@id": "ListItem2",
+                "name": "ListItem2",
+                "position": 2,
+                "previousItem": {
+                    "@type": "ListItem",
+                    "@id": "ListItem1"
+                },
+                "nextItem": {
+                    "@type": "ListItem",
+                    "@id": "ListItem3"
+                },
+                "item": {
+                    "@type": "Thing",
+                    "@id": "Thing2",
+                    "name": "Thing2",
+                    "url": "https://www.test.com/thing2"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "@id": "ListItem3",
+                "name": "ListItem3",
+                "position": 3,
+                "previousItem": {
+                    "@type": "ListItem",
+                    "@id": "ListItem2"
+                },
+                "nextItem": null,
+                "item": {
+                    "@type": "Thing",
+                    "@id": "Thing3",
+                    "name": "Thing3",
+                    "url": "https://www.test.com/thing3"
+                }
+            }
+        ]
+    };
+    return {
+        "@context": "https://schema.org/",
+        "@type": "Thing",
+        "@id": "thing1",
+        "name": "thing1"
+    };
+}
+function $af443bc86ad85e59$var$getThings(n, t = "Thing") {
+    let things = [];
+    for(let i = 0; i < n; i++)things.push($af443bc86ad85e59$var$getThing(i, t));
+    return things;
+}
+function $af443bc86ad85e59$var$getThing(n = 0, t = "Thing") {
+    let r = $af443bc86ad85e59$var$getRecord(n, t);
+    let thing = new KrThing();
+    thing.metadata.credibility = 0.2;
+    thing.metadata._record.instrument = {
+        "@type": "Thing",
+        "@id": "Instrument1"
+    };
+    thing.record = r;
+    return thing;
+}
+function $af443bc86ad85e59$var$getRef(record) {
+    return {
+        "@type": record["@type"],
+        "@id": record["@id"]
+    };
+}
+function $af443bc86ad85e59$var$getRecords(n, t = "Thing") {
+    let records = [];
+    for(let i = 0; i < n; i++)records.push($af443bc86ad85e59$var$getRecord(i, t));
+    return records;
+}
+function $af443bc86ad85e59$var$getRecord(n, t = "Thing") {
+    let record = {
+        "@type": t,
+        "@id": t + String(n),
+        "name": t + String(n),
+        "value": n,
+        "child": {
+            "@context": "https://schema.org/",
+            "@type": "Thing",
+            "@id": "child_" + t + String(n),
+            "name": "child_" + t + String(n),
+            "child": {
+                "@context": "https://schema.org/",
+                "@type": "Thing",
+                "@id": "child_child_" + t + String(n),
+                "name": "child_child_" + t + String(n)
+            }
+        }
+    };
+    return record;
+}
+
+
+
 class $8c53f3ac7d8ee3d4$export$d62a579734015d66 {
     constructor(thing){
         this.thing = thing;
@@ -2497,6 +2668,410 @@ class $8c53f3ac7d8ee3d4$export$d62a579734015d66 {
 
 
 
+class $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c {
+    constructor(element){
+        this.element = element;
+    }
+    initObject() {}
+    // Data attributes
+    get elementType() {
+        if (this.element.classList.contains("krThing")) return "thing";
+        if (this.element.classList.contains("krProperty")) return "property";
+        if (this.element.classList.contains("krValue")) return "value";
+        return null;
+    }
+    get record_type() {
+        let element = this.element.closest(".krThing");
+        if (element) return element.getAttribute("data-record-type");
+        return null;
+    }
+    set record_type(value) {
+        let element = this.element.closest(".krThing");
+        if (element) return element.setAttribute("data-record-type", value);
+        return null;
+    }
+    get record_id() {
+        let element = this.element.closest(".krThing");
+        if (element) return element.getAttribute("data-record-id");
+        return null;
+    }
+    set record_id(value) {
+        let element = this.element.closest(".krThing");
+        if (element) return element.setAttribute("data-record-id", value);
+        return null;
+    }
+    get propertyID() {
+        let value = null;
+        let element = this.element.closest(".krProperty");
+        if (element) {
+            value = element.getAttribute("data-propertyID");
+            if (value && value.includes(".")) value = value.split(".")[-1];
+        }
+        return value;
+    }
+    get propertyPath() {
+        let element = this.element.closest(".krProperty");
+        if (element) return element.getAttribute("data-propertyID");
+        return null;
+    }
+    set propertyID(value) {
+        let element = this.element.closest(".krProperty");
+        if (element) return element.setAttribute("data-propertyID", value);
+        return null;
+    }
+    get valueID() {
+        let element = this.element.closest(".krValue");
+        if (element) return element.getAttribute("data-valueID");
+        return null;
+    }
+    set valueID(value) {
+        let element = this.element.closest(".krValue");
+        if (element) return element.setAttribute("data-valueID", value);
+        return null;
+    }
+    // Object Class Attributes
+    getThingObjects() {
+        let classNameToGet = "krThing";
+        let classNameToStopDepth = "krProperty";
+        let propertyElements = $a2421c6bde17fe2f$var$getDirectChilds(this.element, classNameToGet, classNameToStopDepth);
+        let classObjects = propertyElements.map((x)=>this.elementToBaseElements(x));
+        return classObjects;
+    }
+    getThingObject(record_type, record_id) {
+        for (let t of this.getThingObjects){
+            if (t.record_type == record_type && t.record_id == record_id) return t;
+        }
+        return null;
+    }
+    getParentThingObject() {
+        let element = this.element.closest(".krThing");
+        let result = null;
+        if (element) result = new $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c(element);
+        return result;
+    }
+    getPropertyObjects() {
+        let classNameToGet = "krProperty";
+        let classNameToStopDepth = "krThing";
+        let propertyElements = $a2421c6bde17fe2f$var$getDirectChilds(this.element, classNameToGet, classNameToStopDepth);
+        let classObjects = propertyElements.map((x)=>this.elementToBaseElements(x));
+        return classObjects;
+    }
+    getPropertyObject(propertyID) {
+        for (let t of this.getPropertyObjects){
+            if (t.propertyID == propertyID) return t;
+        }
+        return null;
+    }
+    getParentPropertyObject() {
+        let element = this.element.closest(".krProperty");
+        let result = null;
+        if (element) result = new $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c(element);
+        return result;
+    }
+    getValueObjects() {
+        let classNameToGet = "krValue";
+        let classNameToStopDepth = "krThing";
+        let propertyElements = $a2421c6bde17fe2f$var$getDirectChilds(this.element, classNameToGet, classNameToStopDepth);
+        let classObjects = propertyElements.map((x)=>this.elementToBaseElements(x));
+        return classObjects;
+    }
+    getValueObject(valueID) {
+        for (let t of this.getPropertyObjects){
+            if (t.valueID == valueID) return t;
+        }
+        return null;
+    }
+    getParentValueObject() {
+        let element = this.element.closest(".krValue");
+        let result = null;
+        if (element) result = new $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c(element);
+        return result;
+    }
+    // Get element
+    get thingHeaderElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krThingHeader", "krProperty");
+    }
+    get thingBodyElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krThingBody", "krProperty");
+    }
+    get thingFooterElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krThingFooter", "krProperty");
+    }
+    get thingActionElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krThingAction", "krProperty");
+    }
+    get propertyHeaderElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krPropertyHeader", "krThing");
+    }
+    get propertyBodyElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krPropertyBody", "krThing");
+    }
+    get propertyFooterElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krPropertyFooter", "krThing");
+    }
+    get propertyActionElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krPropertyAction", "krThing");
+    }
+    get valueHeaderElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krValueHeader", "krThing");
+    }
+    get valueBodyElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krValueBody", "krThing");
+    }
+    get valueFooterElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krValueFooter", "krThing");
+    }
+    get valueActionElement() {
+        return $a2421c6bde17fe2f$var$getDirectChild(this.element, "krValueAction", "krThing");
+    }
+    // 
+    elementToBaseElements(element) {
+        // Converts a an element to a class object
+        let newObject = new $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c(element);
+        return newObject;
+    }
+}
+function $a2421c6bde17fe2f$var$getDirectChild(element, classNameToGet, classNameToStopDepth) {
+    let results = $a2421c6bde17fe2f$var$getDirectChilds(element, classNameToGet, classNameToStopDepth);
+    if (results.length == 0) return null;
+    if (results.length >= 1) return results[0];
+}
+function $a2421c6bde17fe2f$var$getDirectChilds(element, classNameToGet, classNameToStopDepth) {
+    let childs = [];
+    for (let e of element.children){
+        if (e.classList.contains(classNameToGet)) childs.push(e);
+        if (!e.classList.contains(classNameToStopDepth)) {
+            let recursiveChilds = $a2421c6bde17fe2f$var$getDirectChilds(e, classNameToGet, classNameToStopDepth);
+            if (recursiveChilds.length > 0) childs = childs.concat(recursiveChilds);
+        }
+    }
+    return childs;
+}
+
+
+
+
+
+let $ea24aad78428563b$var$initializedDb = {};
+class $ea24aad78428563b$export$7139bcca0e2cefa4 {
+    constructor(thing, url){
+        this._thing = thing;
+        this._url = url;
+        this._elementObject = null;
+        this.initObject();
+    }
+    initObject() {
+        this.initObjectContent();
+        this.initMutationObserver();
+        this.initElements();
+    }
+    initObjectContent() {
+        let content = (0, $5OpyM$krakenHtml).form.generic(this._url, this._thing.record_type, this._thing.record);
+        let temp = document.createElement("div");
+        temp.innerHTML = content;
+        let element = temp.firstElementChild;
+        this._elementObject = new (0, $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c)(element);
+        //Temp - correct inputs lacking key data
+        let inputs = element.querySelectorAll("input");
+        for (let i of inputs){
+            i.setAttribute("name", i.getAttribute("id"));
+            let propertyElement = i.closest("krProperty");
+            if (propertyElement) propertyElement.setAttribute("name", i.getAttribute("id"));
+        }
+    }
+    initMutationObserver() {
+        const config = {
+            attributes: true,
+            childList: true,
+            subtree: true
+        };
+        const callback = (mutationList, observer)=>{
+            for (const mutation of mutationList){
+                if (mutation.type === "childList") for (let n of mutation.addedNodes)this.initElement(n);
+                else mutation.type;
+            }
+        };
+        // Create an observer instance linked to the callback function
+        const observer = new MutationObserver(callback);
+        // Start observing the target node for configured mutations
+        observer.observe(this._elementObject.element, config);
+    }
+    initElements() {
+        // Add id to all objects
+        let classes = [
+            "krThing",
+            "krProperty",
+            "krValue"
+        ];
+        for (let c of classes){
+            let q = "." + c;
+            let elements = this._elementObject.element.querySelectorAll(q);
+            for (let e of elements)this.initElement(e);
+        }
+    }
+    initElement(element) {
+        // Check if already initialized
+        if (element.id && element.id != null && element.id != "") {
+            if ($ea24aad78428563b$var$initializedDb?.[element.id] == true) return;
+        }
+        // Init ID
+        this.initElementId(element);
+        // Init krTing
+        if (element.classList.contains("krThing")) this.initPropertyDrag(element);
+        // Init krProperty
+        if (element.classList.contains("krProperty")) {
+            this.initPropertyActionElement(element);
+            this.initPropertyDragDrop(element);
+            this.initPropertyDrag(element);
+        }
+        // Init krValue
+        if (element.classList.contains("krValue")) {
+            this.initValueActionElement(element);
+            this.initPropertyDragDrop(element);
+            this.initPropertyDrag(element);
+        }
+        // Set as initizlized
+        $ea24aad78428563b$var$initializedDb[element.id] = true;
+    }
+    initElementId(element) {
+        if (!element.id || element.id == null || element.id == "") element.id = String(crypto.randomUUID());
+    }
+    initPropertyActionElement(element) {
+        if ($ea24aad78428563b$var$initializedDb?.[element.id] == true) return;
+        let thisObject = this;
+        let p = new (0, $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c)(element);
+        p.propertyActionElement.addEventListener("click", (event)=>{
+            thisObject.addValue(p);
+        });
+    }
+    initValueActionElement(element) {
+        if ($ea24aad78428563b$var$initializedDb?.[element.id] == true) return;
+        let thisObject = this;
+        let v = new (0, $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c)(element);
+        v.valueActionElement.addEventListener("click", (event)=>{
+            thisObject.removeValue(v);
+        });
+    }
+    initPropertyDragDrop(element) {
+        if ($ea24aad78428563b$var$initializedDb?.[element.id] == true) return;
+        let thisObject = this;
+        let p = new (0, $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c)(element);
+        p.element.addEventListener("dragover", (event)=>{
+            event.preventDefault();
+        });
+        p.element.addEventListener("drop", (event)=>{
+            event.preventDefault();
+            event.stopPropagation();
+            let itemNo = 0;
+            for (const item of event.dataTransfer.items)if (item.kind === "string") {
+                itemNo += 1;
+                if (item.type == "text/plain") item.getAsString((value)=>{
+                    console.log("v", value);
+                    try {
+                        value = JSON.parse(value);
+                    } catch  {
+                        let tmp = document.createElement("div");
+                        tmp.innerHTML = value;
+                        value = tmp.textContent;
+                    }
+                    if (p.elementType == "value") {
+                        let parentP = p.getParentPropertyObject();
+                        thisObject.removeValue(p);
+                        thisObject.addValue(parentP, value);
+                    } else thisObject.addValue(p, value);
+                });
+            }
+        });
+    }
+    initPropertyDrag(element) {
+        if ($ea24aad78428563b$var$initializedDb?.[element.id] == true) return;
+        let thisObject = this;
+        let p = new (0, $a2421c6bde17fe2f$export$f4fc9bc3702e5f8c)(element);
+        element.draggable = true;
+        p.element.addEventListener("dragstart", (event)=>{
+            //event.preventDefault();
+            event.stopPropagation();
+            console.log("drag", thisObject.getRecord(p));
+            event.dataTransfer.setData("text/plain", JSON.stringify(thisObject.getRecord(p)));
+        });
+        p.element.addEventListener("drag", (event)=>{
+            event.preventDefault();
+        });
+    }
+    // Attributes
+    get element() {
+        return this._elementObject.element;
+    }
+    //
+    get record() {
+        return this.getRecord(this._elementObject);
+    }
+    getRecord(elementObject) {
+        if (elementObject.elementType == "thing") {
+            let record = {};
+            for (let p of elementObject.getPropertyObjects()){
+                let newRecord = this.getRecord(p);
+                record = {
+                    ...record,
+                    ...this.getRecord(p)
+                };
+            }
+            return record;
+        } else if (elementObject.elementType == "property") {
+            let record = {};
+            record[elementObject.propertyID] = [];
+            for (let v of elementObject.getValueObjects())record[elementObject.propertyID].push(this.getRecord(v));
+            return record;
+        } else if (elementObject.elementType == "value") {
+            let values = [];
+            let things = elementObject.getThingObjects();
+            if (things && things.length != 0) for (let t of things)values = values.concat(this.getRecord(t));
+            else {
+                let inputs;
+                inputs = elementObject.element.querySelectorAll("input");
+                for (let i of inputs)values.push(i.value);
+                inputs = elementObject.element.querySelectorAll("select");
+                for (let i of inputs)values.push(i.value);
+            }
+            return values;
+        } else {
+            let results = [];
+            for (let t of elementObject.getThingObjects())results.push(this.getRecord(t));
+            return results;
+        }
+    }
+    //
+    addValue(propertyObject, value) {
+        if (!propertyObject || propertyObject == null) return;
+        if (propertyObject.elementType != "property") return this.addValue(propertyObject.getParentPropertyObject(), value);
+        let s0 = (0, $5OpyM$KrakenSchemas).get(propertyObject.propertyID);
+        let s = s0.expectedType;
+        let noOfValues = propertyObject.propertyBodyElement.children.length;
+        let propertyPath = propertyObject.propertyID.split(".");
+        propertyPath[propertyPath.length - 1] = propertyPath[propertyPath.length - 1] + "[" + String(noOfValues) + "]";
+        let content = (0, $5OpyM$krakenHtml).form.json(s.jsonSchemaLight, value, propertyObject.propertyID, propertyPath);
+        let temp = document.createElement("div");
+        temp.innerHTML = content;
+        let newValueElement = temp.firstElementChild;
+        let propertyBody = propertyObject.propertyBodyElement;
+        propertyBody.appendChild(newValueElement);
+    }
+    removeValue(valueObject) {
+        valueObject.element.remove();
+    }
+}
+
+
+class $88b41f2b161a575e$export$8440cd96791437b2 {
+    constructor(thing){
+        this.thing = thing;
+    }
+    form(url) {
+        return new (0, $ea24aad78428563b$export$7139bcca0e2cefa4)(this.thing, url);
+    }
+}
+
+
 let $8b9cc78875f648b9$var$MAX_DEPTH = 10;
 class $8b9cc78875f648b9$export$3138a16edeb45799 {
     /*
@@ -2534,6 +3109,8 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         this._action = new (0, $48f3d71cef923a10$export$370403b83c36af9f)(this);
         this._api = new (0, $a0c51871cc1d3395$export$dc35bac29e2a8cfc)(this);
         this._headings = new (0, $8c53f3ac7d8ee3d4$export$d62a579734015d66)(this);
+        this._element = new (0, $88b41f2b161a575e$export$8440cd96791437b2)(this);
+        this._test = new (0, $af443bc86ad85e59$export$2ce0982a5613aa77)(this);
         // db references
         this._dbCollection = null // The collection / table of database
         ;
@@ -2550,10 +3127,13 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
         //
         if (record_type && !record_type["@type"]) this.p.set("@type", record_type);
         if (record_id) this.p.set("@id", record_id);
-        if (!this.record_id || this.record_id == null) record_id = String((0, $5OpyM$v4)());
+        if ((0, $5OpyM$krakenHelpers).isNull(this.record_id)) record_id = String((0, $5OpyM$v4)());
     }
     toJSON() {
         return this.record;
+    }
+    get json() {
+        return JSON.stringify(this.record, null, 4);
     }
     toString() {
         let content = this.heading.getTextSummary;
@@ -2605,12 +3185,20 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     get h() {
         return this._headings;
     }
+    // HTML elements
+    get element() {
+        return this._element;
+    }
+    // Tests
+    get test() {
+        return this._test;
+    }
     // -----------------------------------------------------
     //  events
     // -----------------------------------------------------
     addEventListener(eventType, callback) {
         if (typeof callback !== "function") return;
-        if (!eventType || eventType == null) eventType;
+        if ((0, $5OpyM$krakenHelpers).isNull(eventType)) eventType;
         if (this._callbacks[eventType] === undefined) this._callbacks[eventType] = [];
         this._callbacks[eventType].push(callback);
     }
@@ -2649,7 +3237,7 @@ class $8b9cc78875f648b9$export$3138a16edeb45799 {
     }
     get record_id() {
         let record_id = this.getProperty("@id").value;
-        if (!record_id || record_id == null) this.record_id = String((0, $5OpyM$v4)());
+        if ((0, $5OpyM$krakenHelpers).isNull(record_id)) this.record_id = String((0, $5OpyM$v4)());
         return this.p.get("@id").value;
     }
     set record_id(value) {

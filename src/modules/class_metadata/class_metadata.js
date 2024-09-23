@@ -1,3 +1,4 @@
+import { krakenHelpers as h } from 'krakenhelpers'
 
 
 
@@ -27,7 +28,7 @@ export class KrMetadata {
     constructor(record) {
         this._record = {};
         
-        if(!this._record.createdDate || this._record.createdDate == null){
+        if(h.isNull(this?._record.createdDate) ){
             this._record.createdDate = new Date();
         }
         
@@ -54,7 +55,7 @@ export class KrMetadata {
     }
 
     setSystemRecord(value){
-        if(!value || value == null) { return }
+        if(h.isNull(value)) { return }
         this._record = JSON.parse(JSON.stringify(value));
     }
 
@@ -72,7 +73,7 @@ export class KrMetadata {
         if(!value){return;};
         let tempCreatedDate = this.createdDate
         this._record = JSON.parse(JSON.stringify(value));
-        if(!this.createdDate || this.createdDate == null){
+        if(h.isNull(this.createdDate)){
             this.createdDate = tempCreatedDate
         }
     }
@@ -127,7 +128,7 @@ export class KrMetadata {
     }
     
     get observationDate(){
-        if(!this._record.observationDate || this._record.observationDate == null) { return null }
+        if(h.isNull(this._record.observationDate)) { return null }
         return new Date(JSON.parse(this._record.observationDate || null));
     }
 
@@ -205,7 +206,7 @@ export class KrMetadata {
 
     isValid(comparisonDate=null){
         // Returns true if value is within velidFrom, validThrough. Uses today's date if not provided
-        if(comparisonDate==null){
+        if(h.isNull(comparisonDate)){
             comparisonDate = new Date();
         }
 

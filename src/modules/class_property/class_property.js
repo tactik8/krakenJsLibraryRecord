@@ -1,5 +1,6 @@
 import { KrPropertyValue } from "../class_propertyValue/class_propertyValue.js";
 import { KrMetadata } from "../class_metadata/class_metadata.js";
+import { krakenHelpers as h } from 'krakenhelpers'
 
 export class KrProperty {
     /*
@@ -43,6 +44,14 @@ export class KrProperty {
         let record = {};
         record[this._propertyID] = this.propertyValues.map((x) => x.toJSON());
         return record;
+    }
+
+    get record(){
+        return this.toJSON()
+    }
+
+    get json(){
+        return JSON.stringify(this.record, null, 4)
     }
 
     // Base
@@ -99,14 +108,14 @@ export class KrProperty {
     }
 
     eq(other) {
-        if (this.propertyID && this.propertyID == other.propertyID) {
+        if (h.isNotNull(this.propertyID) && this.propertyID == other.propertyID) {
             return true;
         }
         return false;
     }
 
     getPropertyValueById(propertyValueID) {
-        if (!propertyValueID || propertyValueID == null) {
+        if (h.isNull(propertyValueID)) {
             return;
         }
 
@@ -121,7 +130,7 @@ export class KrProperty {
     contains(newPV) {
         // Return true if already contains same propertyValue
 
-        if (!newPV || newPV == null) {
+        if (h.isNull(newPV)) {
             return;
         }
 
@@ -138,7 +147,7 @@ export class KrProperty {
 
         let needCompileFlag = false;
 
-        if (!other || other == null) {
+        if (h.isNull(other)) {
             return;
         }
 
@@ -173,7 +182,7 @@ export class KrProperty {
 
     getBestRecord(maxDepth, currentDepth) {
         let p = this.propertyValue;
-        if (p && p != null) {
+        if (h.isNotNull(p) ) {
             return [p.getBestRecord(maxDepth, currentDepth)];
         }
         return [];
@@ -221,7 +230,7 @@ export class KrProperty {
         let resultDate = null;
         for (let pv of this._propertyValues) {
             let itemDate = pv.systemCreatedDate;
-            if (itemDate && (resultDate == null || itemDate < resultDate)) {
+            if (itemDate && (h.isNull(resultDate) || itemDate < resultDate)) {
                 resultDate = itemDate;
             }
         }
@@ -232,7 +241,7 @@ export class KrProperty {
         let resultDate = null;
         for (let pv of this._propertyValues) {
             let itemDate = pv.systemCreatedDate;
-            if (itemDate && (resultDate == null || itemDate > resultDate)) {
+            if (itemDate && (h.isNull(resultDate) || itemDate > resultDate)) {
                 resultDate = itemDate;
             }
         }
@@ -268,7 +277,7 @@ export class KrProperty {
         // Serve from cache
         let cache = this._propertyValuesCache;
         let cacheOld = this._propertyValuesCacheOld;
-        if (cache && cache != null && cache.length > 0) {
+        if (h.isNotNull(cache) && cache.length > 0) {
             if (cache == cacheOld) {
                 return cache;
             }
@@ -317,7 +326,7 @@ export class KrProperty {
         let cacheOld = this._propertyValuesNetCacheOld;
 
         if (force == false) {
-            if (cache && cache != null && cache.length > 0) {
+            if (h.isNotNull(cache) && cache.length > 0) {
                 pv = cache;
                 if (cache == cacheOld) {
                     return cache;
@@ -341,10 +350,9 @@ export class KrProperty {
                 results = results.filter(
                     (result) =>
                         !(
-                            result.lt(filteredItem) &&
-                            (filteredItem.replacee == null ||
-                                filteredItem.replacee === undefined ||
-                                filteredItem.replacee == result.value)
+                            result.metadata.lt(filteredItem) &&
+                                (h.isNull(filteredItem.replacee)  ||
+                                    filteredItem.replacee == result.value)
                         ),
                 );
             },
@@ -355,7 +363,7 @@ export class KrProperty {
                 results = results.filter(
                     (result) =>
                         !(
-                            result.lt(filteredItem) &&
+                            result.metadata.lt(filteredItem) &&
                             result.value == filteredItem.value
                         ),
                 );
@@ -363,6 +371,7 @@ export class KrProperty {
         );
 
         function compare(a, b) {
+
             if (a.gt(b)) {
                 return -1;
             }
@@ -414,7 +423,7 @@ export class KrProperty {
 
     get value() {
         // Return value element of best propertyValue object
-        if (this.propertyValue) {
+        if (h.isNotNull(this?.propertyValue)) {
             return this.propertyValue.value;
         }
         return null;
@@ -430,21 +439,28 @@ export class KrProperty {
     }
 
     setValues(value, metadataRecord, actionType) {
+       
         let results = [];
         let values = ensureArray(value);
-        for (let i = 0; i < values.length; i++) {
-            results.push(this.setValue(values[i], metadataRecord, actionType));
+
+        // First value
+        results.push(this.setValue(values[0], metadataRecord, actionType));
+
+        // Next values as add
+        for (let i = 1; i < values.length; i++) {
+            results.push(this.setValue(values[i], metadataRecord, 'addAction'));
         }
         return results;
     }
 
     setValue(value, metadataRecord, actionType) {
+        
         let newValueObject = value;
 
         // Check if date
         if(newValueObject instanceof String){
             let d = convertToDate(newValueObject);
-            if (d && d != null) {
+            if (h.isNotNull(d) ) {
                 newValueObject = d;
             }
         }
@@ -469,10 +485,7 @@ export class KrProperty {
 
 
         // Add to cache
-        if (
-            this._propertyValuesNetCache &&
-            this._propertyValuesNetCache != null
-        ) {
+        if ( h.isNotNull(this._propertyValuesNetCache)) {
             this._propertyValuesNetCache.push(newValueObject);
         }
 
@@ -485,7 +498,7 @@ export class KrProperty {
 
     printScreen(suffix = "") {
         var v = this.value;
-        if (this.value && this.value.record_type) {
+        if (isNotNull(this.value) && this.value.record_type) {
             v = this.value.record_type + "/" + this.value.record_id;
         }
 
@@ -564,26 +577,28 @@ export class KrProperty {
         // Returns equivalent valueObject if present
 
 
-        if(!value || value == null){ return }
+        if(h.isNull(value)){ return null }
         
-        if (value.record_type) {
+        if (h.isNotNull(value?.record_type)) {
             value = value.ref;
         }
 
-        if (value?.["@type"]) {
+        if (h.isNotNull(value?.["@type"])) {
             value = { "@type": value?.["@type"], "@id": value?.["@id"] };
         }
 
         for (let pv of this.propertyValues) {
             let value0 = pv.value;
-            if (value0.record_type) {
+            if (h.isNotNull(value0?.record_type)) {
                 value0 = value0.ref;
             }
 
-            if (value0["@type"]) {
+            if (h.isNotNull(value0?.["@type"])) {
                 value0 = { "@type": value0?.["@type"], "@id": value0?.["@id"] };
             }
 
+            // ??
+            
             if (JSON.stringify(value) == JSON.stringify(value0)) {
                 return pv;
             }
@@ -595,7 +610,7 @@ export class KrProperty {
         // Return true if value is part of values
 
         let v = this.getValue(value);
-        if (v && v != null) {
+        if (h.isNotNull(v)) {
             return true;
         }
         return false;

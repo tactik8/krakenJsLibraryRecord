@@ -1,3 +1,7 @@
+import { krakenHelpers as h } from 'krakenhelpers'
+
+
+
 import { KrProperty } from "../../class_property/class_property.js";
 
 import { ClassKrakenCache } from "./ClassKrakenCache.js";
@@ -59,7 +63,7 @@ export class ClassKrakenExportHelpers {
 // -----------------------------------------------------
 
 function getBestRecord(thisThing, maxDepth = MAX_DEPTH, currentDepth = 0) {
-    if (!maxDepth || maxDepth == null) {
+    if (h.isNull(maxDepth)) {
         maxDepth = MAX_DEPTH;
     }
 
@@ -73,7 +77,7 @@ function getBestRecord(thisThing, maxDepth = MAX_DEPTH, currentDepth = 0) {
 
     let record = {};
     let properties = ensureArray(thisThing.properties);
-    properties = properties.filter(x => x !== undefined && x !== null)
+    properties = properties.filter(x => !h.isNull(x))
     for (let p of properties) {
         record[p.propertyID] = p.getBestRecord(maxDepth, currentDepth + 1);
     }
@@ -90,7 +94,7 @@ function getBestRecord(thisThing, maxDepth = MAX_DEPTH, currentDepth = 0) {
 // -----------------------------------------------------
 
 function getFullRecord(thisThing, maxDepth = MAX_DEPTH, currentDepth = 0) {
-    if (!maxDepth || maxDepth == null) {
+    if (h.isNull(maxDepth)) {
         maxDepth = MAX_DEPTH;
     }
 
@@ -106,7 +110,7 @@ function getFullRecord(thisThing, maxDepth = MAX_DEPTH, currentDepth = 0) {
     let properties = thisThing.properties;
     for (let p of properties) {
         let value = p.getFullRecord(maxDepth, currentDepth + 1);
-        if (value && value != null && value != []) {
+        if (!h.isNull(value)) {
             record[p.propertyID] = value;
         }
     }
@@ -119,7 +123,7 @@ function getFullRecord(thisThing, maxDepth = MAX_DEPTH, currentDepth = 0) {
 }
 
 function setFullRecord(thisThing, value) {
-    if (!value || value == null) {
+    if (h.isNull(value)) {
         return;
     }
 
@@ -143,11 +147,11 @@ function getSystemRecordFlat(thing) {
 }
 
 function getSystemRecord(thing, maxDepth, currentDepth) {
-    if ((!maxDepth || maxDepth == null) && maxDepth != 0) {
+    if ((h.isNull(maxDepth)) && maxDepth != 0) {
         maxDepth = MAX_DEPTH;
     }
 
-    if ((!currentDepth || currentDepth == null) && currentDepth != 0) {
+    if ((h.isNull(currentDepth)) && currentDepth != 0) {
         currentDepth = 0;
     }
 
@@ -183,7 +187,7 @@ function getSystemRecord(thing, maxDepth, currentDepth) {
     for (let p of thing.properties) {
         pvs = pvs.concat(p.getSystemRecord(maxDepth, currentDepth + 1));
     }
-    pvs = pvs.filter((x) => x && x != null && x != []);
+    pvs = pvs.filter((x) => !h.isNull(x));
     record["_propertyValues"] = pvs;
 
     // Add values
@@ -222,7 +226,7 @@ function setSystemRecordV2_0(thing, value, wipeBefore = true) {
     }
 
     // Check if valid format
-    if (!value || !value._propertyValues) {
+    if (h.isNull(value) || h.isNull(value?._propertyValues)) {
         return;
     }
 
@@ -238,14 +242,14 @@ function setSystemRecordV2_0(thing, value, wipeBefore = true) {
 
     //
     let pvRecords = ensureArray(value._propertyValues);
-    pvRecords = pvRecords.filter((x) => x !== undefined && x != null);
+    pvRecords = pvRecords.filter((x) => !h.isNull(x));
     if (pvRecords.length == 0) {
         return;
     }
 
     // Group pvRecords by propertyID
     let propertyIDs = [...new Set(pvRecords.map((x) => x.object.propertyID))];
-    propertyIDs = propertyIDs.filter((x) => x && x != null);
+    propertyIDs = propertyIDs.filter((x) => !h.isNull(x));
 
     for (let propertyID of propertyIDs) {
         let subPropertyValues = pvRecords.filter(
@@ -263,22 +267,22 @@ function setSystemRecordV2_0(thing, value, wipeBefore = true) {
 function convertPV(thing, pvRecord) {
     // Convert propertyValue value to thing if @type present
 
-    if (!pvRecord || pvRecord == null) {
+    if (h.isNull(pvRecord)) {
         return pvRecord;
     }
 
     let value = pvRecord?.object?.value;
 
-    if (!value || value == null) {
+    if (h.isNull(value)) {
         return pvRecord;
     }
 
-    if (value["@type"] && value["@type"] != null) {
+    if ( !h.isNull(value?.["@type"])) {
         
         // Get from cache
         let t = thing._things.get(value?.["@type"], value?.["@id"]);
 
-        if (!t || t == null) {
+        if (h.isNull(t)) {
             t = thing.new(value?.["@type"], value?.["@id"]);
             t._things = thing._things;
             thing._things.set(t);
@@ -297,7 +301,7 @@ function convertPV(thing, pvRecord) {
 function setSystemRecordV1_0(thing, value, cache) {
     // Load data into object
 
-    if (!cache || cache == null) {
+    if (h.isNull(cache)) {
         cache = new ClassKrakenCache();
     }
 
@@ -319,12 +323,12 @@ function setSystemRecordV1_0(thing, value, cache) {
     thing._properties = [];
 
     // Set pvRecords
-    if (!value.propertyValues || value.propertyValues == null) {
+    if (h.isNull(value.propertyValues)) {
         return;
     }
 
     let pvRecords = ensureArray(value.propertyValues);
-    pvRecords = pvRecords.filter((x) => x !== undefined && x != null);
+    pvRecords = pvRecords.filter((x) => !h.isNull(x));
 
     // Remove arrays of 1
     //todo: figure out why this happens
@@ -351,17 +355,17 @@ function setSystemRecordV1_0(thing, value, cache) {
     // convert sub things to KrThing
     let counter = 0;
     for (let pvRecord of pvRecords) {
-        if (!pvRecord || pvRecord == null) {
+        if (h.isNull(pvRecord)) {
             continue;
         }
 
         let value = pvRecord?.object?.value;
 
-        if (!value || value == null) {
+        if (h.isNull(value)) {
             continue;
         }
 
-        if (value["@type"] && value["@type"] != null) {
+        if (!h.isNull(value?.["@type"])) {
             var t = thing.new(value?.["@type"], value?.["@id"]);
             setSystemRecord(t, value, cache);
 
@@ -378,7 +382,7 @@ function setSystemRecordV1_0(thing, value, cache) {
     let propertyIDs = [...new Set(pvRecords.map((x) => x.object.propertyID))];
 
     for (let propertyID of propertyIDs) {
-        if (propertyID && propertyID != null) {
+        if (!h.isNull(propertyID) ) {
             let subPropertyValues = pvRecords.filter(
                 (item) => item.object.propertyID == propertyID,
             );

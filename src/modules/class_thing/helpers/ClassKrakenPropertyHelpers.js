@@ -1,3 +1,6 @@
+import { krakenHelpers as h } from 'krakenhelpers'
+
+
 import { KrProperty } from "../../class_property/class_property.js";
 
 export class ClassKrakenPropertyHelpers {
@@ -18,7 +21,7 @@ export class ClassKrakenPropertyHelpers {
     }
 
     set(propertyID, value, credibility, observationDate) {
-        if (isNull(value)) {
+        if (h.isNull(value)) {
             return;
         }
 
@@ -99,201 +102,190 @@ export class ClassKrakenPropertyHelpers {
     // -----------------------------------------------------
 
     get actionStatus() {
-        return this.thing.getProperty("actionStatus")?.value || null;
+        return this.thing.getProperty("actionStatus")?.value;
     }
     set actionStatus(value) {
-        let oldValue = this.thing.getProperty("actionStatus")?.value || null;
+        let oldValue = this.thing.getProperty("actionStatus")?.value;
         return this.thing.replaceProperty("actionStatus", oldValue, value);
     }
 
     get endTime() {
-        return this.thing.getProperty("endTime")?.value || null;
+        return this.thing.getProperty("endTime")?.value;
     }
     set endTime(value) {
-        let oldValue = this.thing.getProperty("endTime")?.value || null;
+        let oldValue = this.thing.getProperty("endTime")?.value;
         return this.thing.replaceProperty("endTime", oldValue, value);
     }
 
     get error() {
-        return this.thing.getProperty("error")?.value || null;
+        return this.thing.getProperty("error")?.value;
     }
     set error(value) {
-        let oldValue = this.thing.getProperty("error")?.value || null;
+        let oldValue = this.thing.getProperty("error")?.value;
         return this.thing.replaceProperty("error", oldValue, value);
     }
 
     get familyName() {
-        return this.thing.getProperty("familyName")?.value || null;
+        return this.thing.getProperty("familyName")?.value;
     }
     set familyName(value) {
-        let oldValue = this.thing.getProperty("familyName")?.value || null;
+        let oldValue = this.thing.getProperty("familyName")?.value;
         return this.thing.replaceProperty("familyName", oldValue, value);
     }
 
     get givenName() {
-        return this.thing.getProperty("givenName")?.value || null;
+        return this.thing.getProperty("givenName")?.value;
     }
     set givenName(value) {
-        let oldValue = this.thing.getProperty("givenName")?.value || null;
+        let oldValue = this.thing.getProperty("givenName")?.value;
         return this.thing.replaceProperty("givenName", oldValue, value);
     }
 
     get name() {
-        return this.thing.getProperty("name")?.value || null;
+        return this.thing.getProperty("name")?.value;
     }
     set name(value) {
-        let oldValue = this.thing.getProperty("name")?.value || null;
+        let oldValue = this.thing.getProperty("name")?.value;
         return this.thing.replaceProperty("name", oldValue, value);
     }
 
     get startTime() {
-        return this.thing.getProperty("startTime")?.value || null;
+        return this.thing.getProperty("startTime")?.value;
     }
     set startTime(value) {
-        let oldValue = this.thing.getProperty("startTime")?.value || null;
+        let oldValue = this.thing.getProperty("startTime")?.value;
         return this.thing.replaceProperty("startTime", oldValue, value);
     }
 
     get position() {
-        return this.thing.getProperty("position")?.value || null;
+        return this.thing.getProperty("position")?.value;
     }
     set position(value) {
-        let oldValue = this.thing.getProperty("position")?.value || null;
+        let oldValue = this.thing.getProperty("position")?.value;
         return this.thing.replaceProperty("position", oldValue, value);
     }
 
     get url() {
-        return this.thing.getProperty("url")?.value || null;
+        return this.thing.getProperty("url")?.value;
     }
     set url(value) {
-        let oldValue = this.thing.getProperty("url")?.value || null;
+        let oldValue = this.thing.getProperty("url")?.value;
         return this.thing.replaceProperty("url", oldValue, value);
     }
 
     get contentUrl() {
-        return this.thing.getProperty("contentUrl")?.value || null;
+        return this.thing.getProperty("contentUrl")?.value;
     }
     set contentUrl(value) {
-        let oldValue = this.thing.getProperty("contentUrl")?.value || null;
+        let oldValue = this.thing.getProperty("contentUrl")?.value;
         return this.thing.replaceProperty("contentUrl", oldValue, value);
     }
 
     get agent() {
-        return this.thing.getProperty("agent")?.value || null;
+        return this.thing.getProperty("agent")?.value;
     }
     set agent(value) {
-        let oldValue = this.thing.getProperty("agent")?.value || null;
+        let oldValue = this.thing.getProperty("agent")?.value;
         return this.thing.replaceProperty("agent", oldValue, value);
     }
 
     get instrument() {
-        return this.thing.getProperty("instrument")?.value || null;
+        return this.thing.getProperty("instrument")?.value;
     }
     set instrument(value) {
-        let oldValue = this.thing.getProperty("instrument")?.value || null;
+        let oldValue = this.thing.getProperty("instrument")?.value;
         return this.thing.replaceProperty("instrument", oldValue, value);
     }
 
     get object() {
-        return this.thing.getProperty("object")?.value || null;
+        return this.thing.getProperty("object")?.value;
     }
     set object(value) {
-        let oldValue = this.thing.getProperty("object")?.value || null;
+        let oldValue = this.thing.getProperty("object")?.value;
         return this.thing.replaceProperty("object", oldValue, value);
     }
 
     get result() {
-        return this.thing.getProperty("result")?.value || null;
+        return this.thing.getProperty("result")?.value;
     }
     set result(value) {
-        let oldValue = this.thing.getProperty("result")?.value || null;
+        let oldValue = this.thing.getProperty("result")?.value;
         return this.thing.replaceProperty("result", oldValue, value);
     }
 
     get startTime() {
-        return this.thing.getProperty("startTime")?.value || null;
+        return this.thing.getProperty("startTime")?.value;
     }
     set startTime(value) {
-        let oldValue = this.thing.getProperty("startTime")?.value || null;
+        let oldValue = this.thing.getProperty("startTime")?.value;
         return this.thing.replaceProperty("startTime", oldValue, value);
     }
 
     get endTime() {
-        return this.thing.getProperty("endTime")?.value || null;
+        return this.thing.getProperty("endTime")?.value;
     }
     set endTime(value) {
-        let oldValue = this.thing.getProperty("endTime")?.value || null;
+        let oldValue = this.thing.getProperty("endTime")?.value;
         return this.thing.replaceProperty("endTime", oldValue, value);
     }
 
     get actionStatus() {
-        return this.thing.getProperty("actionStatus")?.value || null;
+        return this.thing.getProperty("actionStatus")?.value;
     }
     set actionStatus(value) {
-        let oldValue = this.thing.getProperty("actionStatus")?.value || null;
+        let oldValue = this.thing.getProperty("actionStatus")?.value;
         return this.thing.replaceProperty("actionStatus", oldValue, value);
     }
 
     get instrument() {
-        return this.thing.getProperty("instrument")?.value || null;
+        return this.thing.getProperty("instrument")?.value;
     }
     set instrument(value) {
-        let oldValue = this.thing.getProperty("instrument")?.value || null;
+        let oldValue = this.thing.getProperty("instrument")?.value;
         return this.thing.replaceProperty("instrument", oldValue, value);
     }
 
     get error() {
-        return this.thing.getProperty("error")?.value || null;
+        return this.thing.getProperty("error")?.value;
     }
     set error(value) {
-        let oldValue = this.thing.getProperty("error")?.value || null;
+        let oldValue = this.thing.getProperty("error")?.value;
         return this.thing.replaceProperty("error", oldValue, value);
     }
 
     get item() {
-        return this.thing.getProperty("item")?.value || null;
+        return this.thing.getProperty("item")?.value;
     }
     set item(value) {
-        let oldValue = this.thing.getProperty("item")?.value || null;
+        let oldValue = this.thing.getProperty("item")?.value;
         return this.thing.replaceProperty("item", oldValue, value);
     }
 
     get previousItem() {
-        return this.thing.getProperty("previousItem")?.value || null;
+        return this.thing.getProperty("previousItem")?.value;
     }
     set previousItem(value) {
-        let oldValue = this.thing.getProperty("previousItem")?.value || null;
+        let oldValue = this.thing.getProperty("previousItem")?.value;
         return this.thing.replaceProperty("previousItem", oldValue, value);
     }
 
     get nextItem() {
-        return this.thing.getProperty("nextItem")?.value || null;
+        return this.thing.getProperty("nextItem")?.value;
     }
     set nextItem(value) {
-        let oldValue = this.thing.getProperty("nextItem")?.value || null;
+        let oldValue = this.thing.getProperty("nextItem")?.value ;
         return this.thing.replaceProperty("nextItem", oldValue, value);
     }
 
     get position() {
-        return this.thing.getProperty("position")?.value || null;
+        return this.thing.getProperty("position")?.value ;
     }
     set position(value) {
-        let oldValue = this.thing.getProperty("position")?.value || null;
+        let oldValue = this.thing.getProperty("position")?.value;
         return this.thing.replaceProperty("position", oldValue, value);
     }
 }
 
-function isNull(value) {
-    if (
-        value === undefined ||
-        (value === null && value != 0) ||
-        value == [] ||
-        value === ""
-    ) {
-        return true;
-    }
-    return false;
-}
 
 function getProperty(thisThing, propertyID) {
     /**
@@ -322,8 +314,7 @@ function getProperty(thisThing, propertyID) {
         thisThing._properties.push(property);
     }
 
-    // Recurse
-
+    // Recurse when dot notation
     if (otherIDS.length > 0) {
         if (!property.value?.record_type) {
             return null;
@@ -341,7 +332,7 @@ function getProperties(thisThing) {
      */
 
     let properties = ensureArray(thisThing._properties);
-    properties = properties.filter((x) => x !== undefined && x != null);
+    properties = properties.filter((x) => h.isNotNull(x));
     
     properties = properties.toSorted((a, b) => {
         return a.lt(b);
@@ -368,7 +359,7 @@ function setProperty(
         let p = thisThing.getProperty(pID);
 
         // If not value, create new KrThing
-        if (!p.value?.record_type) {
+        if (h.isNull(p.value?.record_type)) {
             p.setValues(
                 thisThing.new("Thing"),
                 metadataRecord,
@@ -386,9 +377,8 @@ function setProperty(
     let oldValue = thisThing.getProperty(propertyID)?.values;
 
     // get or create property object
-
     let property = thisThing.getProperty(propertyID);
-    if (!property) {
+    if (h.isNull(property)) {
         property = new KrProperty(propertyID);
         thisThing._properties.push(property);
     }
@@ -396,17 +386,17 @@ function setProperty(
     // Iterate through values and convert to KrThing if required
     let values = ensureArray(value);
     for (let i = 0; i < values.length; i++) {
-        if (values[i] && values[i]["@type"]) {
+        if (h.isNotNull(values?.[i]?.['@type'])) {
             values[i] = thisThing.new(values[i]);
         }
     }
 
     // Set metadata
     var metadataRecord = thisThing.metadata.record;
-    if (credibility) {
+    if (h.isNotNull(credibility)) {
         metadataRecord.credibility = credibility;
     }
-    if (observationDate) {
+    if (h.isNotNull(observationDate)) {
         metadataRecord.observationDate = observationDate;
     }
 

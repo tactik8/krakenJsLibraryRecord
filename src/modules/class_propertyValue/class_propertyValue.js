@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { KrMetadata } from '../class_metadata/class_metadata.js';
+import { krakenHelpers as h } from 'krakenhelpers'
 
 export class KrPropertyValue {
     /*
@@ -95,10 +96,13 @@ export class KrPropertyValue {
     get record(){
 
         let record = this._record
-        
+        return record
         
     }
-    
+
+    get json(){
+        return JSON.stringify(this.record, null, 4)
+    }
 
     
     // ----------------------------------------------------
@@ -111,13 +115,7 @@ export class KrPropertyValue {
     set propertyID(value){
         this._record.object.object.propertyID = value;
     }
-    get value(){
-        return this._record.object.value;
-    }
-    set value(value){
-        this._record.object.value = ensureNotArray(value);
-        this._record.replacer = ensureNotArray(value);
-        }
+   
 
     // ----------------------------------------------------
     // Attributes - metadata
@@ -133,8 +131,10 @@ export class KrPropertyValue {
         return this._record.object.value;
     }
     set value(value){
+        
         this._record.object.value = ensureNotArray(value);
         this._record.replacer = ensureNotArray(value);
+        
     }
     get agent(){
         return this.metadata.agent;
@@ -248,7 +248,6 @@ export class KrPropertyValue {
 
     getSystemRecord(maxDepth, currentDepth){
 
-        //console.log('Get system value', this.propertyID)
         let record = {}
         record['@type'] = this.record_type
         record['@id'] = this.record_id
@@ -262,13 +261,10 @@ export class KrPropertyValue {
         record.metadata = this.metadata.getSystemRecord(maxDepth, currentDepth);
 
         if(['previousItem', 'nextItem'].includes(this.propertyID) ){
-            //console.log('x')
             record.object['value'] = this?.value?.ref
-        } else if (this.value && this.value.record_type ){
-            //console.log('s')
+        } else if (h.isNotNull(this?.value?.record_type)){
             record.object['value'] = this.value.export.getSystem(maxDepth, currentDepth);
         } else {
-            //console.log('v')
             record.object['value'] = this.value
         }
         return record;
@@ -276,7 +272,7 @@ export class KrPropertyValue {
 
     setSystemRecord(value){
 
-        if(!value || value == null){ return }
+        if(h.isNull(value)){ return }
         
         this.metadata.setSystemRecord(value?.metadata);
         delete value.metadata;
@@ -308,12 +304,72 @@ export class KrPropertyValue {
         return true
        
     }
-    
+
     gt(other){
+        
+        if(this.value?.record_type == 'ListItem'){
+            
+            let thisPosition = this.value?.p?.position || null
+            if(h.isNull(thisPosition)){ thisPosition = 0 }
+
+            let otherPosition = other.value?.p?.position || null
+            if(h.isNull(otherPosition)){ thisPosition = 0 }
+
+
+            if(h.isNotNull(thisPosition) && h.isNull(otherPosition)){
+                return false
+            }
+
+            if(h.isNull(thisPosition) && h.isNotNull(otherPosition)){
+                return true
+            }
+
+ 
+            
+            if( h.isNotNull(thisPosition) && h.isNotNull(otherPosition)){
+                
+               try{
+                    if(thisPosition < otherPosition ){ 
+                        return true 
+                    } else if( thisPosition > otherPosition ){
+                        return false
+                    }
+                } catch {}
+            }
+        }
         return this.metadata.gt(other.metadata);
     };
     
     lt(other){
+       
+        if(this.value?.record_type == 'ListItem'){
+
+            
+            let thisPosition = this.value?.p?.position || null
+            //if(h.isNull(thisPosition)){ thisPosition = 0 }
+           
+            let otherPosition = other.value?.p?.position || null
+            //if(h.isNull(otherPosition)){ thisPosition = 0 }
+
+            if(h.isNotNull(thisPosition) && h.isNull(otherPosition)){
+                return true
+            }
+
+            if(h.isNull(thisPosition) && h.isNotNull(otherPosition)){
+                return false
+            }
+            
+            try {
+                if(thisPosition > otherPosition ){ 
+                    return true 
+                } else if( thisPosition < otherPosition ){
+                    return false
+                }
+           } catch (error) {
+                
+           }
+            
+        }
         return this.metadata.lt(other.metadata);
     };
 
@@ -354,11 +410,14 @@ export class KrPropertyValue {
 
 
 function ensureNotArray(value) {
-    let new_value = ensureArray(value);
-    if (new_value.length > 0) {
-        return new_value[0];
+    
+    if(Array.isArray(value)){
+        if(h.isNotNull(value)){
+            return value[0];
+        }
+        return null
     } else {
-        return null;
+        return value;
     }
 }
 

@@ -1,3 +1,4 @@
+import { krakenHelpers as h } from 'krakenhelpers'
 
 
 // todo: add ability to change starting position from 0
@@ -51,7 +52,7 @@ export class ClassKrakenItemListHelpers {
 
     // ListItems
 
-    get getListItems(){
+    get listItems(){
         return getListItems(this.thing)
     } 
     set items(value){
@@ -159,58 +160,84 @@ export class ClassKrakenItemListHelpers {
 }
 
 
+function getListItem(thisThing, record_type, record_id){
+    // Retrieve list item by giving either, record, thing or record or thing of its item
 
+    record_id = record_id || record_type?.record_id || record_type?.['@id']
+    record_type = record_type?.record_type || record_type?.['@type'] || record_type
 
-
-
-
-
-function getFirstItem(thisThing) {
-    let items = thisThing.p.get("itemListElement").values;
-
-    if (items.length == 0) {
-        return null;
-    }
-
-    for (let item of items) {
-        if (!item.p.previousItem || item.p.previousItem == null) {
-            return item;
+    if(h.isNull(record_type)){ return null }
+    
+    for(let l of thisThing.p.get('itemListElement')?.values || []){
+        if(l?.record_type == record_type && l?.record_id == record_id){
+            return l
+        }
+        let item = l.p.get('item')?. value || null
+        if(item?.record_type == record_type && item?.record_id == record_id){
+            return l
         }
     }
-
-    for (let item of items) {
-        if (item.p.position == 0) {
-            return item;
-        }
-    }
-
-    return null;
-}
-
-function getLastItem(thisThing) {
-    let items = thisThing.p.get("itemListElement").values;
-
-    if (items.length == 0) {
-        return null;
-    }
-    for (let item of items) {
-        if (item.p.nextItem === undefined || item.p.nextItem == null) {
-            return item;
-        }
-    }
-    return null;
+    return null
 }
 
 function getListItems(thisThing) {
-    let results = [];
-    let t = thisThing.list.first;
 
-    while (t && t != null) {
-        results.push(t);
-        t = t.p.nextItem;
+    let listItems = thisThing.p.get('itemListElement').values
+
+    function sortListItems(item1, item2){
+
+        let item1Position = item1.p.position || null
+        let item2Position = item2.p.position || null
+
+        if(h.isNull(item1Position) && h.isNull(item2Position)){
+            return 0
+        }
+
+        if(h.isNull(item1Position) && h.isNotNull(item2Position)){
+            return -1
+        }
+
+        if(h.isNotNull(item1Position) && h.isNull(item2Position)){
+            return 1
+        }
+        
+        if(item1.p.position < item2.p.position){
+            return -1
+        }  
+        if(item1.p.position > item2.p.position){
+            return 1
+        }    
+        return 0 
     }
 
-    return results;
+    // sort by position
+    //listItems.sort(getListItems)
+    
+    return listItems;
+}
+
+
+function getFirstItem(thisThing) {
+
+    let listItems = getListItems(thisThing)
+
+    if(h.isNull(listItems)){ return null }
+
+    
+    let firstItem = listItems[listItems.length -1]
+
+    return firstItem
+    
+}
+
+function getLastItem(thisThing) {
+    let listItems = getListItems(thisThing)
+
+    if(h.isNull(listItems)){ return null }
+
+    let lastItem = listItems[listItems.length -1]
+    
+    return lastItem
 }
 
 
@@ -219,7 +246,7 @@ function getItems(thing){
     let listItems = getListItems(thing)
     listItems = ensureArray(listItems)
     let items = listItems.map(x => x?.p.get('item').value)
-    items = items.filter( x => x !== undefined && x != null);
+    items = items.filter( x => !h.isNull(x));
     items = ensureArray(items)
     return items
 }
@@ -231,71 +258,55 @@ function pushItem(thisThing, listItems) {
 
     // Prepare listItems
     let newListItems = []
+    let lastItem = getLastItem(thisThing)
+    
     for (let listItem of listItems) {
 
-        // Check if thing, else convert to one
-        if (!listItem.record_type) {
-            let newListItem = thisThing.new();
-            newListItem.export.record = listItem;
-            listItem = newListItem;
-        }
-
-        // Check if ListItem, else convert to one
-        if (listItem.record_type != "ListItem") {
-
-            let newListItem = thisThing.new("ListItem");
-            newListItem.p.item = listItem;
-            listItem = newListItem;
-        }
-        newListItems.push(listItem)
-    }
-
-
-
-    // Set previous, next and position
-    let lastListItem = getLastItem(thisThing);
-    let newListItemsLength = newListItems.length
-
-    for(let i=0; i< newListItemsLength; i++){
-
-        let listItem = newListItems[i]
-
-        if (lastListItem && lastListItem != null) {
-            listItem.p.position = lastListItem.p.position + 1;
-            listItem.p.previousItem = lastListItem;
-            lastListItem.p.nextItem = listItem
+        if(h.isNull(lastItem)){
+            listItem = createListItem(thisThing, listItem)
+            listItem.p.position = 0
+            thisThing.p.add('itemListElement', listItem)
+            
         } else {
-            listItem.p.position = 0;
+
+            insertAfter(thisThing, lastItem, listItem)
+           
         }
-        lastListItem = listItem
-
+        lastItem = listItem
     }
 
-    // Add to property
-    thisThing.p.add("itemListElement", newListItems);
-
-    return; //listItem
+    return; 
 }
 
-function reCalculatePosition(thisThing) {
-    return;
-    let t = thisThing.list.first;
+function recalculatePosition(thisThing){
 
-    var position = 0;
+    
+    let position = 0
+    let item = getFirstItem(thisThing)
 
-    while (t && t != null) {
-        t.p.position = position;
-        position = position + 1;
-        t = t.p.nextItem;
+    while (h.isNotNull(item)){
+
+        
+        if(item.p.get('position')?.value != position){
+            item.p.set('position', position)
+        }
+        let nextItem = item.p.get('nextItem')?.value
+        item = getListItem(thisThing, nextItem)
+        position += 1
+        
     }
+
+    return
+
 }
+
 
 // -----------------------------------------------------
 //  CRUD for items
 // -----------------------------------------------------
 
 function remove(thisThing, itemRef) {
-    var item = thisThing.getItem(itemRef);
+    var item = getListItem(thisThing, itemRef)
     if (!item) {
         return null;
     }
@@ -304,35 +315,22 @@ function remove(thisThing, itemRef) {
     var n = item.p.nextItem;
 
     // Ressign before and after links to one another
-    if (p) {
+    if (h.isNotNull(p)) {
+        console.log('no p')
         p.p.nextItem = n;
     }
-    if (n) {
+    if (h.isNotNull(n)) {
+         console.log('no n')
         n.p.previousItem = p;
     }
 
     // Remove from list
-    thisThing.deleteProperty("itemListElement", item);
+    thisThing.p.delete('itemListElement', item)
+    
 
     // Sets position
-    item.p.position = null;
-
-    // Sets position
-    let position = 0;
-    if (n) {
-        position = n.p.position - 1;
-        n.p.position = position;
-    }
-
-    let nextItem = n?.nextItem;
-    while (nextItem) {
-        nextItem.p.position = position + 1;
-        position = position + 1;
-        nextItem = nextItem.p.nextItem;
-    }
-
-    //thisThing.reCalculatePosition()
-
+    recalculatePosition(thisThing)
+    
     // Remove links
     item.p.previousItem = null;
     item.p.nextItem = null;
@@ -340,21 +338,48 @@ function remove(thisThing, itemRef) {
     return;
 }
 
-function insertBefore(thisThing, referenceItem, refItemtoInsert) {
-    let item;
-    // Convert to ListItem if not one already
-    if (!(refItemtoInsert instanceof KrListItem)) {
-        refItemtoInsert = new KrListItem(refItemtoInsert);
-        item = refItemtoInsert;
-    } else {
-        item = thisThing.list.getItem(refItemtoInsert.ref);
+
+function createListItem(thisThing, listItem){
+    // Create a list item given a listitem, thing, record or item
+
+    // Convert to thing
+    if(!listItem?.record_type){
+        listItem = thisThing.new(listItem)
     }
 
-    // Retrieve latest ListItem record
+    // Add lsitItem if not one
+    if(listItem.record_type != 'ListItem'){
+        let newListItem = thisThing.new()
+        newListItem.record_type = 'ListItem'
+        newListItem.p.add('item', listItem)
+        listItem = newListItem
+    }
 
-    var n = thisThing.list.getItem(referenceItem);
-    var p = p.p.previousItem;
+    return listItem
+    
+}
 
+
+
+
+function insertBefore(thisThing, referenceItem, itemToInsert) {
+
+
+    // Get inputItem (create if not in listitemelement)
+    let item = getListItem(thisThing, itemToInsert)
+    if(h.isNull(item)){
+        item = createListItem(thisThing, itemToInsert)
+    } 
+
+    // Get referenceItem
+    let n = getListItem(thisThing, referenceItem)
+
+    if(h.isNull(n)){ throw('Error, invalid reference item')}
+    
+    // Get referenceitem previous item
+    let p = n.p.get('previousItem')?.value || null
+    p = getListItem(thisThing, p)
+    
     // Stop events
     thisThing.blockEvents();
     if (item) {
@@ -368,27 +393,20 @@ function insertBefore(thisThing, referenceItem, refItemtoInsert) {
     }
 
     // Remove previous links of items
-    if (
-        (item.p.previousItem && item.p.previousItem != null) ||
-        (item.p.nextItem && item.p.nextItem != null)
-    ) {
-        thisThing.remove(item.ref);
-    }
+    remove(thisThing, item)
 
+    
     // Change allocation
-    item.p.previousItem = p;
-    item.p.nextItem = n;
+    item.p.set('previousItem', p)
+    item.p.set('nextItem', n)
 
     if (p) {
-        p.p.nextItem = item;
-    } else {
-        p.p.nextItem = null;
+        p.p.set('nextItem', item)
     }
     if (n) {
-        n.p.previousItem = item;
-    } else {
-        n.p.previousItem = null;
-    }
+        n.p.set('previousItem', item)
+        
+    } 
 
     // Start events
     thisThing.allowEvents();
@@ -402,42 +420,51 @@ function insertBefore(thisThing, referenceItem, refItemtoInsert) {
         n.allowEvents();
     }
 
-    // Sets position
-    let position = 0;
-    if (p) {
-        position = p.p.position + 1;
+
+    if(1 == 0 ){
+        // Sets position
+        let position = 0;
+        if (p) {
+            position = p.p.position + 1;
+        }
+    
+        
+        let whileItem = item
+        while(!h.isNull(whileItem)){
+            whileItem.p.set('position', position);
+            whileItem = whileItem.p.get('nextItem')?.value || null;
+            position = position + 1;
+        }
     }
 
-    item.position = position;
-    let nextItem = item.p.nextItem;
-    while (nextItem) {
-        nextItem.p.position = position + 1;
-        position = position + 1;
-        nextItem = nextItem.p.nextItem;
-    }
+    // Add item
+    thisThing.p.add("itemListElement", item);
 
-    //  Add to list
-    let t = thisThing.getItem(refItemtoInsert.ref);
-    if (!t || t == null) {
-        thisThing.p.add("itemListElement", refItemtoInsert);
-    }
+    recalculatePosition(thisThing)
 
+    
     return item;
 }
 
-function insertAfter(thisThing, referenceItem, refItemtoInsert) {
+function insertAfter(thisThing, referenceItem, itemToInsert) {
     /**
      *
      */
 
-    let item;
-    // Convert to ListItem if not one already
-    if (!(refItemtoInsert instanceof KrListItem)) {
-        refItemtoInsert = new KrListItem(refItemtoInsert);
-        item = refItemtoInsert;
-    } else {
-        item = thisThing.getItem(refItemtoInsert.ref);
-    }
+    // Get inputItem (create if not in listitemelement)
+    let item = getListItem(thisThing, itemToInsert)
+    if(h.isNull(item)){
+        item = createListItem(thisThing, itemToInsert)
+    } 
+
+    // Get referenceItem
+    let p = getListItem(thisThing, referenceItem)
+
+    if(h.isNull(p)){ throw('Error, invalid reference item')}
+
+    // Get referenceitem previous item
+    let n = p.p.nextItem || null
+    n = getListItem(thisThing, n)
 
     // Stop events
     thisThing.blockEvents();
@@ -452,31 +479,21 @@ function insertAfter(thisThing, referenceItem, refItemtoInsert) {
     }
 
     // Remove previous links of items
-    if (
-        (item.p.previousItem && item.p.previousItem != null) ||
-        (item.p.nextItem && item.p.nextItem != null)
-    ) {
-        thisThing.remove(item.ref);
-    }
-
-    var p = thisThing.list.getItem(referenceItem);
-    var n = p.p.nextItem;
+    remove(thisThing, item)
 
     // Change allocation
-    item.p.previousItem = p;
-    item.p.nextItem = n;
+    item.p.previousItem = p
+    item.p.nextItem = n
 
     if (p) {
-        p.p.nextItem = item;
-    } else {
-        p.p.nextItem = null;
+        p.p.nextItem=item
     }
     if (n) {
-        n.p.previousItem = item;
-    } else {
-        n.p.previousItem = null;
-    }
+        n.p.previousItem=item
 
+    } 
+
+    
     // Start events
     thisThing.allowEvents();
     if (item) {
@@ -489,30 +506,34 @@ function insertAfter(thisThing, referenceItem, refItemtoInsert) {
         n.allowEvents();
     }
 
-    // Change position
-    let position = 0;
-    if (p) {
-        position = p.p.position + 1;
+
+    if(1 == 0 ){
+        // Sets position
+        let position = 0;
+        if (p) {
+            position = p.p.position + 1;
+        }
+
+
+        let whileItem = item
+        while(!h.isNull(whileItem)){
+            whileItem.p.set('position', position);
+            whileItem = whileItem.p.get('nextItem')?.value || null;
+            position = position + 1;
+        }
     }
 
-    item.p.position = position;
-    let nextItem = item.p.nextItem;
-    while (nextItem) {
-        nextItem.p.position = position + 1;
-        position = position + 1;
-        nextItem = nextItem.p.nextItem;
-    }
+    // Add item
+    thisThing.p.add("itemListElement", item);
 
-    //  Add to list
-    let t = thisThing.getItem(refItemtoInsert.ref);
-    if (!t || t == null) {
-        thisThing.p.add("itemListElement", refItemtoInsert);
-    }
-
+    recalculatePosition(thisThing)
     return item;
 }
 
 function getItem(thisThing, ref) {
+    
+
+    return getListItem(thisThing, ref)
     if (!ref) {
         return null;
     }
@@ -521,7 +542,7 @@ function getItem(thisThing, ref) {
         ref = ref.ref;
     }
 
-    if (!ref || !ref["@type"] || ref["@type"] == null) {
+    if ( h.isNull(ref?.['@type'])) {
         return null;
     }
 
@@ -532,7 +553,7 @@ function getItem(thisThing, ref) {
     }
 }
 
-function getByListItem(thisThing, ref) {
+function getByListItemOLD(thisThing, ref) {
     let items = thisThing.p.get("itemListElement").values;
 
     for (let item of items) {
@@ -543,7 +564,7 @@ function getByListItem(thisThing, ref) {
     return null;
 }
 
-function getByItem(thisThing, ref) {
+function getByItemOLD(thisThing, ref) {
     let items = thisThing.p.get("itemListElement").values;
     for (let item of items) {
         if (
@@ -562,7 +583,7 @@ function getByItem(thisThing, ref) {
 
 function getParams(thisThing) {
     let params = {};
-    if (!thisThing._params || thisThing._params == null) {
+    if (h.isNull(thisThing._params)) {
         return {};
     } else {
         params = thisThing._params;
@@ -571,7 +592,7 @@ function getParams(thisThing) {
     let keys = ["limit", "offset", "orderBy", "orderDirection"];
     for (let k of keys) {
         let v = this[k];
-        if (v && v != null) {
+        if (!h.isNull(v)) {
             params[k] = v;
         }
     }

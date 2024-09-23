@@ -1,3 +1,4 @@
+import { krakenHelpers as h } from 'krakenhelpers'
 
 
 export const recordHelpers = {
@@ -43,19 +44,19 @@ function simplify(data) {
             let newData = []
             for(let d of data){
                 let value = simplify(d);
-                if(d && d != null){
+                if(h.isNotNull(d)){
                     newData.push(value)
                 }
             }
             return newData
         }
-    } else if (data !== null && typeof data === "object") {
+    } else if (h.isNotNull(data) && typeof data === "object") {
         // If the data is an object, process each key
         const newData = {};
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
                 let value = simplify(data[key]);
-                if(value){
+                if(h.isNotNull(value)){
                     newData[key] = simplify(data[key]);
                 }
             }

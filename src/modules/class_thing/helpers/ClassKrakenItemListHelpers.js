@@ -172,7 +172,7 @@ function getListItem(thisThing, record_type, record_id){
         if(l?.record_type == record_type && l?.record_id == record_id){
             return l
         }
-        let item = l.p.get('item')?. value || null
+        let item = l.p.item
         if(item?.record_type == record_type && item?.record_id == record_id){
             return l
         }
@@ -334,9 +334,10 @@ function recalculatePosition(thisThing){
 function remove(thisThing, itemRef) {
     var item = getListItem(thisThing, itemRef)
     if (!item) {
+        console.log('not item remove')
         return null;
     }
-
+   
     var p = item.p.previousItem;
     var n = item.p.nextItem;
 
@@ -349,8 +350,17 @@ function remove(thisThing, itemRef) {
     }
 
     // Remove from list
+     console.log('iii')
+    console.log(thisThing.p.itemListElement.length)
     thisThing.p.delete('itemListElement', item)
+
     
+    console.log('jjj')
+    let p1 = thisThing.p.get('itemListElement')
+    for(let pv of p1.propertyValues){
+        console.log(pv.object.value.record_id)
+    }
+    console.log(thisThing.p.itemListElement.length)
 
     // Sets position
     recalculatePosition(thisThing)
@@ -389,6 +399,7 @@ function createListItem(thisThing, listItem){
 function insertBefore(thisThing, referenceItem, itemToInsert) {
 
 
+    console.log(referenceItem, itemToInsert)
     // Get inputItem (create if not in listitemelement)
     let item = getListItem(thisThing, itemToInsert)
     if(h.isNull(item)){
@@ -421,14 +432,14 @@ function insertBefore(thisThing, referenceItem, itemToInsert) {
 
     
     // Change allocation
-    item.p.set('previousItem', p)
-    item.p.set('nextItem', n)
+    item.p.previousItem = p
+    item.p.nextItem = n
 
     if (p) {
-        p.p.set('nextItem', item)
+        p.p.nextItem = item
     }
     if (n) {
-        n.p.set('previousItem', item)
+        n.p.previousItem = item
         
     } 
 
@@ -443,23 +454,8 @@ function insertBefore(thisThing, referenceItem, itemToInsert) {
     if (n) {
         n.allowEvents();
     }
-
-
-    if(1 == 0 ){
-        // Sets position
-        let position = 0;
-        if (p) {
-            position = p.p.position + 1;
-        }
     
-        
-        let whileItem = item
-        while(!h.isNull(whileItem)){
-            whileItem.p.set('position', position);
-            whileItem = whileItem.p.get('nextItem')?.value || null;
-            position = position + 1;
-        }
-    }
+
 
     // Add item
     thisThing.p.add("itemListElement", item);
@@ -510,12 +506,13 @@ function insertAfter(thisThing, referenceItem, itemToInsert) {
     item.p.nextItem = n
 
     if (p) {
-        p.p.nextItem=item
+        p.p.nextItem = item
     }
     if (n) {
-        n.p.previousItem=item
+        n.p.previousItem = item
 
     } 
+
 
     
     // Start events

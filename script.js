@@ -29,5 +29,10 @@ let thing = new KrThing("ItemList");
                     name: "thing3",
   });
 
-console.log(thing.json)
 
+//console.log(thing.json)
+thing.l.insertBefore({"@type": "Thing",
+                         "@id": "thing3"}, {"@type": "Thing",
+                        "@id": "thing1"})
+
+console.log(thing.json)

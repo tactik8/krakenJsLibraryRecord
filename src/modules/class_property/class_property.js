@@ -344,13 +344,15 @@ export class KrProperty {
             pv.filter((item) => item.record_type == "replaceAction"),
         );
 
+
+
         // Process deletions and replacements
         pv.filter((item) => item.record_type == "replaceAction").forEach(
             (filteredItem) => {
                 results = results.filter(
                     (result) =>
                         !(
-                            result.metadata.lt(filteredItem) &&
+                            result.metadata.lt(filteredItem.metadata) &&
                                 (h.isNull(filteredItem.replacee)  ||
                                     filteredItem.replacee == result.value)
                         ),
@@ -360,15 +362,19 @@ export class KrProperty {
 
         pv.filter((item) => item.record_type == "deleteAction").forEach(
             (filteredItem) => {
+                
                 results = results.filter(
                     (result) =>
                         !(
-                            result.metadata.lt(filteredItem) &&
-                            result.value == filteredItem.value
+                            result.metadata.lt(filteredItem.metadata) &&
+                            h.isEqual(result?.object?.value, filteredItem?.object?.value)
                         ),
                 );
+               
             },
         );
+
+        
 
         function compare(a, b) {
 

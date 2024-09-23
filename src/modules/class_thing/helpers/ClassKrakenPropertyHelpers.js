@@ -253,6 +253,15 @@ export class ClassKrakenPropertyHelpers {
         return this.thing.replaceProperty("error", oldValue, value);
     }
 
+
+    get itemListElement() {
+        return this.thing.getProperty("itemListElement")?.values;
+    }
+    set itemListElement(values) {
+        return this.thing.replaceProperty("itemListElement", oldValue, values);
+    }
+
+    
     get item() {
         return this.thing.getProperty("item")?.value;
     }

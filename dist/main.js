@@ -710,10 +710,10 @@ class $0ff73647c93c411e$export$13f164945901aa88 {
         results = results.concat(pv.filter((item)=>item.record_type == "replaceAction"));
         // Process deletions and replacements
         pv.filter((item)=>item.record_type == "replaceAction").forEach((filteredItem)=>{
-            results = results.filter((result)=>!(result.metadata.lt(filteredItem) && ((0, $5OpyM$krakenHelpers).isNull(filteredItem.replacee) || filteredItem.replacee == result.value)));
+            results = results.filter((result)=>!(result.metadata.lt(filteredItem.metadata) && ((0, $5OpyM$krakenHelpers).isNull(filteredItem.replacee) || filteredItem.replacee == result.value)));
         });
         pv.filter((item)=>item.record_type == "deleteAction").forEach((filteredItem)=>{
-            results = results.filter((result)=>!(result.metadata.lt(filteredItem) && result.value == filteredItem.value));
+            results = results.filter((result)=>!(result.metadata.lt(filteredItem.metadata) && (0, $5OpyM$krakenHelpers).isEqual(result?.object?.value, filteredItem?.object?.value)));
         });
         function compare(a, b) {
             if (a.gt(b)) return -1;
@@ -1137,8 +1137,8 @@ class $669430fe45e0fd45$export$73a9d89cdfbecb0a {
     push(propertyID, value, credibility, observationDate) {
         return this.add(propertyID, value, credibility, observationDate);
     }
-    replace(propertyID, oldValue, newValue, credibility, observationDate) {
-        return $669430fe45e0fd45$var$setProperty(this.thing, propertyID, newValue, credibility, observationDate, "replaceAction", oldValue);
+    replace(propertyID, oldValue1, newValue, credibility, observationDate) {
+        return $669430fe45e0fd45$var$setProperty(this.thing, propertyID, newValue, credibility, observationDate, "replaceAction", oldValue1);
     }
     delete(propertyID, value, credibility, observationDate) {
         return $669430fe45e0fd45$var$setProperty(this.thing, propertyID, value, credibility, observationDate, "deleteAction", null);
@@ -1150,162 +1150,168 @@ class $669430fe45e0fd45$export$73a9d89cdfbecb0a {
         return this.thing.getProperty("actionStatus")?.value;
     }
     set actionStatus(value) {
-        let oldValue = this.thing.getProperty("actionStatus")?.value;
-        return this.thing.replaceProperty("actionStatus", oldValue, value);
+        let oldValue1 = this.thing.getProperty("actionStatus")?.value;
+        return this.thing.replaceProperty("actionStatus", oldValue1, value);
     }
     get endTime() {
         return this.thing.getProperty("endTime")?.value;
     }
     set endTime(value) {
-        let oldValue = this.thing.getProperty("endTime")?.value;
-        return this.thing.replaceProperty("endTime", oldValue, value);
+        let oldValue1 = this.thing.getProperty("endTime")?.value;
+        return this.thing.replaceProperty("endTime", oldValue1, value);
     }
     get error() {
         return this.thing.getProperty("error")?.value;
     }
     set error(value) {
-        let oldValue = this.thing.getProperty("error")?.value;
-        return this.thing.replaceProperty("error", oldValue, value);
+        let oldValue1 = this.thing.getProperty("error")?.value;
+        return this.thing.replaceProperty("error", oldValue1, value);
     }
     get familyName() {
         return this.thing.getProperty("familyName")?.value;
     }
     set familyName(value) {
-        let oldValue = this.thing.getProperty("familyName")?.value;
-        return this.thing.replaceProperty("familyName", oldValue, value);
+        let oldValue1 = this.thing.getProperty("familyName")?.value;
+        return this.thing.replaceProperty("familyName", oldValue1, value);
     }
     get givenName() {
         return this.thing.getProperty("givenName")?.value;
     }
     set givenName(value) {
-        let oldValue = this.thing.getProperty("givenName")?.value;
-        return this.thing.replaceProperty("givenName", oldValue, value);
+        let oldValue1 = this.thing.getProperty("givenName")?.value;
+        return this.thing.replaceProperty("givenName", oldValue1, value);
     }
     get name() {
         return this.thing.getProperty("name")?.value;
     }
     set name(value) {
-        let oldValue = this.thing.getProperty("name")?.value;
-        return this.thing.replaceProperty("name", oldValue, value);
+        let oldValue1 = this.thing.getProperty("name")?.value;
+        return this.thing.replaceProperty("name", oldValue1, value);
     }
     get startTime() {
         return this.thing.getProperty("startTime")?.value;
     }
     set startTime(value) {
-        let oldValue = this.thing.getProperty("startTime")?.value;
-        return this.thing.replaceProperty("startTime", oldValue, value);
+        let oldValue1 = this.thing.getProperty("startTime")?.value;
+        return this.thing.replaceProperty("startTime", oldValue1, value);
     }
     get position() {
         return this.thing.getProperty("position")?.value;
     }
     set position(value) {
-        let oldValue = this.thing.getProperty("position")?.value;
-        return this.thing.replaceProperty("position", oldValue, value);
+        let oldValue1 = this.thing.getProperty("position")?.value;
+        return this.thing.replaceProperty("position", oldValue1, value);
     }
     get url() {
         return this.thing.getProperty("url")?.value;
     }
     set url(value) {
-        let oldValue = this.thing.getProperty("url")?.value;
-        return this.thing.replaceProperty("url", oldValue, value);
+        let oldValue1 = this.thing.getProperty("url")?.value;
+        return this.thing.replaceProperty("url", oldValue1, value);
     }
     get contentUrl() {
         return this.thing.getProperty("contentUrl")?.value;
     }
     set contentUrl(value) {
-        let oldValue = this.thing.getProperty("contentUrl")?.value;
-        return this.thing.replaceProperty("contentUrl", oldValue, value);
+        let oldValue1 = this.thing.getProperty("contentUrl")?.value;
+        return this.thing.replaceProperty("contentUrl", oldValue1, value);
     }
     get agent() {
         return this.thing.getProperty("agent")?.value;
     }
     set agent(value) {
-        let oldValue = this.thing.getProperty("agent")?.value;
-        return this.thing.replaceProperty("agent", oldValue, value);
+        let oldValue1 = this.thing.getProperty("agent")?.value;
+        return this.thing.replaceProperty("agent", oldValue1, value);
     }
     get instrument() {
         return this.thing.getProperty("instrument")?.value;
     }
     set instrument(value) {
-        let oldValue = this.thing.getProperty("instrument")?.value;
-        return this.thing.replaceProperty("instrument", oldValue, value);
+        let oldValue1 = this.thing.getProperty("instrument")?.value;
+        return this.thing.replaceProperty("instrument", oldValue1, value);
     }
     get object() {
         return this.thing.getProperty("object")?.value;
     }
     set object(value) {
-        let oldValue = this.thing.getProperty("object")?.value;
-        return this.thing.replaceProperty("object", oldValue, value);
+        let oldValue1 = this.thing.getProperty("object")?.value;
+        return this.thing.replaceProperty("object", oldValue1, value);
     }
     get result() {
         return this.thing.getProperty("result")?.value;
     }
     set result(value) {
-        let oldValue = this.thing.getProperty("result")?.value;
-        return this.thing.replaceProperty("result", oldValue, value);
+        let oldValue1 = this.thing.getProperty("result")?.value;
+        return this.thing.replaceProperty("result", oldValue1, value);
     }
     get startTime() {
         return this.thing.getProperty("startTime")?.value;
     }
     set startTime(value) {
-        let oldValue = this.thing.getProperty("startTime")?.value;
-        return this.thing.replaceProperty("startTime", oldValue, value);
+        let oldValue1 = this.thing.getProperty("startTime")?.value;
+        return this.thing.replaceProperty("startTime", oldValue1, value);
     }
     get endTime() {
         return this.thing.getProperty("endTime")?.value;
     }
     set endTime(value) {
-        let oldValue = this.thing.getProperty("endTime")?.value;
-        return this.thing.replaceProperty("endTime", oldValue, value);
+        let oldValue1 = this.thing.getProperty("endTime")?.value;
+        return this.thing.replaceProperty("endTime", oldValue1, value);
     }
     get actionStatus() {
         return this.thing.getProperty("actionStatus")?.value;
     }
     set actionStatus(value) {
-        let oldValue = this.thing.getProperty("actionStatus")?.value;
-        return this.thing.replaceProperty("actionStatus", oldValue, value);
+        let oldValue1 = this.thing.getProperty("actionStatus")?.value;
+        return this.thing.replaceProperty("actionStatus", oldValue1, value);
     }
     get instrument() {
         return this.thing.getProperty("instrument")?.value;
     }
     set instrument(value) {
-        let oldValue = this.thing.getProperty("instrument")?.value;
-        return this.thing.replaceProperty("instrument", oldValue, value);
+        let oldValue1 = this.thing.getProperty("instrument")?.value;
+        return this.thing.replaceProperty("instrument", oldValue1, value);
     }
     get error() {
         return this.thing.getProperty("error")?.value;
     }
     set error(value) {
-        let oldValue = this.thing.getProperty("error")?.value;
-        return this.thing.replaceProperty("error", oldValue, value);
+        let oldValue1 = this.thing.getProperty("error")?.value;
+        return this.thing.replaceProperty("error", oldValue1, value);
+    }
+    get itemListElement() {
+        return this.thing.getProperty("itemListElement")?.values;
+    }
+    set itemListElement(values) {
+        return this.thing.replaceProperty("itemListElement", oldValue, values);
     }
     get item() {
         return this.thing.getProperty("item")?.value;
     }
     set item(value) {
-        let oldValue = this.thing.getProperty("item")?.value;
-        return this.thing.replaceProperty("item", oldValue, value);
+        let oldValue1 = this.thing.getProperty("item")?.value;
+        return this.thing.replaceProperty("item", oldValue1, value);
     }
     get previousItem() {
         return this.thing.getProperty("previousItem")?.value;
     }
     set previousItem(value) {
-        let oldValue = this.thing.getProperty("previousItem")?.value;
-        return this.thing.replaceProperty("previousItem", oldValue, value);
+        let oldValue1 = this.thing.getProperty("previousItem")?.value;
+        return this.thing.replaceProperty("previousItem", oldValue1, value);
     }
     get nextItem() {
         return this.thing.getProperty("nextItem")?.value;
     }
     set nextItem(value) {
-        let oldValue = this.thing.getProperty("nextItem")?.value;
-        return this.thing.replaceProperty("nextItem", oldValue, value);
+        let oldValue1 = this.thing.getProperty("nextItem")?.value;
+        return this.thing.replaceProperty("nextItem", oldValue1, value);
     }
     get position() {
         return this.thing.getProperty("position")?.value;
     }
     set position(value) {
-        let oldValue = this.thing.getProperty("position")?.value;
-        return this.thing.replaceProperty("position", oldValue, value);
+        let oldValue1 = this.thing.getProperty("position")?.value;
+        return this.thing.replaceProperty("position", oldValue1, value);
     }
 }
 function $669430fe45e0fd45$var$getProperty(thisThing, propertyID) {
@@ -1353,7 +1359,7 @@ function $669430fe45e0fd45$var$setProperty(thisThing, propertyID, value, credibi
         return p;
     }
     // Get old value
-    let oldValue = thisThing.getProperty(propertyID)?.values;
+    let oldValue1 = thisThing.getProperty(propertyID)?.values;
     // get or create property object
     let property = thisThing.getProperty(propertyID);
     if ((0, $5OpyM$krakenHelpers).isNull(property)) {
@@ -1371,10 +1377,10 @@ function $669430fe45e0fd45$var$setProperty(thisThing, propertyID, value, credibi
     var newValues = property.setValues(values, metadataRecord, actionType, previousValue);
     // dispatch event
     let newValue = thisThing.getProperty(propertyID)?.values;
-    if (oldValue != newValue) {
+    if (oldValue1 != newValue) {
         let data = {
             propertyID: propertyID,
-            oldValue: oldValue,
+            oldValue: oldValue1,
             newValue: newValue
         };
         thisThing.dispatchEvent(actionType, data);
@@ -1756,7 +1762,7 @@ function $681e59e95589c3c8$var$getListItem(thisThing, record_type, record_id) {
     if ((0, $5OpyM$krakenHelpers).isNull(record_type)) return null;
     for (let l of thisThing.p.get("itemListElement")?.values || []){
         if (l?.record_type == record_type && l?.record_id == record_id) return l;
-        let item = l.p.get("item")?.value || null;
+        let item = l.p.item;
         if (item?.record_type == record_type && item?.record_id == record_id) return l;
     }
     return null;
@@ -1845,14 +1851,23 @@ function $681e59e95589c3c8$var$recalculatePosition(thisThing) {
 // -----------------------------------------------------
 function $681e59e95589c3c8$var$remove(thisThing, itemRef) {
     var item = $681e59e95589c3c8$var$getListItem(thisThing, itemRef);
-    if (!item) return null;
+    if (!item) {
+        console.log("not item remove");
+        return null;
+    }
     var p = item.p.previousItem;
     var n = item.p.nextItem;
     // Ressign before and after links to one another
     if ((0, $5OpyM$krakenHelpers).isNotNull(p)) p.p.nextItem = n;
     if ((0, $5OpyM$krakenHelpers).isNotNull(n)) n.p.previousItem = p;
     // Remove from list
+    console.log("iii");
+    console.log(thisThing.p.itemListElement.length);
     thisThing.p.delete("itemListElement", item);
+    console.log("jjj");
+    let p1 = thisThing.p.get("itemListElement");
+    for (let pv of p1.propertyValues)console.log(pv.object.value.record_id);
+    console.log(thisThing.p.itemListElement.length);
     // Sets position
     $681e59e95589c3c8$var$recalculatePosition(thisThing);
     // Remove links
@@ -1874,6 +1889,7 @@ function $681e59e95589c3c8$var$createListItem(thisThing, listItem) {
     return listItem;
 }
 function $681e59e95589c3c8$var$insertBefore(thisThing, referenceItem, itemToInsert) {
+    console.log(referenceItem, itemToInsert);
     // Get inputItem (create if not in listitemelement)
     let item = $681e59e95589c3c8$var$getListItem(thisThing, itemToInsert);
     if ((0, $5OpyM$krakenHelpers).isNull(item)) item = $681e59e95589c3c8$var$createListItem(thisThing, itemToInsert);
@@ -1891,10 +1907,10 @@ function $681e59e95589c3c8$var$insertBefore(thisThing, referenceItem, itemToInse
     // Remove previous links of items
     $681e59e95589c3c8$var$remove(thisThing, item);
     // Change allocation
-    item.p.set("previousItem", p);
-    item.p.set("nextItem", n);
-    if (p) p.p.set("nextItem", item);
-    if (n) n.p.set("previousItem", item);
+    item.p.previousItem = p;
+    item.p.nextItem = n;
+    if (p) p.p.nextItem = item;
+    if (n) n.p.previousItem = item;
     // Start events
     thisThing.allowEvents();
     if (item) item.allowEvents();

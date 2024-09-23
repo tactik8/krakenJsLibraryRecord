@@ -4,40 +4,30 @@ import { krakenHelpers as k } from 'krakenhelpers'
 
 
 
+let thing = new KrThing("ItemList");
 
-let thing = new KrThing('ItemList')
-thing.test.fill()
+  thing.p.add("name", "List 1");
 
-for(let i of thing.l.listItems){
-   // console.log(i.json)
-}
+  thing.list.add({
+                    "@context": "https://schema.org/",
+                    "@type": "Thing",
+                    "@id": "thing1",
+                    name: "thing1",
+  });
 
-let newRecord = {
-        "@context": "https://schema.org/",
-        "@type": "Thing",
-        "@id": "thing20",
-        "name": "thing20"
-    }
-let newRecord3 = {
-    "@context": "https://schema.org/",
-    "@type": "Thing",
-    "@id": "thing30",
-    "name": "thing30"
-}
+  thing.list.add({
+                    "@context": "https://schema.org/",
+                    "@type": "Thing",
+                    "@id": "thing2",
+                    name: "thing2",
+  });
 
-//thing.l.insertAfter({"@type": "ListItem", "@id": "ListItem1"}, newRecord)
+  thing.list.add({
+                    "@context": "https://schema.org/",
+                    "@type": "Thing",
+                    "@id": "thing3",
+                    name: "thing3",
+  });
 
-
-//thing.l.push(newRecord3)
-
-//thing.l.remove(newRecord)
-
-let items = thing.p.get('itemListElement').values
-
-
-for(let item of thing.p.get('itemListElement').values){
-    
-    console.log(item.p.position, item.p.item.record_type, item.record_id, item.p.item.record_type, item.p.item.record_id)
-}
-
+console.log(thing.json)
 

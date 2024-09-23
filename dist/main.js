@@ -1780,12 +1780,25 @@ function $681e59e95589c3c8$var$getListItems(thisThing) {
 function $681e59e95589c3c8$var$getFirstItem(thisThing) {
     let listItems = $681e59e95589c3c8$var$getListItems(thisThing);
     if ((0, $5OpyM$krakenHelpers).isNull(listItems)) return null;
-    let firstItem = listItems[listItems.length - 1];
+    // Get item 1st position 0
+    for (let l of listItems){
+        if ((0, $5OpyM$krakenHelpers).isNotNull(l.p.position) && l.p.position === 0) return l;
+    }
+    // Get item no previousItem if only one
+    let filteredItems = listItems.filter((x)=>(0, $5OpyM$krakenHelpers).isNull(x?.p?.previousItem));
+    if (filteredItems.length == 1) return filteredItems[0];
+    // Else 
+    let firstItem = listItems[0];
     return firstItem;
 }
 function $681e59e95589c3c8$var$getLastItem(thisThing) {
     let listItems = $681e59e95589c3c8$var$getListItems(thisThing);
     if ((0, $5OpyM$krakenHelpers).isNull(listItems)) return null;
+    if (listItems.length == 1) return listItems[0];
+    let filteredItems = listItems.filter((x)=>(0, $5OpyM$krakenHelpers).isNotNull(x?.p?.position));
+    if (filteredItems.length == 1) return filteredItems[0];
+    else return filteredItems[filteredItems.length - 1];
+    // Else 
     let lastItem = listItems[listItems.length - 1];
     return lastItem;
 }
@@ -1803,13 +1816,17 @@ function $681e59e95589c3c8$var$pushItem(thisThing, listItems) {
     let newListItems = [];
     let lastItem = $681e59e95589c3c8$var$getLastItem(thisThing);
     for (let listItem of listItems){
+        listItem = $681e59e95589c3c8$var$createListItem(thisThing, listItem);
         if ((0, $5OpyM$krakenHelpers).isNull(lastItem)) {
-            listItem = $681e59e95589c3c8$var$createListItem(thisThing, listItem);
             listItem.p.position = 0;
             thisThing.p.add("itemListElement", listItem);
-        } else $681e59e95589c3c8$var$insertAfter(thisThing, lastItem, listItem);
+        } else {
+            listItem.p.position = lastItem.p.position + 1;
+            $681e59e95589c3c8$var$insertAfter(thisThing, lastItem, listItem);
+        }
         lastItem = listItem;
     }
+    $681e59e95589c3c8$var$recalculatePosition(thisThing);
     return;
 }
 function $681e59e95589c3c8$var$recalculatePosition(thisThing) {
@@ -1832,14 +1849,8 @@ function $681e59e95589c3c8$var$remove(thisThing, itemRef) {
     var p = item.p.previousItem;
     var n = item.p.nextItem;
     // Ressign before and after links to one another
-    if ((0, $5OpyM$krakenHelpers).isNotNull(p)) {
-        console.log("no p");
-        p.p.nextItem = n;
-    }
-    if ((0, $5OpyM$krakenHelpers).isNotNull(n)) {
-        console.log("no n");
-        n.p.previousItem = p;
-    }
+    if ((0, $5OpyM$krakenHelpers).isNotNull(p)) p.p.nextItem = n;
+    if ((0, $5OpyM$krakenHelpers).isNotNull(n)) n.p.previousItem = p;
     // Remove from list
     thisThing.p.delete("itemListElement", item);
     // Sets position

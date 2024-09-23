@@ -220,12 +220,24 @@ function getListItems(thisThing) {
 function getFirstItem(thisThing) {
 
     let listItems = getListItems(thisThing)
-
+    
     if(h.isNull(listItems)){ return null }
 
+    // Get item 1st position 0
+    for(let l of listItems){
+        if(h.isNotNull(l.p.position) && l.p.position === 0){
+            return l
+        }
+    }
     
-    let firstItem = listItems[listItems.length -1]
+   // Get item no previousItem if only one
+    let filteredItems = listItems.filter(x => h.isNull(x?.p?.previousItem))
+    if(filteredItems.length == 1){
+        return filteredItems[0]
+    }
 
+    // Else 
+    let firstItem = listItems[0]
     return firstItem
     
 }
@@ -235,6 +247,16 @@ function getLastItem(thisThing) {
 
     if(h.isNull(listItems)){ return null }
 
+    if(listItems.length == 1){ return listItems[0] }
+
+    let filteredItems = listItems.filter(x => h.isNotNull(x?.p?.position))
+    if(filteredItems.length == 1){
+        return filteredItems[0]
+    } else {
+        return filteredItems[filteredItems.length - 1]
+    }
+
+    // Else 
     let lastItem = listItems[listItems.length -1]
     
     return lastItem
@@ -262,19 +284,23 @@ function pushItem(thisThing, listItems) {
     
     for (let listItem of listItems) {
 
+        listItem = createListItem(thisThing, listItem)
         if(h.isNull(lastItem)){
-            listItem = createListItem(thisThing, listItem)
+           
             listItem.p.position = 0
             thisThing.p.add('itemListElement', listItem)
             
         } else {
 
+            listItem.p.position = lastItem.p.position + 1
             insertAfter(thisThing, lastItem, listItem)
            
         }
         lastItem = listItem
     }
 
+    recalculatePosition(thisThing)
+    
     return; 
 }
 
@@ -286,12 +312,12 @@ function recalculatePosition(thisThing){
 
     while (h.isNotNull(item)){
 
-        
         if(item.p.get('position')?.value != position){
             item.p.set('position', position)
         }
         let nextItem = item.p.get('nextItem')?.value
         item = getListItem(thisThing, nextItem)
+        
         position += 1
         
     }
@@ -316,11 +342,9 @@ function remove(thisThing, itemRef) {
 
     // Ressign before and after links to one another
     if (h.isNotNull(p)) {
-        console.log('no p')
         p.p.nextItem = n;
     }
     if (h.isNotNull(n)) {
-         console.log('no n')
         n.p.previousItem = p;
     }
 

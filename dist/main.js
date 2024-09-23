@@ -1851,23 +1851,15 @@ function $681e59e95589c3c8$var$recalculatePosition(thisThing) {
 // -----------------------------------------------------
 function $681e59e95589c3c8$var$remove(thisThing, itemRef) {
     var item = $681e59e95589c3c8$var$getListItem(thisThing, itemRef);
-    if (!item) {
-        console.log("not item remove");
-        return null;
-    }
+    if (!item) return null;
     var p = item.p.previousItem;
     var n = item.p.nextItem;
     // Ressign before and after links to one another
     if ((0, $5OpyM$krakenHelpers).isNotNull(p)) p.p.nextItem = n;
     if ((0, $5OpyM$krakenHelpers).isNotNull(n)) n.p.previousItem = p;
     // Remove from list
-    console.log("iii");
-    console.log(thisThing.p.itemListElement.length);
     thisThing.p.delete("itemListElement", item);
-    console.log("jjj");
     let p1 = thisThing.p.get("itemListElement");
-    for (let pv of p1.propertyValues)console.log(pv.object.value.record_id);
-    console.log(thisThing.p.itemListElement.length);
     // Sets position
     $681e59e95589c3c8$var$recalculatePosition(thisThing);
     // Remove links
@@ -1889,7 +1881,6 @@ function $681e59e95589c3c8$var$createListItem(thisThing, listItem) {
     return listItem;
 }
 function $681e59e95589c3c8$var$insertBefore(thisThing, referenceItem, itemToInsert) {
-    console.log(referenceItem, itemToInsert);
     // Get inputItem (create if not in listitemelement)
     let item = $681e59e95589c3c8$var$getListItem(thisThing, itemToInsert);
     if ((0, $5OpyM$krakenHelpers).isNull(item)) item = $681e59e95589c3c8$var$createListItem(thisThing, itemToInsert);

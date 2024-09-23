@@ -334,7 +334,7 @@ function recalculatePosition(thisThing){
 function remove(thisThing, itemRef) {
     var item = getListItem(thisThing, itemRef)
     if (!item) {
-        console.log('not item remove')
+      
         return null;
     }
    
@@ -350,17 +350,11 @@ function remove(thisThing, itemRef) {
     }
 
     // Remove from list
-     console.log('iii')
-    console.log(thisThing.p.itemListElement.length)
     thisThing.p.delete('itemListElement', item)
 
     
-    console.log('jjj')
     let p1 = thisThing.p.get('itemListElement')
-    for(let pv of p1.propertyValues){
-        console.log(pv.object.value.record_id)
-    }
-    console.log(thisThing.p.itemListElement.length)
+
 
     // Sets position
     recalculatePosition(thisThing)
@@ -399,7 +393,6 @@ function createListItem(thisThing, listItem){
 function insertBefore(thisThing, referenceItem, itemToInsert) {
 
 
-    console.log(referenceItem, itemToInsert)
     // Get inputItem (create if not in listitemelement)
     let item = getListItem(thisThing, itemToInsert)
     if(h.isNull(item)){
